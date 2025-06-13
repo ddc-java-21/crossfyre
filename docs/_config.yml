@@ -1,0 +1,22 @@
+remote_theme: ddc-java/ddc-day-book
+repository_link:
+  enabled: false
+page_navigator:
+  enabled: true
+titles_from_headings:
+  enabled: false
+prev_next_navigation:
+- bottom
+
+# TODO Modify the contents below for the specific project. NOTE THE INDENTATION!
+
+title: "Capstone Project"
+description: "Trust me, it'll be cool!"
+
+# TODO List team members in the author.name property.
+
+author:
+  name: "DDC Student"
+
+# Do not change the following line.
+  copyright: true

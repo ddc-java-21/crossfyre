@@ -1,0 +1,109 @@
+### IntelliJ/Android Studio ###
+
+.idea/**/*
+captures/
+out/
+*.iws
+*.iml
+*.ipr
+
+!**/src/main/**/out/
+!**/src/test/**/out/
+# Uncomment next line to include misc.xml (e.g., for Java version information) in version control.
+# !.idea/misc.xml
+
+### Eclipse ###
+
+.apt_generated/
+.apt_generated_test/
+.externalToolBuilders/
+.settings/
+.metadata/
+bin/
+tmp/
+
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+.apt_generated
+.autotools
+.buildpath
+.cache-main
+.classpath
+.cproject
+.factorypath
+.loadpath
+.metadata
+# Comment next line to track the project description file (e.g., for dependency info).
+.project
+.recommenders
+.scala_dependencies
+.settings
+.springBeans
+.sts4-cache
+.target
+.tern-project
+.texlipse
+.worksheet
+
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+
+### NetBeans ###
+
+nbproject/private/
+nbproject/Makefile-*.mk
+nbproject/Package-*.bashnbbuild/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+
+### VS Code ###
+
+.history/
+.vscode/
+*.vsix
+
+
+### Gradle ###
+
+.gradle/
+build/
+local.properties
+
+!**/src/main/**/build/
+!**/src/test/**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+
+### Maven ###
+
+target/
+HELP.md
+
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+
+### Database ###
+
+# TODO Add data directory to this in JDBC/JPA/Spring Data projects with embedded databases!
+# TODO Add database log files located outside the data directory in JDBC/JPA/Spring Data projects!
+
+
+### OS X ###
+
+# - metadata
+.DS_Store
+
+
+### DDC ###
+
+# - temporary files
+.grading
