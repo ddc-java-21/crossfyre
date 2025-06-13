@@ -6,9 +6,7 @@
 
 [//]: # (TODO Provide project summary.)
 
-## Credits, copyrights, and license information
-
-&copy; 2025 by (_team members_).
+## &copy; 2025 by Travis Hollins, Dorian Obisike, and Tim Nickell.
 
 [//]: # (TODO Update team member list)
 
