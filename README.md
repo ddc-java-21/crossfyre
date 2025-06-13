@@ -1,6 +1,4 @@
-# Capstone Project Template
-
-[//]: # (CrossFyre)
+# CrossFyre
 
 ## Summary
 
