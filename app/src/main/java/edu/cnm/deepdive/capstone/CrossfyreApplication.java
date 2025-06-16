@@ -24,7 +24,7 @@ import dagger.hilt.android.HiltAndroidApp;
  * {@code AndroidManifest.xml}, or it will not be loaded and used by the Android system.
  */
 @HiltAndroidApp
-public class CapstoneApplication extends Application { // TODO Rename this class as aappropriate.
+public class CrossfyreApplication extends Application {
 
   @Override
   public void onCreate() {

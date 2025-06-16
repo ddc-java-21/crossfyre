@@ -30,7 +30,6 @@ dependencyResolutionManagement {
     }
 }
 
-// TODO Update for project name.
-rootProject.name = "capstone-project"
+rootProject.name = "cross-fyre"
 
 include(":app", ":server")
