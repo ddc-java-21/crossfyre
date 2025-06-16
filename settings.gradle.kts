@@ -30,6 +30,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "crossFyre"
+rootProject.name = "cross-fyre"
 
 include(":app", ":server")
