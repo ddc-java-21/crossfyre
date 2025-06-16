@@ -6,32 +6,51 @@ order: 0
 
 {% include ddc-abbreviations.md %}
 
-## Page contents
+### Page contents
 {:.no_toc}
 
 - ToC
 {:toc}
 
-## Summary
+### Summary
 
-[//]: # (TODO Replace this paragraph with one or more paragraphs summarizing the purpose and operation of the Android app you propose to develop in this project.)
+* The purpose of our Android app will be able to generate a couple different crossword puzzles
+* from scratch. There will be a leaderboard system that will be loaded with the times of people
+* who have beat the crossword puzzle in the least amount of time.
 
-## Intended users and user stories
 
-[//]: # (TODO Write a bullet list here, including at least 2 different types of intended users. Along with each type of intended user, include at least 1 _user story_. A user story is usually just 1 simple sentence &#40;no more than 2 sentences&#41;, in the voice of the intended user, stating a specific task that the user performs using the app, and the benefit that will be obtained. See rubric for required form.)
+### Intended users and user stories
 
-## Functionality
+* Intended user 1: A person who likes to do crosswords in their free time instead of playing games
+* on their phone as well as being competitive so they can see how they match up against others.
+* User story intended user: As a crossword enthusiast, I want to generate and solve new puzzles 
+* daily so that I can challenge myself and climb the leaderboard.
 
-[//]: # (TODO List &#40;using a bullet list---or ordered list, if order is relevant&#41; the key functional aspects that will be provided by the app---i.e., tell us what the user will be able to do using the app. This should not simply be a re-statement of the [summary]&#40;#summary&#41;, but should instead provide a more specific articulation of the functionality and user experience. )
 
-## Persistent data
+### Functionality
 
-[//]: # (TODO Using a bullet list, list what content will be maintained in server-side storage. This should include any information that users of your app would expect to be maintained &#40;i.e., without connection to a server&#41; across multiple sessions of use.)
+* The user will be able to click a button that will generate a randomized crossword
+* The user will log in with their email through a third party authentification service
+* Once the user completes a crossword, if done in the top 5 least amount of time have their username displayed in the leaderboard
+* The user will be able to click to generate a couple different subject themes for the crossword 
 
-## Device/external services
 
-[//]: # (TODO If the client component will need to access special services of the client device &#40;e.g., sensors, contacts, messaging&#41;, list them here using a bullet list. Also, if the client component will need to access already-existing external services &#40;e.g., real-time weather data, Open Movie Database, Open Trivia Database&#41;, those should also be listed here.)
+### Persistent data
 
-## Stretch goals and possible enhancements 
+* The information regarding the themes of the crossword puzzle
+* The generator for the crossword puzzle
+* The usernames of the people who have made it onto the leaderboard
 
-[//]: # (TODO If you can identify functional elements of the software that you think might not be achievable in the scope of the project, but which would nonetheless add significant value if you were able to include them, list them here. For now, we recommend listing them in order of complexity/amount of work, from the least to the most.)
+
+### Device/external services
+
+* google authentifiaction provider
+
+
+### Stretch goals and possible enhancements 
+
+* create animations for when the user gets a word in the crossword correct or finishes the game
+* Have user be able to delete their username from the leaderboard if they wanted to 
+* add multiple different themes so it gives variety to our crossword outside of just one theme
+* Have a user choose the size of crossword generated from a few different choices for each theme
+
