@@ -8,15 +8,15 @@ titles_from_headings:
 prev_next_navigation:
 - bottom
 
-# TODO Modify the contents below for the specific project. NOTE THE INDENTATION!
+# DONE Modify the contents below for the specific project. NOTE THE INDENTATION!
 
-title: "Capstone Project"
-description: "Trust me, it'll be cool!"
+title: "CrossFyre"
+description: "Crossword Generator Game Application"
 
-# TODO List team members in the author.name property.
+# DONE List team members in the author.name property.
 
 author:
-  name: "DDC Student"
+  name: "Dorian Obisike, Travis Hollins, and Tim Nickell"
 
 # Do not change the following line.
   copyright: true
