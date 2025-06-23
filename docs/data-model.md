@@ -14,4 +14,4 @@ order: 20
 
 ## UML class diagram
 
-[//]: # (TODO Use Markdown or Liquid include to show UML class diagram in SVG format, linking to PDF format. )
+[![CrossFyre UML Class Diagram](img/CrossFyre-UML-v2.drawio.svg)](pdf/CrossFyre-UML-v2.drawio.pdf)
