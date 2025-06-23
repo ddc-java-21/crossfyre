@@ -14,10 +14,8 @@ order: 0
 
 ### Summary
 
-* The purpose of our Android app will be able to generate a general crossword puzzle
-* from scratch. There will be a dual leaderboard system that consists of a daily leaderboard and an
-* all time leaderboard. The leaderboards will be loaded with the top 10 times of 
-* people who have beat the crossword puzzle in the least amount of time.
+* The purpose of our Android app will be able to let users play the daily crossword puzzle as well 
+* as previous ones.
 
 
 ### Intended users and user stories
@@ -32,36 +30,55 @@ order: 0
 
 * The user will be able to click a button that will generate a randomized crossword.
 * The user will log in with their email through a third party authentification service.
-* Once the user completes a crossword, if done in the top 5 least amount of time have their 
-* username displayed in the leaderboard.
-* The user will be able to click to generate a couple different subject themes for the crossword.
-* If user inputs a correct or incorrect word there will be an audio queue that activates.
-* There is an auto check option that will update on real time input if the letter is correct with
-* a change of background color for correct or incorrect.
+* The user will be able to play the daily crossword for that day as well as past daily puzzles
+* There is an auto check that will happen with each letter implemented so after each letter the cloud
+* will send back to see if there is a match
+* A change of background color for correct or incorrect letters/words.
 * The user can resume their recent game state if the game was not completed before leaving to menu.
-* To initialize the game it will load an initial game state so it is accessible offline for only
-* that current game.
-* Generates a puzzle of the day and has features to look back at previous puzzles of the day in a 
-* widget format(calendar)
+* To initialize the game for the user it will load an initial game state that consists of the puzzle 
+* structure(puzzle id) and the clues in a grid map to the side of the game
+* The clues will be invisible to the user until they click on the corresponding grid in the puzzle
+* and then only that clue will become visible to them to avoid cheating
+* A user can not have more than daily puzzle of the day game open at one time
+* There will be a check feature that the user can use to see if the corresping letters in their puzzle are correct
+
 
 
 ### Persistent data
 
-* The information regarding the clues and key words
-* The generator for the crossword puzzle
-* The display names of the people who have made it onto the leaderboard
+# Puzzle 
+* Puzzle id
+* Grid layout
+* Clue list(across, down)
+* Word List
+* DateTime updated and created
+
+# User
+* User ID
+* profile settings
+* progress data (ID's and timestamps of completion)
+
+# Dictionary
+* Active game words
+* clues for active game words 
 
 
 ### Device/external services
 
 * google authentication provider
 * crossword puzzle generator
-* crossword library api/database
+* pattern matcher
+* dictionary word api
 
 
 ### Stretch goals and possible enhancements 
 
 * Create animations for when the user gets a word in the crossword correct or finishes the game
+* Leaderboard implementation
+* Once the user completes a crossword, if done in the top 5 least amount of time have their
+* username displayed in the leaderboard.
+* There is a score that is based on the end time subtracting the initial time
+* If user inputs a correct or incorrect word there will be an audio queue that activates.
 * Add an animation for a correct inputted answer or/and when the user finishes the game
 * Have user be able to delete their username from the leaderboard if they wanted to 
 * Add multiple different themes so it gives variety to our crossword outside of just one theme
