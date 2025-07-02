@@ -14,16 +14,21 @@ order: 0
 
 ### Summary
 
-* The purpose of our Android app will be able to let users play the daily crossword puzzle of the
-* day as well as previous ones.
+* CrossFyre is a crossword-puzzle generator app for Android that allows users to work on a daily
+* generated cross word puzzle of the day. Its hallmark feature is a generated puzzled of the day 
+* that creates a unique puzzle for a selected theme. It uses a public API (or APIs) to retrieve 
+* content to serve as the content for the puzzles, allowing for unique puzzles to be created every 
+* day. It tracks user puzzle history using an account login system. So whether looking for a 
+* relaxing companion to a morning coffee, or feeling like expanding your vocabulary that day, this 
+* app is anyone's go-to source for fun puzzle-solving madness.
 
 
 ### Intended users and user stories
 
-* Intended user 1: A person who likes to do crosswords in their free time instead of playing games
-* on their phone as well as being competitive so they can see how they match up against others.
-* User story intended user: As a crossword enthusiast, I want to generate and solve new puzzles
-* daily so that I can challenge myself and climb the leaderboard.
+* Intended user 1: As a person who likes to do small brain teasers in their free time at work,
+* I play crosswords to help my brain ease off the stress caused at my job.
+* Intended user 2: As someone who likes to learn new words when I don't have school in the summer,
+* I play crosswords to help expand my vocabulary to help my articulation.
 
 
 ### Functionality
@@ -39,7 +44,7 @@ order: 0
 * structure(puzzle id) and the clues in a grid map to the side of the game in a column format.
 * The clues will be invisible to the user until they click on the corresponding grid in the puzzle.
 * and then only that clue will become visible to the user to counteract cheating.
-* A user can not have more than daily puzzle of the day game open at one time.
+* A user can not have more than one daily puzzle of the day game open at one time.
 * There will be a check feature that the user can use to see if the corresponding letters in their
 * puzzle are matched anywhere.
 
