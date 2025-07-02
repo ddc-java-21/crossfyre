@@ -44,7 +44,7 @@ order: 0
 * structure(puzzle id) and the clues in a grid map to the side of the game in a column format.
 * The clues will be invisible to the user until they click on the corresponding grid in the puzzle.
 * and then only that clue will become visible to the user to counteract cheating.
-* A user can not have more than daily puzzle of the day game open at one time.
+* A user can not have more than one daily puzzle of the day game open at one time.
 * There will be a check feature that the user can use to see if the corresponding letters in their
 * puzzle are matched anywhere.
 
