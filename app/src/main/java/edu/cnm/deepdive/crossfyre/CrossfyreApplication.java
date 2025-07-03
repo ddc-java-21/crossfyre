@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package edu.cnm.deepdive.capstone;
+package edu.cnm.deepdive.crossfyre;
 
 import android.app.Application;
 import dagger.hilt.android.HiltAndroidApp;
