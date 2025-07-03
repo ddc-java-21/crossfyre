@@ -1,4 +1,4 @@
-package edu.cnm.deepdive.capstone;
+package edu.cnm.deepdive.crossfyre;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
