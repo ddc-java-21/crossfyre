@@ -50,7 +50,7 @@ public class Puzzle {
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY,
       cascade = CascadeType.ALL,orphanRemoval = true)
   @JsonIgnore
-  private final List<Guess> guesses = new LinkedList<>();
+  private final List<Word> words = new LinkedList<>();
 
   // TODO: 7/2/2025 private final Board...include words and getter calls for their position and direction?
 
@@ -74,8 +74,8 @@ public class Puzzle {
     return created;
   }
 
-  public List<Guess> getGuesses() {
-    return guesses;
+  public List<Word> getWords() {
+    return words;
   }
 
   @Override

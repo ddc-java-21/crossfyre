@@ -24,7 +24,7 @@ import java.util.UUID;
 @JsonPropertyOrder({"key", "author", "text", "posted"})
 public class Guess {
 
-  private static final int MAX_MESSAGE_LENGTH = 255;
+  private static final int MAX_MESSAGE_LENGTH = 255; // TODO: 7/6/2025 change to puzzle grid size
 
   @Id
   @GeneratedValue
@@ -50,7 +50,7 @@ public class Guess {
 //  private Instant posted;
 
   @ManyToOne(fetch = FetchType.EAGER, optional = false)
-  @JoinColumn(name = "author_id", nullable = false, updatable = false)
+  @JoinColumn(name = "player_id", nullable = false, updatable = false)
   @JsonProperty(access = Access.READ_ONLY)
   private User author;
 
