@@ -75,6 +75,8 @@ nbdist/
 .gradle/
 build/
 local.properties
+*-local.yaml
+*-local.yml
 
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -95,6 +97,8 @@ HELP.md
 
 # TODO Add data directory to this in JDBC/JPA/Spring Data projects with embedded databases!
 # TODO Add database log files located outside the data directory in JDBC/JPA/Spring Data projects!
+
+/db/
 
 
 ### OS X ###
