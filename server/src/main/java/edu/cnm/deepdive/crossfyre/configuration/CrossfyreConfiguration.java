@@ -3,6 +3,7 @@ package edu.cnm.deepdive.crossfyre.configuration;
 import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
+import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "crossfyre")
 public class CrossfyreConfiguration {

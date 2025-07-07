@@ -2,6 +2,7 @@ package edu.cnm.deepdive.crossfyre.service;
 
 import edu.cnm.deepdive.crossfyre.configuration.CrossfyreConfiguration;
 import edu.cnm.deepdive.crossfyre.configuration.CrossfyreConfiguration.Polling;
+import edu.cnm.deepdive.crossfyre.model.entity.SolutionPuzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.UserWord;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
@@ -32,7 +33,7 @@ public class GameService implements AbstractGameService {
   private final long pollingTimeout;
 
   @Autowired
-  GameService(UserWordRepository userWordRepository, UserPuzzleRepository channelRepository, CrossfyreConfiguration configuration) {
+  GameService(UserWordRepository userWordRepository, UserPuzzleRepository userPuzzleRepository, CrossfyreConfiguration configuration) {
     this.userWordRepository = userWordRepository;
     this.userPuzzleRepository = userPuzzleRepository;
     Polling polling = configuration.getPolling();
@@ -42,10 +43,10 @@ public class GameService implements AbstractGameService {
   }
 
   @Override
-  public UserWord get(UUID puzzleKey, UUID wordKey) {
+  public UserWord get(UserPuzzle puzzleKey, UUID wordKey) {
     return userPuzzleRepository
-        .findByExternalKey(puzzleKey)
-        .flatMap((Puzzle) -> userWordRepository.findByPuzzleAndExternalKey(puzzle, wordKey))
+        .findByExternalKey(wordKey)
+        .flatMap((Puzzle) -> userWordRepository.findByUserPuzzle_Id(puzzleKey.getId()))
         .orElseThrow();
   }
 
@@ -73,6 +74,16 @@ public class GameService implements AbstractGameService {
    return result;
   }
 
+  @Override
+  public UserWord add(User author, UUID puzzleKey, UserWord userWord) {
+    return null;
+  }
+
+  @Override
+  public UserWord get(UUID puzzleKey, UUID wordKey) {
+    return null;
+  }
+
   private void checkForWords(Instant cutoff, UserPuzzle userPuzzle, ScheduledFuture<?>[] futurePolling,
       DeferredResult<Iterable<UserWord>> result) {
     userWordRepository
@@ -84,17 +95,17 @@ public class GameService implements AbstractGameService {
   private void sendResult(ScheduledFuture<?>[] futurePolling,
       DeferredResult<Iterable<UserWord>> result, Iterable<UserWord> words) {
     futurePolling[0].cancel(true);
-    result.setResult(
-        word);
+    result.setResult(words);
   }
 
   @Override
-  public UserWord add(User author, UUID puzzleKey, UserWord userWord) {
+  public UserWord add(User author, UUID puzzleKey, UserWord userWord, SolutionPuzzle solutionPuzzle,
+      UserPuzzle userPuzzle) {
     return userPuzzleRepository
         .findByExternalKey(puzzleKey)
         .map((puzzle) -> {
-          userWord.setAuthor(author);
-          puzzle.setPuzzle(puzzle);
+          userWord.setUserPuzzle(userPuzzle);
+          puzzle.setSolutionPuzzle(solutionPuzzle);
           return userWordRepository.save(userWord);
         })
         .orElseThrow();

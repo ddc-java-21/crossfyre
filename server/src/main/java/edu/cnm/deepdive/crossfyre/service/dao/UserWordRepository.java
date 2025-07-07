@@ -9,9 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface UserWordRepository extends CrudRepository<UserWord, Long> {
 
-  Optional<UserWord> findByExternalKey(UUID externalKey);
-
-  Optional<UserWord> findByPuzzleAndExternalKey(UserPuzzle userPuzzle, UUID externalKey);
+  Optional<UserWord> findByUserPuzzle_Id(long userPuzzle_id);
 
   Iterable<UserWord> findByPuzzleOrderByPostedAsc(UserPuzzle userPuzzle);
 
