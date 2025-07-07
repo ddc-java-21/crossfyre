@@ -20,3 +20,6 @@ order: 20
 
 [![CrossFyre ERD Entity Diagram](img/CrossFyre-ERD.drawio.svg)](pdf/CrossFyre-ERD.drawio.pdf)
 
+## Data Definition Language code
+
+{% include linked-file.md file="sql/ddl-server.sql" type="sql" %}
