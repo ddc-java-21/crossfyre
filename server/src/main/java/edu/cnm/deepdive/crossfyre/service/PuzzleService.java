@@ -1,6 +1,6 @@
 package edu.cnm.deepdive.crossfyre.service;
 
-import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
+import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +19,12 @@ public class PuzzleService implements AbstractPuzzleService {
   }
 
   @Override
-  public Iterable<Puzzle> getAll() {
+  public Iterable<UserPuzzle> getAll() {
     return repository.getAllByOrderByTitleAsc();
   }
 
   @Override
-  public Puzzle get(UUID key) {
+  public UserPuzzle get(UUID key) {
     return repository
         .findByExternalKey(key)
         .orElseThrow();

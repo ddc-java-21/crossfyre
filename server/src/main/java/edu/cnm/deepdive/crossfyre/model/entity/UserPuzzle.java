@@ -12,7 +12,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -25,12 +28,12 @@ import org.hibernate.annotations.CreationTimestamp;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "title", "created"})
-public class Puzzle {
+@JsonPropertyOrder({"key", "solution", "created", "size", "board"})
+public class UserPuzzle {
 
   @Id
   @GeneratedValue
-  @Column(name = "puzzle_id", nullable = false, updatable = false)
+  @Column(name = "user_puzzle_id", nullable = false, updatable = false)
   @JsonIgnore
   private long id;
 
@@ -47,12 +50,28 @@ public class Puzzle {
   @JsonProperty(access = Access.READ_ONLY)
   private Instant created;
 
-  @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY,
+  @OneToMany(mappedBy = "userPuzzle", fetch = FetchType.LAZY,
       cascade = CascadeType.ALL,orphanRemoval = true)
   @JsonIgnore
-  private final List<Word> words = new LinkedList<>();
+  private final List<UserWord> userWords = new LinkedList<>();
 
-  // TODO: 7/2/2025 private final Board...include words and getter calls for their position and direction?
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(access = Access.READ_ONLY)
+  private int size;
+
+  @Column(nullable = false, updatable = true)
+  private String board;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "solution_puzzle_id", nullable = false, updatable = false)
+  @JsonProperty(value = "solution", access = Access.READ_ONLY)
+  @JsonIgnore
+  private SolutionPuzzle solutionPuzzle;
+
+  @OneToMany(mappedBy = "userPuzzle",
+      cascade = CascadeType.ALL,orphanRemoval = true)
+  @JsonIgnore
+  private List<Game> game = new LinkedList<>();
 
   public long getId() {
     return id;
@@ -70,12 +89,44 @@ public class Puzzle {
     this.title = title;
   }
 
+  public int getSize() {
+    return size;
+  }
+
+  public void setSize(int size) {
+    this.size = size;
+  }
+
+  public String getBoard() {
+    return board;
+  }
+
+  public void setBoard(String board) {
+    this.board = board;
+  }
+
+  public SolutionPuzzle getSolutionPuzzle() {
+    return solutionPuzzle;
+  }
+
+  public void setSolutionPuzzle (SolutionPuzzle solutionPuzzle) {
+    this.solutionPuzzle = solutionPuzzle;
+  }
+
   public Instant getCreated() {
     return created;
   }
 
-  public List<Word> getWords() {
-    return words;
+  public List<UserWord> getUserWords() {
+    return userWords;
+  }
+
+  public List<Game> getGame() {
+    return game;
+  }
+
+  public void setGame(List<Game> game) {
+    this.game = game;
   }
 
   @Override
@@ -88,7 +139,7 @@ public class Puzzle {
     boolean comparison;
     if (this == obj) {
       comparison = true;
-    } else if (obj instanceof Puzzle other) {
+    } else if (obj instanceof UserPuzzle other) {
       comparison = (this.id != 0 && this.id == other.id);
     } else {
       comparison = false;

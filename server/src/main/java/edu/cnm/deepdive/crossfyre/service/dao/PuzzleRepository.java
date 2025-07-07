@@ -1,14 +1,14 @@
 package edu.cnm.deepdive.crossfyre.service.dao;
 
-import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
+import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.repository.CrudRepository;
 
-public interface PuzzleRepository extends CrudRepository<Puzzle, Long> {
+public interface PuzzleRepository extends CrudRepository<UserPuzzle, Long> {
 
-  Optional<Puzzle> findByExternalKey(UUID externalKey);
+  Optional<UserPuzzle> findByExternalKey(UUID externalKey);
 
-  Iterable<Puzzle> getAllByOrderByTitleAsc();
+  Iterable<UserPuzzle> getAllByOrderByTitleAsc();
 
 }

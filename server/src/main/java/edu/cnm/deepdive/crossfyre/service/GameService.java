@@ -2,10 +2,9 @@ package edu.cnm.deepdive.crossfyre.service;
 
 import edu.cnm.deepdive.crossfyre.configuration.CrossfyreConfiguration;
 import edu.cnm.deepdive.crossfyre.configuration.CrossfyreConfiguration.Polling;
-import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
-import edu.cnm.deepdive.crossfyre.model.entity.Word;
+import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
+import edu.cnm.deepdive.crossfyre.model.entity.UserWord;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
-import edu.cnm.deepdive.crossfyre.model.entity.Word;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.WordRepository;
 import java.time.Instant;
@@ -24,7 +23,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 @Profile("service")
 public class GameService implements AbstractGameService {
 
-  private static final List<Word> EMPTY_WORD_LIST = List.of();
+  private static final List<UserWord> EMPTY_USER_WORD_LIST = List.of();
 
   private final WordRepository wordRepository;
   private final PuzzleRepository puzzleRepository;
@@ -43,7 +42,7 @@ public class GameService implements AbstractGameService {
   }
 
   @Override
-  public Word get(UUID puzzleKey, UUID wordKey) {
+  public UserWord get(UUID puzzleKey, UUID wordKey) {
     return puzzleRepository
         .findByExternalKey(puzzleKey)
         .flatMap((Puzzle) -> wordRepository.findByPuzzleAndExternalKey(puzzle, wordKey))
@@ -51,52 +50,52 @@ public class GameService implements AbstractGameService {
   }
 
   @Override
-  public Iterable<Word> getAllInPuzzle(UUID puzzleKey) {
+  public Iterable<UserWord> getAllInPuzzle(UUID puzzleKey) {
     return puzzleRepository
         .findByExternalKey(puzzleKey)
-        .map((Puzzle puzzle) -> wordRepository.findByPuzzleOrderByPostedAsc(puzzle))// TODO: 7/6/2025  map properly
+        .map((UserPuzzle userPuzzle) -> wordRepository.findByPuzzleOrderByPostedAsc(userPuzzle))// TODO: 7/6/2025  map properly
         .orElseThrow();
   }
 
   @Override
-  public DeferredResult<Iterable<Word>> getAllInPuzzleSince(UUID puzzleKey, Instant cutoff) {
-    DeferredResult<Iterable<Word>> result =
+  public DeferredResult<Iterable<UserWord>> getAllInPuzzleSince(UUID puzzleKey, Instant cutoff) {
+    DeferredResult<Iterable<UserWord>> result =
         new DeferredResult<>(pollingInterval);
     ScheduledFuture<?>[] futurePolling = new ScheduledFuture[1];
-    Runnable timeoutTask = () -> sendResult(futurePolling, result, EMPTY_WORD_LIST);
+    Runnable timeoutTask = () -> sendResult(futurePolling, result, EMPTY_USER_WORD_LIST);
     result.onTimeout(timeoutTask);
-      Puzzle puzzle = puzzleRepository
+      UserPuzzle userPuzzle = puzzleRepository
           .findByExternalKey(puzzleKey)
           .orElseThrow();
-    Runnable pollingTask = () -> checkForWords(cutoff, puzzle, futurePolling, result);
+    Runnable pollingTask = () -> checkForWords(cutoff, userPuzzle, futurePolling, result);
     futurePolling[0] =
         scheduler.scheduleAtFixedRate(pollingTask, 0, pollingInterval, TimeUnit.MILLISECONDS);
    return result;
   }
 
-  private void checkForWords(Instant cutoff, Puzzle puzzle, ScheduledFuture<?>[] futurePolling,
-      DeferredResult<Iterable<Word>> result) {
+  private void checkForWords(Instant cutoff, UserPuzzle userPuzzle, ScheduledFuture<?>[] futurePolling,
+      DeferredResult<Iterable<UserWord>> result) {
     wordRepository
-        .findFirstByPuzzleAndPostedAfterOrderByPostedDesc(puzzle, cutoff)
+        .findFirstByPuzzleAndPostedAfterOrderByPostedDesc(userPuzzle, cutoff)
         .ifPresent((posted) -> sendResult(futurePolling, result,
-            wordRepository.findByPuzzleAndPostedAfterOrderByPostedAsc(puzzle, cutoff)));
+            wordRepository.findByPuzzleAndPostedAfterOrderByPostedAsc(userPuzzle, cutoff)));
   }
 
   private void sendResult(ScheduledFuture<?>[] futurePolling,
-      DeferredResult<Iterable<Word>> result, Iterable<Word> words) {
+      DeferredResult<Iterable<UserWord>> result, Iterable<UserWord> words) {
     futurePolling[0].cancel(true);
     result.setResult(
         word);
   }
 
   @Override
-  public Word add(User author, UUID puzzleKey, Word word) {
+  public UserWord add(User author, UUID puzzleKey, UserWord userWord) {
     return puzzleRepository
         .findByExternalKey(puzzleKey)
         .map((puzzle) -> {
-          word.setAuthor(author);
+          userWord.setAuthor(author);
           puzzle.setPuzzle(puzzle);
-          return wordRepository.save(word);
+          return wordRepository.save(userWord);
         })
         .orElseThrow();
   }
