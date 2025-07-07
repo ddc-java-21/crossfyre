@@ -2,7 +2,6 @@ package edu.cnm.deepdive.crossfyre.service.dao;
 
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.UserWord;
-import edu.cnm.deepdive.crossfyre.model.projection.Posted;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,6 +19,6 @@ public interface UserWordRepository extends CrudRepository<UserWord, Long> {
 //  @Query("SELECT m FROM Message AS m WHERE m.Puzzle = :Puzzle AND m.posted > :cutoff")
   Iterable<UserWord> findByPuzzleAndPostedAfterOrderByPostedAsc(UserPuzzle userPuzzle, Instant cutoff);
 
-  Optional<Posted> findFirstByPuzzleAndPostedAfterOrderByPostedDesc(UserPuzzle userPuzzle, Instant cutoff);
+  Optional<UserWord> findFirstByPuzzleAndPostedAfterOrderByPostedDesc(UserPuzzle userPuzzle, Instant cutoff);
 
 }
