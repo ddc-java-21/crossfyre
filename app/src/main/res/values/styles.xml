@@ -16,8 +16,33 @@
 -->
 <resources>
   <!-- Base application theme. -->
-  <style name="AppTheme" parent="Theme.Material3.DayNight">
+  <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
     <!-- TODO Customize your theme here. -->
+    <item name="toolbarElevation">@dimen/toolbar_elevation</item>
+    <item name="toolbarStyle">@style/Widget.Toolbar</item>
+    <item name="appBarLayoutStyle">@style/Widget.AppBarLayout</item>
+  </style>
+
+  <style name="Widget.Toolbar" parent="Widget.Material3.Toolbar">
+    <item name="android:background">?attr/colorSurfaceVariant</item>
+    <item name="android:elevation">?attr/toolbarElevation</item>
+    <item name="android:minHeight">?attr/actionBarSize</item>
+    <item name="navigationIconTint">?attr/colorOnSurfaceVariant</item>
+    <item name="titleTextAppearance">@style/TextAppearance.Toolbar.Title</item>
+    <item name="subtitleTextAppearance">@style/TextAppearance.Toolbar.Subtitle</item>
+  </style>
+
+  <style name="Widget.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+    <item name="android:background">?attr/colorSurfaceVariant</item>
+    <item name="android:elevation">?attr/toolbarElevation</item>
+  </style>
+
+  <style name="TextAppearance.Toolbar.Title" parent="TextAppearance.Material3.TitleLarge">
+    <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+  </style>
+
+  <style name="TextAppearance.Toolbar.Subtitle" parent="TextAppearance.Material3.BodySmall">
+    <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
   </style>
 
 </resources>

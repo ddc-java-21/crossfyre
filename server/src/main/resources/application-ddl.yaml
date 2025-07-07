@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: ddl
+
+  main:
+    web-application-type: none
+
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          schema-generation:
+            script:
+              append: false
+
+      jakarta:
+        persistence:
+          schema-generation:
+            create-source: metadata
+            scripts:
+              action: create
+              create-target: ./docs/sql/ddl-server.sql

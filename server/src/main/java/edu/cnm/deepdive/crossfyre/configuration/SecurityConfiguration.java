@@ -22,9 +22,7 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 // TODO: 7/7/2025 Restart security and signon
-
 
 @Configuration
 @EnableWebSecurity
