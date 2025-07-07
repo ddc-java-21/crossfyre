@@ -25,10 +25,10 @@ import org.hibernate.validator.constraints.Length;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "player", "wordName", "posted"})
+@JsonPropertyOrder({"word", "clue", "puzzle", "row", "column", "direction"})
 public class SolutionWord {
 
-  private static final int MAX_MESSAGE_LENGTH = 255;
+  private static final int MAX_WORD_LENGTH = 255;
 
   @Id
   @GeneratedValue
@@ -36,20 +36,11 @@ public class SolutionWord {
   @JsonIgnore
   private long id;
 
-  @Column(nullable = false, updatable = false, unique = true)
-  @JsonProperty(value = "key", access = Access.READ_ONLY)
-  private UUID externalKey;
-
   @NotBlank
-  @Length(max = MAX_MESSAGE_LENGTH)
-  @Column(nullable = false, updatable = false, length = MAX_MESSAGE_LENGTH)
+  @Length(max = MAX_WORD_LENGTH)
+  @Column(unique = true, nullable = false, updatable = false)
+  @JsonProperty(value = "word", access = Access.READ_ONLY)
   private String wordName;
-
-  @CreationTimestamp
-  @Temporal(TemporalType.TIMESTAMP)
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(access = Access.READ_ONLY)
-  private Instant posted;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "solution_puzzle_id", nullable = false, updatable = false)
@@ -57,23 +48,23 @@ public class SolutionWord {
   private SolutionPuzzle solutionPuzzle;
 
   @Column(nullable = false, updatable = false, unique = true)
+  @JsonProperty(value = "clue", access = Access.READ_ONLY)
   private String clue;
 
   @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "row", access = Access.READ_ONLY)
   private int wordRow;
 
   @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "column", access = Access.READ_ONLY)
   private int wordColumn;
 
   @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "direction", access = Access.READ_ONLY)
   private String wordDirection;
 
   public long getId() {
     return id;
-  }
-
-  public UUID getExternalKey() {
-    return externalKey;
   }
 
   public String getWordName() {
@@ -82,10 +73,6 @@ public class SolutionWord {
 
   public void setWordName(String wordName) {
     this.wordName = wordName;
-  }
-
-  public Instant getPosted() {
-    return posted;
   }
 
   public SolutionPuzzle getSolutionPuzzle() {
@@ -144,11 +131,6 @@ public class SolutionWord {
       comparison = false;
     }
     return comparison;
-  }
-
-  @PrePersist
-  void generateFieldValues() {
-    externalKey = UUID.randomUUID();
   }
 
 }

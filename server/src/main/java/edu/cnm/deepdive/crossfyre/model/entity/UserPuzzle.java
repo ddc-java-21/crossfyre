@@ -28,7 +28,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "title", "created", "size", "board"})
+@JsonPropertyOrder({"key", "solution", "created", "size", "board"})
 public class UserPuzzle {
 
   @Id
@@ -68,10 +68,10 @@ public class UserPuzzle {
   @JsonIgnore
   private SolutionPuzzle solutionPuzzle;
 
-  @OneToOne(mappedBy = "userPuzzle",
+  @OneToMany(mappedBy = "userPuzzle",
       cascade = CascadeType.ALL,orphanRemoval = true)
   @JsonIgnore
-  private Game game;
+  private List<Game> game = new LinkedList<>();
 
   public long getId() {
     return id;
@@ -121,11 +121,11 @@ public class UserPuzzle {
     return userWords;
   }
 
-  public Game getGame() {
+  public List<Game> getGame() {
     return game;
   }
 
-  public void setGame(Game game) {
+  public void setGame(List<Game> game) {
     this.game = game;
   }
 

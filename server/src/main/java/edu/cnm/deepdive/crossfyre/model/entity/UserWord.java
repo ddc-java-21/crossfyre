@@ -13,19 +13,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
-import java.time.Instant;
-import java.util.UUID;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "player", "wordName", "posted"})
+@JsonPropertyOrder({"puzzle", "clue", "wordName", "row", "column", "direction"})
 public class UserWord {
 
   private static final int MAX_MESSAGE_LENGTH = 255;
@@ -36,44 +30,35 @@ public class UserWord {
   @JsonIgnore
   private long id;
 
-  @Column(nullable = false, updatable = false, unique = true)
-  @JsonProperty(value = "key", access = Access.READ_ONLY)
-  private UUID externalKey;
-
   @NotBlank
   @Length(max = MAX_MESSAGE_LENGTH)
   @Column(nullable = false, updatable = false, length = MAX_MESSAGE_LENGTH)
+  @JsonProperty(value = "wordName", access = Access.READ_WRITE)
   private String wordName;
 
-  @CreationTimestamp
-  @Temporal(TemporalType.TIMESTAMP)
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(access = Access.READ_ONLY)
-  private Instant posted;
 
+  @Column(nullable = false, updatable = false, unique = true)
+  @JsonProperty(value = "clue", access = Access.READ_ONLY)
+  private String clue;
+
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "row", access = Access.READ_ONLY)
+  private int wordRow;
+
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "column", access = Access.READ_ONLY)
+  private int wordColumn;
+
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "direction", access = Access.READ_ONLY)
+  private String wordDirection;
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
   private UserPuzzle userPuzzle;
 
-  @Column(nullable = false, updatable = false, unique = true)
-  private String clue;
-
-  @Column(nullable = false, updatable = false)
-  private int wordRow;
-
-  @Column(nullable = false, updatable = false)
-  private int wordColumn;
-
-  @Column(nullable = false, updatable = false)
-  private String wordDirection;
-
   public long getId() {
     return id;
-  }
-
-  public UUID getExternalKey() {
-    return externalKey;
   }
 
   public String getWordName() {
@@ -82,10 +67,6 @@ public class UserWord {
 
   public void setWordName(String wordName) {
     this.wordName = wordName;
-  }
-
-  public Instant getPosted() {
-    return posted;
   }
 
   public UserPuzzle getUserPuzzle() {
@@ -145,10 +126,4 @@ public class UserWord {
     }
     return comparison;
   }
-
-  @PrePersist
-  void generateFieldValues() {
-    externalKey = UUID.randomUUID();
-  }
-
 }
