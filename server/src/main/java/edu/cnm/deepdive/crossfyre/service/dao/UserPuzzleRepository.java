@@ -9,6 +9,8 @@ public interface UserPuzzleRepository extends CrudRepository<UserPuzzle, Long> {
 
   Optional<UserPuzzle> findByExternalKey(UUID externalKey);
 
-  Iterable<UserPuzzle> getAllByOrderByTitleAsc();
+  Optional<UserPuzzle> findBySolutionPuzzle_Id(long solutionPuzzle_id);
+
+
 
 }

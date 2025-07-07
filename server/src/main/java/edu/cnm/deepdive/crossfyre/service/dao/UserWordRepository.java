@@ -11,12 +11,11 @@ public interface UserWordRepository extends CrudRepository<UserWord, Long> {
 
   Optional<UserWord> findByUserPuzzle_Id(long userPuzzle_id);
 
-  Iterable<UserWord> findByPuzzleOrderByPostedAsc(UserPuzzle userPuzzle);
+  Iterable<UserWord> findByWordName(String wordName);
+
+  Iterable<UserWord> findByClue(String clue);
 
 //  This is included to show a JPQL implementation of a Spring Data inferred query.
 //  @Query("SELECT m FROM Message AS m WHERE m.Puzzle = :Puzzle AND m.posted > :cutoff")
-  Iterable<UserWord> findByPuzzleAndPostedAfterOrderByPostedAsc(UserPuzzle userPuzzle, Instant cutoff);
-
-  Optional<UserWord> findFirstByPuzzleAndPostedAfterOrderByPostedDesc(UserPuzzle userPuzzle, Instant cutoff);
 
 }

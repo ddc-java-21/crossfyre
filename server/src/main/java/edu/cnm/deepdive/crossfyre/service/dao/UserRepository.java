@@ -15,4 +15,5 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
   Optional<User> findByDisplayName(String displayName);
 
+
 }

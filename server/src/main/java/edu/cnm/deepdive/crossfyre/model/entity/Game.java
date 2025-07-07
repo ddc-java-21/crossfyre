@@ -12,33 +12,30 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.Length;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "player", "puzzle", "posted", "completed"})
+@JsonPropertyOrder({"puzzleID", "player", "puzzle", "posted", "completed"})
 public class Game {
 
   private static final int MAX_MESSAGE_LENGTH = 255;
 
   @Id
   @GeneratedValue
-  @Column(name = "game_id", nullable = false, updatable = false)
+  @Column(name = "user_puzzle_id", nullable = false, updatable = false, unique = true)
   @JsonIgnore
-  private long id;
+  private long userPuzzleId;
 
-  @Column(nullable = false, updatable = false, unique = true)
+  @Column(name = "user_profile_id", nullable = false, updatable = false, unique = true)
   @JsonProperty(value = "key", access = Access.READ_ONLY)
   private UUID externalKey;
 
@@ -63,8 +60,8 @@ public class Game {
   @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
   private UserPuzzle userPuzzle;
 
-  public long getId() {
-    return id;
+  public long getUserPuzzleId() {
+    return userPuzzleId;
   }
 
   public UUID getExternalKey() {
@@ -101,7 +98,7 @@ public class Game {
 
   @Override
   public int hashCode() {
-    return Long.hashCode(id);
+    return Long.hashCode(userPuzzleId);
   }
 
   @Override
@@ -110,7 +107,7 @@ public class Game {
     if (this == obj) {
       comparison = true;
     } else if (obj instanceof Game other) {
-      comparison = (this.id != 0 && this.id == other.id);
+      comparison = (this.userPuzzleId != 0 && this.userPuzzleId == other.userPuzzleId);
     } else {
       comparison = false;
     }
