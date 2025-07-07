@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,60 +14,40 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotBlank;
-import org.hibernate.validator.constraints.Length;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({"puzzle", "clue", "wordName", "row", "column", "direction"})
-public class UserWord {
+public class Guess {
 
-  private static final int MAX_MESSAGE_LENGTH = 25;
+  private static final int CHARACTER_GUESS_LIMIT = 1;
 
   @Id
   @GeneratedValue
-  @Column(name = "user_word_id", nullable = false, updatable = false)
+  @Column(name = "guess_id", nullable = false, updatable = false)
   @JsonIgnore
   private long id;
 
-  @NotBlank
-  @Length(max = MAX_MESSAGE_LENGTH)
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "wordName", access = Access.READ_WRITE)
-  private String wordName;
-
-
-  @Column(nullable = false, updatable = false, unique = true)
-  @JsonProperty(value = "clue", access = Access.READ_ONLY)
-  private String clue;
+  @Column(nullable = false, updatable = true, length = CHARACTER_GUESS_LIMIT)
+  @JsonProperty(value = "guess", access = Access.WRITE_ONLY)
+  private Character guessChar;
 
   @Column(nullable = false, updatable = false)
   @JsonProperty(value = "row", access = Access.READ_ONLY)
-  private int wordRow;
+  private int guessRow;
 
   @Column(nullable = false, updatable = false)
   @JsonProperty(value = "column", access = Access.READ_ONLY)
-  private int wordColumn;
+  private int guessColumn;
 
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "direction", access = Access.READ_ONLY)
-  private String wordDirection;
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = true)
+  @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_WRITE)
   private UserPuzzle userPuzzle;
 
   public long getId() {
     return id;
-  }
-
-  public String getWordName() {
-    return wordName;
-  }
-
-  public void setWordName(String wordName) {
-    this.wordName = wordName;
   }
 
   public UserPuzzle getUserPuzzle() {
@@ -77,36 +58,20 @@ public class UserWord {
     this.userPuzzle = userPuzzle;
   }
 
-  public String getClue() {
-    return clue;
+  public int getGuessRow() {
+    return guessRow;
   }
 
-  public void setClue(String clue) {
-    this.clue = clue;
+  public void setGuessRow(int wordRow) {
+    this.guessRow = wordRow;
   }
 
-  public int getWordRow() {
-    return wordRow;
+  public int getGuessColumn() {
+    return guessColumn;
   }
 
-  public void setWordRow(int wordRow) {
-    this.wordRow = wordRow;
-  }
-
-  public int getWordColumn() {
-    return wordColumn;
-  }
-
-  public void setWordColumn(int wordColumn) {
-    this.wordColumn = wordColumn;
-  }
-
-  public String getWordDirection() {
-    return wordDirection;
-  }
-
-  public void setWordDirection(String wordDirection) {
-    this.wordDirection = wordDirection;
+  public void setGuessColumn(int wordColumn) {
+    this.guessColumn = wordColumn;
   }
 
   @Override
@@ -119,7 +84,7 @@ public class UserWord {
     boolean comparison;
     if (this == obj) {
       comparison = true;
-    } else if (obj instanceof UserWord other) {
+    } else if (obj instanceof Guess other) {
       comparison = (this.id != 0 && this.id == other.id);
     } else {
       comparison = false;

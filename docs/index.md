@@ -15,7 +15,7 @@ order: 0
 ### Summary
 
 * CrossFyre is a crossword-userPuzzle generator app for Android that allows users to work on a daily
-* generated cross userWord userPuzzle of the day. Its hallmark feature is a generated puzzled of the day 
+* generated cross guess userPuzzle of the day. Its hallmark feature is a generated puzzled of the day 
 * that creates a unique userPuzzle for a selected theme. It uses a public API (or APIs) to retrieve 
 * content to serve as the content for the puzzles, allowing for unique puzzles to be created every 
 * day. It tracks user userPuzzle history using an account login system. So whether looking for a 
@@ -74,17 +74,17 @@ order: 0
 * google authentication provider
 * crossword userPuzzle generator
 * pattern matcher
-* dictionary userWord api
+* dictionary guess api
 
 
 ### Stretch goals and possible enhancements
 
-* Create animations for when the user gets a userWord in the crossword correct or finishes the game.
+* Create animations for when the user gets a guess in the crossword correct or finishes the game.
 * Leaderboard implementation.
 * Once the user completes a crossword, if done in the top 5 least amount of time have their
 * username displayed in the leaderboard.
 * There is a score that is based on the end time subtracted by the initial time.
-* If user inputs a correct or incorrect userWord there will be an audio queue that activates when they
+* If user inputs a correct or incorrect guess there will be an audio queue that activates when they
 * do a check.
 * Add an animation for a correct inputted answer and/or when the user finishes the game.
 * Have user be able to delete their username from the leaderboard if they wanted to.

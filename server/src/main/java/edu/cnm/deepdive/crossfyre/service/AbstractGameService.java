@@ -1,15 +1,15 @@
 package edu.cnm.deepdive.crossfyre.service;
 
-import edu.cnm.deepdive.crossfyre.model.entity.UserWord;
+import edu.cnm.deepdive.crossfyre.model.entity.Guess;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
 import java.util.UUID;
 
 public interface AbstractGameService {
 
-  Iterable<UserWord> getAllInPuzzle(UUID puzzleKey);
+  Iterable<Guess> getAllInPuzzle(UUID puzzleKey);
 
-  UserWord add(User author, UUID puzzleKey, UserWord userWord);
+  Guess add(User author, UUID puzzleKey, Guess guess);
 
-  UserWord get(UUID puzzleKey, UUID wordKey);
+  Guess get(UUID puzzleKey, UUID wordKey);
 
 }
