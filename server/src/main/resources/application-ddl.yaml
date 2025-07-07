@@ -19,4 +19,4 @@ spring:
             create-source: metadata
             scripts:
               action: create
-              create-target: ./docs/sql/ddl.sql
+              create-target: ./docs/sql/ddl-server.sql

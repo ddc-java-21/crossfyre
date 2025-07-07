@@ -6,38 +6,35 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
-import java.net.URL;
 import java.time.Instant;
 import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
-@Table(
-    name = "user_profile"
-)
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "displayName", "avatar", "created"})
-public class User {
+@JsonPropertyOrder({"key", "player", "puzzle", "posted", "completed"})
+public class Game {
 
-  private static final int MAX_DISPLAY_NAME_LENGTH = 30;
-  private static final int MAX_OAUTH_KEY_LENGTH = 30;
+  private static final int MAX_MESSAGE_LENGTH = 255;
 
   @Id
   @GeneratedValue
-  @Column(name = "user_profile_id", nullable = false, updatable = false)
+  @Column(name = "game_id", nullable = false, updatable = false)
   @JsonIgnore
   private long id;
 
@@ -45,28 +42,26 @@ public class User {
   @JsonProperty(value = "key", access = Access.READ_ONLY)
   private UUID externalKey;
 
-  @Column(nullable = false, updatable = false, length = MAX_OAUTH_KEY_LENGTH, unique = true)
-  @JsonIgnore
-  private String oauthKey;
-
-  @NotBlank
-  @Length(max = MAX_DISPLAY_NAME_LENGTH)
-  @Column(nullable = false, updatable = true, length = MAX_DISPLAY_NAME_LENGTH, unique = true)
-  private String displayName;
-
-  @Column(nullable = true, updatable = true)
-  private URL avatar;
-
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
   @JsonProperty(access = Access.READ_ONLY)
-  private Instant created;
+  private Instant posted;
 
-  @OneToOne(mappedBy = "player",
-      cascade = CascadeType.ALL,orphanRemoval = true)
-  @JsonIgnore
-  private Game game;
+  @UpdateTimestamp
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(nullable = false)
+  private Instant completed;
+
+  @OneToOne(fetch = FetchType.EAGER, optional = false)
+  @JoinColumn(name = "player_id", nullable = false, updatable = false)
+  @JsonProperty(value = "player", access = Access.READ_ONLY)
+  private User player;
+
+  @OneToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
+  @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
+  private UserPuzzle userPuzzle;
 
   public long getId() {
     return id;
@@ -76,40 +71,32 @@ public class User {
     return externalKey;
   }
 
-  public String getOauthKey() {
-    return oauthKey;
+  public Instant getPosted() {
+    return posted;
   }
 
-  public void setOauthKey(String oauthKey) {
-    this.oauthKey = oauthKey;
+  public Instant getCompleted() {
+    return completed;
   }
 
-  public String getDisplayName() {
-    return displayName;
+  public void setCompleted(Instant completed) {
+    this.completed = completed;
   }
 
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
+  public User getPlayer() {
+    return player;
   }
 
-  public URL getAvatar() {
-    return avatar;
+  public void setPlayer(User player) {
+    this.player = player;
   }
 
-  public void setAvatar(URL avatar) {
-    this.avatar = avatar;
+  public UserPuzzle getUserPuzzle() {
+    return userPuzzle;
   }
 
-  public Instant getCreated() {
-    return created;
-  }
-
-  public Game getGame() {
-    return game;
-  }
-
-  public void setGame(Game game) {
-    this.game = game;
+  public void setUserPuzzle(UserPuzzle userPuzzle) {
+    this.userPuzzle = userPuzzle;
   }
 
   @Override
@@ -122,7 +109,7 @@ public class User {
     boolean comparison;
     if (this == obj) {
       comparison = true;
-    } else if (obj instanceof User other) {
+    } else if (obj instanceof Game other) {
       comparison = (this.id != 0 && this.id == other.id);
     } else {
       comparison = false;
