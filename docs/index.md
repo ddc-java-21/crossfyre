@@ -25,10 +25,21 @@ order: 0
 
 ### Intended users and user stories
 
-* Intended user 1: As a person who likes to do small brain teasers in their free time at work,
-* I play crosswords to help my brain ease off the stress caused at my job.
-* Intended user 2: As someone who likes to learn new words when I don't have school in the summer,
-* I play crosswords to help expand my vocabulary to help my articulation.
+- A kid who wants a fun but challenging way to learn through quick brain teaser like games
+    > As a kid out of school, I play my crossword game to teach myself new words while
+    I am on summer break.
+
+- An elder who wants to keep away the memory fog and play older word games their used to do crosswords
+    > As a elder, I know that it can be hard to remember things so I sharpen my brain by playing 
+    CrossFyre as it lets me play a quick crossword game that I am familiar with the style of.
+
+[//]: # (* Intended user 1: As a person who likes to do small brain teasers in their free time at work,)
+
+[//]: # (* I play crosswords to help my brain ease off the stress caused at my job.)
+
+[//]: # (* Intended user 2: As someone who likes to learn new words when I don't have school in the summer,)
+
+[//]: # (* I play crosswords to help expand my vocabulary to help my articulation.)
 
 
 ### Functionality
