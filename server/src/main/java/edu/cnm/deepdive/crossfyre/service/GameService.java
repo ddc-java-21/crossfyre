@@ -5,8 +5,8 @@ import edu.cnm.deepdive.crossfyre.configuration.CrossfyreConfiguration.Polling;
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.UserWord;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
-import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
-import edu.cnm.deepdive.crossfyre.service.dao.WordRepository;
+import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
+import edu.cnm.deepdive.crossfyre.service.dao.UserWordRepository;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -25,16 +25,16 @@ public class GameService implements AbstractGameService {
 
   private static final List<UserWord> EMPTY_USER_WORD_LIST = List.of();
 
-  private final WordRepository wordRepository;
-  private final PuzzleRepository puzzleRepository;
+  private final UserWordRepository userWordRepository;
+  private final UserPuzzleRepository userPuzzleRepository;
   private final ScheduledExecutorService scheduler;
   private final long pollingInterval;
   private final long pollingTimeout;
 
   @Autowired
-  GameService(WordRepository wordRepository, PuzzleRepository channelRepository, CrossfyreConfiguration configuration) {
-    this.wordRepository = wordRepository;
-    this.puzzleRepository = puzzleRepository;
+  GameService(UserWordRepository userWordRepository, UserPuzzleRepository channelRepository, CrossfyreConfiguration configuration) {
+    this.userWordRepository = userWordRepository;
+    this.userPuzzleRepository = userPuzzleRepository;
     Polling polling = configuration.getPolling();
     scheduler = Executors.newScheduledThreadPool(polling.getPoolSize());
     pollingInterval = polling.getInterval().toMillis();
@@ -43,17 +43,17 @@ public class GameService implements AbstractGameService {
 
   @Override
   public UserWord get(UUID puzzleKey, UUID wordKey) {
-    return puzzleRepository
+    return userPuzzleRepository
         .findByExternalKey(puzzleKey)
-        .flatMap((Puzzle) -> wordRepository.findByPuzzleAndExternalKey(puzzle, wordKey))
+        .flatMap((Puzzle) -> userWordRepository.findByPuzzleAndExternalKey(puzzle, wordKey))
         .orElseThrow();
   }
 
   @Override
   public Iterable<UserWord> getAllInPuzzle(UUID puzzleKey) {
-    return puzzleRepository
+    return userPuzzleRepository
         .findByExternalKey(puzzleKey)
-        .map((UserPuzzle userPuzzle) -> wordRepository.findByPuzzleOrderByPostedAsc(userPuzzle))// TODO: 7/6/2025  map properly
+        .map((UserPuzzle userPuzzle) -> userWordRepository.findByPuzzleOrderByPostedAsc(userPuzzle))// TODO: 7/6/2025  map properly
         .orElseThrow();
   }
 
@@ -64,7 +64,7 @@ public class GameService implements AbstractGameService {
     ScheduledFuture<?>[] futurePolling = new ScheduledFuture[1];
     Runnable timeoutTask = () -> sendResult(futurePolling, result, EMPTY_USER_WORD_LIST);
     result.onTimeout(timeoutTask);
-      UserPuzzle userPuzzle = puzzleRepository
+      UserPuzzle userPuzzle = userPuzzleRepository
           .findByExternalKey(puzzleKey)
           .orElseThrow();
     Runnable pollingTask = () -> checkForWords(cutoff, userPuzzle, futurePolling, result);
@@ -75,10 +75,10 @@ public class GameService implements AbstractGameService {
 
   private void checkForWords(Instant cutoff, UserPuzzle userPuzzle, ScheduledFuture<?>[] futurePolling,
       DeferredResult<Iterable<UserWord>> result) {
-    wordRepository
+    userWordRepository
         .findFirstByPuzzleAndPostedAfterOrderByPostedDesc(userPuzzle, cutoff)
         .ifPresent((posted) -> sendResult(futurePolling, result,
-            wordRepository.findByPuzzleAndPostedAfterOrderByPostedAsc(userPuzzle, cutoff)));
+            userWordRepository.findByPuzzleAndPostedAfterOrderByPostedAsc(userPuzzle, cutoff)));
   }
 
   private void sendResult(ScheduledFuture<?>[] futurePolling,
@@ -90,12 +90,12 @@ public class GameService implements AbstractGameService {
 
   @Override
   public UserWord add(User author, UUID puzzleKey, UserWord userWord) {
-    return puzzleRepository
+    return userPuzzleRepository
         .findByExternalKey(puzzleKey)
         .map((puzzle) -> {
           userWord.setAuthor(author);
           puzzle.setPuzzle(puzzle);
-          return wordRepository.save(userWord);
+          return userWordRepository.save(userWord);
         })
         .orElseThrow();
   }

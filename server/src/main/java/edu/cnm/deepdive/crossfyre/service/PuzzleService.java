@@ -1,7 +1,7 @@
 package edu.cnm.deepdive.crossfyre.service;
 
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
-import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
+import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 @Profile("service")
 public class PuzzleService implements AbstractPuzzleService {
 
-  private final PuzzleRepository repository;
+  private final UserPuzzleRepository repository;
 
   @Autowired
-  PuzzleService(PuzzleRepository repository) {
+  PuzzleService(UserPuzzleRepository repository) {
     this.repository = repository;
   }
 

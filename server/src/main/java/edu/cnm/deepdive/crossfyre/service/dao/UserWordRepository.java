@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.repository.CrudRepository;
 
-public interface WordRepository extends CrudRepository<UserWord, Long> {
+public interface UserWordRepository extends CrudRepository<UserWord, Long> {
 
   Optional<UserWord> findByExternalKey(UUID externalKey);
 
