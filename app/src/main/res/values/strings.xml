@@ -1,0 +1,10 @@
+<resources>
+  <string name="login_fragment_label">Sign in to Crossfyre</string>
+  <string name="main_fragment_label">Service Bearer Token</string>
+  <string name="sign_in_failure_message">Unable to sign in with provided credentials.</string>
+  <string name="sign_out_title">Sign out</string>
+  <string name="settings_title">Settings</string>
+  <string name="settings_fragment_label">Crossfyre Settings</string>
+  <string name="bearer_token_title">Bearer Token</string>
+  <string name="app_name">Crossfyre</string>
+</resources>
