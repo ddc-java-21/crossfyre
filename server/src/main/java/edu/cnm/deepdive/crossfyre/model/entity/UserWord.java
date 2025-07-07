@@ -22,7 +22,7 @@ import org.hibernate.validator.constraints.Length;
 @JsonPropertyOrder({"puzzle", "clue", "wordName", "row", "column", "direction"})
 public class UserWord {
 
-  private static final int MAX_MESSAGE_LENGTH = 255;
+  private static final int MAX_MESSAGE_LENGTH = 25;
 
   @Id
   @GeneratedValue
@@ -32,7 +32,7 @@ public class UserWord {
 
   @NotBlank
   @Length(max = MAX_MESSAGE_LENGTH)
-  @Column(nullable = false, updatable = false, length = MAX_MESSAGE_LENGTH)
+  @Column(nullable = false, updatable = false)
   @JsonProperty(value = "wordName", access = Access.READ_WRITE)
   private String wordName;
 
@@ -53,8 +53,8 @@ public class UserWord {
   @JsonProperty(value = "direction", access = Access.READ_ONLY)
   private String wordDirection;
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
-  @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
+  @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = true)
+  @JsonProperty(value = "puzzle", access = Access.READ_WRITE)
   private UserPuzzle userPuzzle;
 
   public long getId() {

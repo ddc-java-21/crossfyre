@@ -8,8 +8,12 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -27,7 +31,7 @@ import org.hibernate.annotations.CreationTimestamp;
     name = "user_profile"
 )
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "displayName", "avatar", "created"})
+@JsonPropertyOrder({"key", "displayName", "game", "avatar", "created"})
 public class User {
 
   private static final int MAX_DISPLAY_NAME_LENGTH = 30;
@@ -54,6 +58,11 @@ public class User {
 
   @Column(nullable = true, updatable = true)
   private URL avatar;
+
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = true)
+  @JsonProperty(value = "game", access = Access.READ_WRITE)
+  private Game game;
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)

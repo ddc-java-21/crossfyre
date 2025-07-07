@@ -13,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -43,12 +44,12 @@ public class Game {
   @Column(nullable = false)
   private Instant solvedTime;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "user_profile_id", nullable = false, updatable = false)
   @JsonProperty(value = "user", access = Access.READ_ONLY)
   private User player;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
   private UserPuzzle userPuzzle;

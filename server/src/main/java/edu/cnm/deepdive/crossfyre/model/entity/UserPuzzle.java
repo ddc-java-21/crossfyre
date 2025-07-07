@@ -68,10 +68,10 @@ public class UserPuzzle {
   @JsonIgnore
   private SolutionPuzzle solutionPuzzle;
 
-  @OneToMany(mappedBy = "userPuzzle",
+  @OneToOne(mappedBy = "userPuzzle",
       cascade = CascadeType.ALL,orphanRemoval = true)
   @JsonIgnore
-  private List<Game> game = new LinkedList<>();
+  private Game game;
 
   public long getId() {
     return id;
@@ -121,11 +121,11 @@ public class UserPuzzle {
     return userWords;
   }
 
-  public List<Game> getGame() {
+  public Game getGame() {
     return game;
   }
 
-  public void setGame(List<Game> game) {
+  public void setGame(Game game) {
     this.game = game;
   }
 
