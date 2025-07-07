@@ -1,5 +1,9 @@
 package edu.cnm.deepdive.crossfyre.service.dao;
 
-public interface GameRepository {
+import edu.cnm.deepdive.crossfyre.model.entity.Game;
+import org.springframework.data.repository.CrudRepository;
+
+public interface GameRepository extends CrudRepository<Game, Long> {
+
 
 }
