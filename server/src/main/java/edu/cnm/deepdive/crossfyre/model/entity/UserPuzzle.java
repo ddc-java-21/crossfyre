@@ -26,7 +26,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({"key", "title", "created"})
-public class Puzzle {
+public class UserPuzzle {
 
   @Id
   @GeneratedValue
@@ -88,7 +88,7 @@ public class Puzzle {
     boolean comparison;
     if (this == obj) {
       comparison = true;
-    } else if (obj instanceof Puzzle other) {
+    } else if (obj instanceof UserPuzzle other) {
       comparison = (this.id != 0 && this.id == other.id);
     } else {
       comparison = false;

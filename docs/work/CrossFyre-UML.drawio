@@ -70,10 +70,10 @@
         <mxCell id="6JOUey5XouENT1kEJFKY-41" value="0 .. *" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="460" y="740" width="50" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="6JOUey5XouENT1kEJFKY-42" value="A puzzle comprises many words -- specifically,&lt;div&gt;a list of horizontal words and a list of vertical&lt;/div&gt;&lt;div&gt;words; however, any one userWord does not belong&lt;/div&gt;&lt;div&gt;to a single puzzle instance&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="6JOUey5XouENT1kEJFKY-42" value="A userPuzzle comprises many words -- specifically,&lt;div&gt;a list of horizontal words and a list of vertical&lt;/div&gt;&lt;div&gt;words; however, any one userWord does not belong&lt;/div&gt;&lt;div&gt;to a single userPuzzle instance&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="190" y="650" width="270" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="6JOUey5XouENT1kEJFKY-43" value="A puzzle contains one guess at a time, which&lt;div&gt;is updated (replaced) with new input from client;&amp;nbsp;&lt;/div&gt;&lt;div&gt;also, any single guess belongs to only one puzzle&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="6JOUey5XouENT1kEJFKY-43" value="A userPuzzle contains one guess at a time, which&lt;div&gt;is updated (replaced) with new input from client;&amp;nbsp;&lt;/div&gt;&lt;div&gt;also, any single guess belongs to only one userPuzzle&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="707.5" y="390" width="290" height="60" as="geometry" />
         </mxCell>
         <mxCell id="6JOUey5XouENT1kEJFKY-47" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=bottom;rounded=0;" parent="1" edge="1">

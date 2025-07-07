@@ -2,7 +2,7 @@ package edu.cnm.deepdive.crossfyre.service;
 
 import edu.cnm.deepdive.crossfyre.configuration.CrossfyreConfiguration;
 import edu.cnm.deepdive.crossfyre.configuration.CrossfyreConfiguration.Polling;
-import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
+import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.UserWord;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
@@ -53,7 +53,7 @@ public class GameService implements AbstractGameService {
   public Iterable<UserWord> getAllInPuzzle(UUID puzzleKey) {
     return puzzleRepository
         .findByExternalKey(puzzleKey)
-        .map((Puzzle puzzle) -> wordRepository.findByPuzzleOrderByPostedAsc(puzzle))// TODO: 7/6/2025  map properly
+        .map((UserPuzzle userPuzzle) -> wordRepository.findByPuzzleOrderByPostedAsc(userPuzzle))// TODO: 7/6/2025  map properly
         .orElseThrow();
   }
 
@@ -64,21 +64,21 @@ public class GameService implements AbstractGameService {
     ScheduledFuture<?>[] futurePolling = new ScheduledFuture[1];
     Runnable timeoutTask = () -> sendResult(futurePolling, result, EMPTY_USER_WORD_LIST);
     result.onTimeout(timeoutTask);
-      Puzzle puzzle = puzzleRepository
+      UserPuzzle userPuzzle = puzzleRepository
           .findByExternalKey(puzzleKey)
           .orElseThrow();
-    Runnable pollingTask = () -> checkForWords(cutoff, puzzle, futurePolling, result);
+    Runnable pollingTask = () -> checkForWords(cutoff, userPuzzle, futurePolling, result);
     futurePolling[0] =
         scheduler.scheduleAtFixedRate(pollingTask, 0, pollingInterval, TimeUnit.MILLISECONDS);
    return result;
   }
 
-  private void checkForWords(Instant cutoff, Puzzle puzzle, ScheduledFuture<?>[] futurePolling,
+  private void checkForWords(Instant cutoff, UserPuzzle userPuzzle, ScheduledFuture<?>[] futurePolling,
       DeferredResult<Iterable<UserWord>> result) {
     wordRepository
-        .findFirstByPuzzleAndPostedAfterOrderByPostedDesc(puzzle, cutoff)
+        .findFirstByPuzzleAndPostedAfterOrderByPostedDesc(userPuzzle, cutoff)
         .ifPresent((posted) -> sendResult(futurePolling, result,
-            wordRepository.findByPuzzleAndPostedAfterOrderByPostedAsc(puzzle, cutoff)));
+            wordRepository.findByPuzzleAndPostedAfterOrderByPostedAsc(userPuzzle, cutoff)));
   }
 
   private void sendResult(ScheduledFuture<?>[] futurePolling,

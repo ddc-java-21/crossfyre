@@ -1,6 +1,6 @@
 package edu.cnm.deepdive.crossfyre.service.dao;
 
-import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
+import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.UserWord;
 import edu.cnm.deepdive.crossfyre.model.projection.Posted;
 import java.time.Instant;
@@ -12,14 +12,14 @@ public interface WordRepository extends CrudRepository<UserWord, Long> {
 
   Optional<UserWord> findByExternalKey(UUID externalKey);
 
-  Optional<UserWord> findByPuzzleAndExternalKey(Puzzle puzzle, UUID externalKey);
+  Optional<UserWord> findByPuzzleAndExternalKey(UserPuzzle userPuzzle, UUID externalKey);
 
-  Iterable<UserWord> findByPuzzleOrderByPostedAsc(Puzzle puzzle);
+  Iterable<UserWord> findByPuzzleOrderByPostedAsc(UserPuzzle userPuzzle);
 
 //  This is included to show a JPQL implementation of a Spring Data inferred query.
 //  @Query("SELECT m FROM Message AS m WHERE m.Puzzle = :Puzzle AND m.posted > :cutoff")
-  Iterable<UserWord> findByPuzzleAndPostedAfterOrderByPostedAsc(Puzzle puzzle, Instant cutoff);
+  Iterable<UserWord> findByPuzzleAndPostedAfterOrderByPostedAsc(UserPuzzle userPuzzle, Instant cutoff);
 
-  Optional<Posted> findFirstByPuzzleAndPostedAfterOrderByPostedDesc(Puzzle puzzle, Instant cutoff);
+  Optional<Posted> findFirstByPuzzleAndPostedAfterOrderByPostedDesc(UserPuzzle userPuzzle, Instant cutoff);
 
 }

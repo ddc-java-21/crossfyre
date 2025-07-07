@@ -57,7 +57,7 @@ public class Guess {
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
   @JsonIgnore
-  private Puzzle puzzle;
+  private UserPuzzle userPuzzle;
 
   public long getId() {
     return id;
@@ -87,12 +87,12 @@ public class Guess {
     this.author = author;
   }
 
-  public Puzzle getPuzzle() {
-    return puzzle;
+  public UserPuzzle getPuzzle() {
+    return userPuzzle;
   }
 
-  public void setChannel(Puzzle puzzle) {
-    this.puzzle = puzzle;
+  public void setChannel(UserPuzzle userPuzzle) {
+    this.userPuzzle = userPuzzle;
   }
 
   @Override
