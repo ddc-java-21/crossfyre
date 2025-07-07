@@ -41,12 +41,13 @@ public class SolutionPuzzle {
   private UUID externalKey;
 
   @Column(nullable = false, updatable = true, unique = true, length = 30)
+  @JsonProperty(value = "title", access = Access.READ_ONLY)
   private String title;
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
-  @JsonProperty(access = Access.READ_ONLY)
+  @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
 
   @OneToMany(mappedBy = "solutionPuzzle", fetch = FetchType.LAZY,
@@ -54,11 +55,16 @@ public class SolutionPuzzle {
   @JsonIgnore
   private final List<SolutionWord> solutionWords = new LinkedList<>();
 
+  @OneToMany(mappedBy = "solutionPuzzle", fetch = FetchType.LAZY,
+      cascade = CascadeType.ALL,orphanRemoval = true)
+  @JsonIgnore
+  private final List<UserPuzzle> userPuzzles = new LinkedList<>();
+
   @Column(nullable = false, updatable = false)
   @JsonProperty(access = Access.READ_ONLY)
   private int size;
 
-  @Column(nullable = false, updatable = true)
+  @Column(nullable = false, updatable = false)
   private String board;
 
   public long getId() {
@@ -101,6 +107,10 @@ public class SolutionPuzzle {
     return solutionWords;
   }
 
+  public List<UserPuzzle> getUserPuzzles() {
+    return userPuzzles;
+  }
+
   @Override
   public int hashCode() {
     return Long.hashCode(id);
@@ -123,5 +133,4 @@ public class SolutionPuzzle {
   void generateFieldValues() {
     externalKey = UUID.randomUUID();
   }
-
 }

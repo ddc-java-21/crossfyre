@@ -18,13 +18,12 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.Instant;
 import java.util.UUID;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"puzzleID", "player", "puzzle", "posted", "completed"})
+@JsonPropertyOrder({"key", "user", "puzzle", "solved"})
 public class Game {
 
   private static final int MAX_MESSAGE_LENGTH = 255;
@@ -39,23 +38,17 @@ public class Game {
   @JsonProperty(value = "key", access = Access.READ_ONLY)
   private UUID externalKey;
 
-  @CreationTimestamp
-  @Temporal(TemporalType.TIMESTAMP)
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(access = Access.READ_ONLY)
-  private Instant posted;
-
   @UpdateTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false)
-  private Instant completed;
+  private Instant solvedTime;
 
-  @OneToOne(fetch = FetchType.EAGER, optional = false)
-  @JoinColumn(name = "player_id", nullable = false, updatable = false)
-  @JsonProperty(value = "player", access = Access.READ_ONLY)
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "user_profile_id", nullable = false, updatable = false)
+  @JsonProperty(value = "user", access = Access.READ_ONLY)
   private User player;
 
-  @OneToOne(fetch = FetchType.LAZY, optional = false)
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
   private UserPuzzle userPuzzle;
@@ -68,16 +61,12 @@ public class Game {
     return externalKey;
   }
 
-  public Instant getPosted() {
-    return posted;
+  public Instant getSolvedTime() {
+    return solvedTime;
   }
 
-  public Instant getCompleted() {
-    return completed;
-  }
-
-  public void setCompleted(Instant completed) {
-    this.completed = completed;
+  public void setSolvedTime(Instant completed) {
+    this.solvedTime = completed;
   }
 
   public User getPlayer() {

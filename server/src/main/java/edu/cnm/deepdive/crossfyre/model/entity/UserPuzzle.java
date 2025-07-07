@@ -28,7 +28,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "title", "created", "size", "board"})
+@JsonPropertyOrder({"key", "solution", "created", "size", "board"})
 public class UserPuzzle {
 
   @Id
