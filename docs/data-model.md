@@ -15,3 +15,8 @@ order: 20
 ## UML class diagram
 
 [![CrossFyre UML Class Diagram](img/CrossFyre-UML-SVG.svg)](pdf/CrossFyre-UML-PDF.pdf)
+
+
+## ERD class diagram
+
+[![CrossFyre_URD Class Diagram](img/CrossFyre-ERD.drawio.svg)](pdf/CrossFyre-ERD.drawio.pdf)

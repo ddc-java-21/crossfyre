@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: preload
+
+  main:
+    web-application-type: none
+
+chat:
+  preload:
+    # noinspection SpringBootApplicationYaml
+    file: preload/puzzles.json

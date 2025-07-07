@@ -1,0 +1,6 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          client-id: 259556350121-dm8m0oce4gg0776lo9kkbovrnc0ndhnk.apps.googleusercontent.com
