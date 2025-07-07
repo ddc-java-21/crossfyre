@@ -28,7 +28,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "solution", "created", "size", "board"})
+@JsonPropertyOrder({"key", "created", "solved"})
 public class UserPuzzle {
 
   @Id
@@ -41,37 +41,34 @@ public class UserPuzzle {
   @JsonProperty(value = "key", access = Access.READ_ONLY)
   private UUID externalKey;
 
-  @Column(nullable = false, updatable = true, unique = true, length = 30)
-  private String title;
+  @CreationTimestamp
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "created", access = Access.READ_ONLY)
+  private Instant created;
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
-  @JsonProperty(access = Access.READ_ONLY)
-  private Instant created;
+  @JsonProperty(value = "solved", access = Access.READ_ONLY)
+  private Instant solved;
 
-  @OneToMany(mappedBy = "userPuzzle", fetch = FetchType.LAZY,
-      cascade = CascadeType.ALL,orphanRemoval = true)
+  @OneToMany(mappedBy =
+      "userPuzzle", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
   @JsonIgnore
-  private final List<UserWord> userWords = new LinkedList<>();
-
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(access = Access.READ_ONLY)
-  private int size;
-
-  @Column(nullable = false, updatable = true)
-  private String board;
+  private final List<Guess> guesses = new LinkedList<>();
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "solution_puzzle_id", nullable = false, updatable = false)
-  @JsonProperty(value = "solution", access = Access.READ_ONLY)
+  @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
+  @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
   @JsonIgnore
-  private SolutionPuzzle solutionPuzzle;
+  private Puzzle puzzle;
 
-  @OneToMany(mappedBy = "userPuzzle",
-      cascade = CascadeType.ALL,orphanRemoval = true)
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "user_id", nullable = false, updatable = false)
+  @JsonProperty(value = "user", access = Access.READ_ONLY)
   @JsonIgnore
-  private List<Game> game = new LinkedList<>();
+  private User user;
 
   public long getId() {
     return id;
@@ -81,52 +78,38 @@ public class UserPuzzle {
     return externalKey;
   }
 
-  public String getTitle() {
-    return title;
+  public Puzzle getSolutionPuzzle() {
+    return puzzle;
   }
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public int getSize() {
-    return size;
-  }
-
-  public void setSize(int size) {
-    this.size = size;
-  }
-
-  public String getBoard() {
-    return board;
-  }
-
-  public void setBoard(String board) {
-    this.board = board;
-  }
-
-  public SolutionPuzzle getSolutionPuzzle() {
-    return solutionPuzzle;
-  }
-
-  public void setSolutionPuzzle (SolutionPuzzle solutionPuzzle) {
-    this.solutionPuzzle = solutionPuzzle;
+  public void setSolutionPuzzle (Puzzle puzzle) {
+    this.puzzle = puzzle;
   }
 
   public Instant getCreated() {
     return created;
   }
 
-  public List<UserWord> getUserWords() {
-    return userWords;
+  public List<Guess> getUserWords() {
+    return guesses;
   }
 
-  public List<Game> getGame() {
-    return game;
+  public User getUser() {
+    return user;
   }
 
-  public void setGame(List<Game> game) {
-    this.game = game;
+  public UserPuzzle setUser(User user) {
+    this.user = user;
+    return this;
+  }
+
+  public Instant getSolved() {
+    return solved;
+  }
+
+  public UserPuzzle setSolved(Instant solved) {
+    this.solved = solved;
+    return this;
   }
 
   @Override
@@ -151,5 +134,4 @@ public class UserPuzzle {
   void generateFieldValues() {
     externalKey = UUID.randomUUID();
   }
-
 }

@@ -8,8 +8,12 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -23,19 +27,17 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
-@Table(
-    name = "user_profile"
-)
+@Table(name = "user")
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({"key", "displayName", "avatar", "created"})
 public class User {
 
-  private static final int MAX_DISPLAY_NAME_LENGTH = 30;
+  private static final int MAX_DISPLAY_NAME_LENGTH = 20;
   private static final int MAX_OAUTH_KEY_LENGTH = 30;
 
   @Id
   @GeneratedValue
-  @Column(name = "user_profile_id", nullable = false, updatable = false)
+  @Column(name = "user_id", nullable = false, updatable = false)
   @JsonIgnore
   private long id;
 

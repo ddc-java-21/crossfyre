@@ -13,26 +13,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
-import java.time.Instant;
-import java.util.UUID;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"word", "clue", "puzzle", "row", "column", "direction"})
-public class SolutionWord {
+@JsonPropertyOrder({"wordname", "clue", "row", "column", "direction", "puzzle"})
+public class PuzzleWord {
 
   private static final int MAX_WORD_LENGTH = 255;
 
   @Id
   @GeneratedValue
-  @Column(name = "solution_word_id", nullable = false, updatable = false)
+  @Column(name = "puzzle_word_id", nullable = false, updatable = false)
   @JsonIgnore
   private long id;
 
@@ -41,12 +35,6 @@ public class SolutionWord {
   @Column(unique = true, nullable = false, updatable = false)
   @JsonProperty(value = "word", access = Access.READ_ONLY)
   private String wordName;
-
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "solution_puzzle_id", nullable = false, updatable = false)
-  @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
-  private SolutionPuzzle solutionPuzzle;
-
   @Column(nullable = false, updatable = false, unique = true)
   @JsonProperty(value = "clue", access = Access.READ_ONLY)
   private String clue;
@@ -63,6 +51,11 @@ public class SolutionWord {
   @JsonProperty(value = "direction", access = Access.READ_ONLY)
   private String wordDirection;
 
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
+  @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
+  private Puzzle puzzle;
+
   public long getId() {
     return id;
   }
@@ -75,12 +68,12 @@ public class SolutionWord {
     this.wordName = wordName;
   }
 
-  public SolutionPuzzle getSolutionPuzzle() {
-    return solutionPuzzle;
+  public Puzzle getSolutionPuzzle() {
+    return puzzle;
   }
 
-  public void setSolutionPuzzle(SolutionPuzzle solutionPuzzle) {
-    this.solutionPuzzle = solutionPuzzle;
+  public void setSolutionPuzzle(Puzzle puzzle) {
+    this.puzzle = puzzle;
   }
 
   public String getClue() {
@@ -125,7 +118,7 @@ public class SolutionWord {
     boolean comparison;
     if (this == obj) {
       comparison = true;
-    } else if (obj instanceof SolutionWord other) {
+    } else if (obj instanceof PuzzleWord other) {
       comparison = (this.id != 0 && this.id == other.id);
     } else {
       comparison = false;
