@@ -57,6 +57,8 @@ public class UserWord {
   @JsonProperty(value = "puzzle", access = Access.READ_WRITE)
   private UserPuzzle userPuzzle;
 
+  //get current state of user puzzle up to a point
+
   public long getId() {
     return id;
   }

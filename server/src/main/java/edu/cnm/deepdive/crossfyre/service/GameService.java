@@ -33,7 +33,8 @@ public class GameService implements AbstractGameService {
   private final long pollingTimeout;
 
   @Autowired
-  GameService(UserWordRepository userWordRepository, UserPuzzleRepository userPuzzleRepository, CrossfyreConfiguration configuration) {
+  GameService(UserWordRepository userWordRepository, UserPuzzleRepository userPuzzleRepository,
+      CrossfyreConfiguration configuration) {
     this.userWordRepository = userWordRepository;
     this.userPuzzleRepository = userPuzzleRepository;
     Polling polling = configuration.getPolling();
@@ -46,16 +47,17 @@ public class GameService implements AbstractGameService {
   public UserWord get(UserPuzzle puzzleKey, UUID wordKey) {
     return userPuzzleRepository
         .findByExternalKey(wordKey)
-        .flatMap((Puzzle) -> userWordRepository.findByUserPuzzle_Id(puzzleKey.getId()))
-        .orElseThrow();
+        .map((puzzle) -> userWordRepository.findByUserPuzzle(userPuzzleRepository.)
+
   }
 
   @Override
   public Iterable<UserWord> getAllInPuzzle(UUID puzzleKey) {
     return userPuzzleRepository
         .findByExternalKey(puzzleKey)
-        .map((UserPuzzle userPuzzle) -> userWordRepository.findByPuzzleOrderByPostedAsc(userPuzzle))// TODO: 7/6/2025  map properly
+        .map(UserPuzzle::getUserWords)// TODO: 7/6/2025  map properly
         .orElseThrow();
+
   }
 
   @Override
@@ -65,13 +67,13 @@ public class GameService implements AbstractGameService {
     ScheduledFuture<?>[] futurePolling = new ScheduledFuture[1];
     Runnable timeoutTask = () -> sendResult(futurePolling, result, EMPTY_USER_WORD_LIST);
     result.onTimeout(timeoutTask);
-      UserPuzzle userPuzzle = userPuzzleRepository
-          .findByExternalKey(puzzleKey)
-          .orElseThrow();
+    UserPuzzle userPuzzle = userPuzzleRepository
+        .findByExternalKey(puzzleKey)
+        .orElseThrow();
     Runnable pollingTask = () -> checkForWords(cutoff, userPuzzle, futurePolling, result);
     futurePolling[0] =
         scheduler.scheduleAtFixedRate(pollingTask, 0, pollingInterval, TimeUnit.MILLISECONDS);
-   return result;
+    return result;
   }
 
   @Override
@@ -84,12 +86,12 @@ public class GameService implements AbstractGameService {
     return null;
   }
 
-  private void checkForWords(Instant cutoff, UserPuzzle userPuzzle, ScheduledFuture<?>[] futurePolling,
+  private void checkForWords(Instant created, UserPuzzle userPuzzle,
+      ScheduledFuture<?>[] futurePolling,
       DeferredResult<Iterable<UserWord>> result) {
     userWordRepository
-        .findFirstByPuzzleAndPostedAfterOrderByPostedDesc(userPuzzle, cutoff)
-        .ifPresent((posted) -> sendResult(futurePolling, result,
-            userWordRepository.findByPuzzleAndPostedAfterOrderByPostedAsc(userPuzzle, cutoff)));
+        .findByUserPuzzle(userPuzzle)
+        .ifPresent((word) -> sendResult(futurePolling, result, ));
   }
 
   private void sendResult(ScheduledFuture<?>[] futurePolling,

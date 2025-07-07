@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface GameRepository extends CrudRepository<Game, Long> {
 
-Optional<Game> findByUserAndPuzzle_Id(User author, long puzzle_id);
+Optional<Game> findByUserAndUserPuzzle_Id(User author, long puzzle_id);
 
-Iterable<Game> findByPuzzle_IdOrderByPostedAsc(long puzzle_id);
+Iterable<Game> findByUserPuzzle_IdOrderByPostedAsc(long puzzle_id);
 }

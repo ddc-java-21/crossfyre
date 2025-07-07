@@ -20,3 +20,7 @@ order: 20
 ## ERD class diagram
 
 [![CrossFyre_URD Class Diagram](img/CrossFyre-ERD.drawio.svg)](pdf/CrossFyre-ERD.drawio.pdf)
+
+## Data Definition Language code
+
+[//]: # ({% include linked-file.md file="sql/ddl-server.sql"%})
