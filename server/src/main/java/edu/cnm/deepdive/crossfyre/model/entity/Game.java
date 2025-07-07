@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,26 +13,28 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotBlank;
 import java.time.Instant;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.Length;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "title", "created", "size", "board"})
-public class UserPuzzle {
+@JsonPropertyOrder({"key", "player", "puzzle", "posted", "completed"})
+public class Game {
+
+  private static final int MAX_MESSAGE_LENGTH = 255;
 
   @Id
   @GeneratedValue
-  @Column(name = "user_puzzle_id", nullable = false, updatable = false)
+  @Column(name = "game_id", nullable = false, updatable = false)
   @JsonIgnore
   private long id;
 
@@ -41,37 +42,26 @@ public class UserPuzzle {
   @JsonProperty(value = "key", access = Access.READ_ONLY)
   private UUID externalKey;
 
-  @Column(nullable = false, updatable = true, unique = true, length = 30)
-  private String title;
-
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
   @JsonProperty(access = Access.READ_ONLY)
-  private Instant created;
+  private Instant posted;
 
-  @OneToMany(mappedBy = "userPuzzle", fetch = FetchType.LAZY,
-      cascade = CascadeType.ALL,orphanRemoval = true)
-  @JsonIgnore
-  private final List<UserWord> userWords = new LinkedList<>();
+  @UpdateTimestamp
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(nullable = false)
+  private Instant completed;
 
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(access = Access.READ_ONLY)
-  private int size;
+  @OneToOne(fetch = FetchType.EAGER, optional = false)
+  @JoinColumn(name = "player_id", nullable = false, updatable = false)
+  @JsonProperty(value = "player", access = Access.READ_ONLY)
+  private User player;
 
-  @Column(nullable = false, updatable = true)
-  private String board;
-
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "solution_puzzle_id", nullable = false, updatable = false)
-  @JsonProperty(value = "solution", access = Access.READ_ONLY)
-  @JsonIgnore
-  private SolutionPuzzle solutionPuzzle;
-
-  @OneToOne(mappedBy = "userPuzzle",
-      cascade = CascadeType.ALL,orphanRemoval = true)
-  @JsonIgnore
-  private Game game;
+  @OneToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
+  @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
+  private UserPuzzle userPuzzle;
 
   public long getId() {
     return id;
@@ -81,52 +71,32 @@ public class UserPuzzle {
     return externalKey;
   }
 
-  public String getTitle() {
-    return title;
+  public Instant getPosted() {
+    return posted;
   }
 
-  public void setTitle(String title) {
-    this.title = title;
+  public Instant getCompleted() {
+    return completed;
   }
 
-  public int getSize() {
-    return size;
+  public void setCompleted(Instant completed) {
+    this.completed = completed;
   }
 
-  public void setSize(int size) {
-    this.size = size;
+  public User getPlayer() {
+    return player;
   }
 
-  public String getBoard() {
-    return board;
+  public void setPlayer(User player) {
+    this.player = player;
   }
 
-  public void setBoard(String board) {
-    this.board = board;
+  public UserPuzzle getUserPuzzle() {
+    return userPuzzle;
   }
 
-  public SolutionPuzzle getSolutionPuzzle() {
-    return solutionPuzzle;
-  }
-
-  public void setSolutionPuzzle (SolutionPuzzle solutionPuzzle) {
-    this.solutionPuzzle = solutionPuzzle;
-  }
-
-  public Instant getCreated() {
-    return created;
-  }
-
-  public List<UserWord> getUserWords() {
-    return userWords;
-  }
-
-  public Game getGame() {
-    return game;
-  }
-
-  public void setGame(Game game) {
-    this.game = game;
+  public void setUserPuzzle(UserPuzzle userPuzzle) {
+    this.userPuzzle = userPuzzle;
   }
 
   @Override
@@ -139,7 +109,7 @@ public class UserPuzzle {
     boolean comparison;
     if (this == obj) {
       comparison = true;
-    } else if (obj instanceof UserPuzzle other) {
+    } else if (obj instanceof Game other) {
       comparison = (this.id != 0 && this.id == other.id);
     } else {
       comparison = false;
