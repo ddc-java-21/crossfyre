@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import java.util.UUID;
 
-public class Word {
+public class UserWord {
 
   @Id
   @GeneratedValue
@@ -52,7 +52,7 @@ public class Word {
     return position;
   }
 
-  public Word setPosition(int[] position) {
+  public UserWord setPosition(int[] position) {
     this.position = position;
     return this;
   }

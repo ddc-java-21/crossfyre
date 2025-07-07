@@ -70,7 +70,7 @@
         <mxCell id="6JOUey5XouENT1kEJFKY-41" value="0 .. *" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="460" y="740" width="50" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="6JOUey5XouENT1kEJFKY-42" value="A puzzle comprises many words -- specifically,&lt;div&gt;a list of horizontal words and a list of vertical&lt;/div&gt;&lt;div&gt;words; however, any one word does not belong&lt;/div&gt;&lt;div&gt;to a single puzzle instance&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="6JOUey5XouENT1kEJFKY-42" value="A puzzle comprises many words -- specifically,&lt;div&gt;a list of horizontal words and a list of vertical&lt;/div&gt;&lt;div&gt;words; however, any one userWord does not belong&lt;/div&gt;&lt;div&gt;to a single puzzle instance&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="190" y="650" width="270" height="70" as="geometry" />
         </mxCell>
         <mxCell id="6JOUey5XouENT1kEJFKY-43" value="A puzzle contains one guess at a time, which&lt;div&gt;is updated (replaced) with new input from client;&amp;nbsp;&lt;/div&gt;&lt;div&gt;also, any single guess belongs to only one puzzle&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
@@ -92,13 +92,13 @@
         <mxCell id="6JOUey5XouENT1kEJFKY-49" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="1350" y="830" width="30" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="6JOUey5XouENT1kEJFKY-50" value="A word can have only one direction, but multiple&lt;div&gt;&amp;nbsp;words can have the same direction type&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="6JOUey5XouENT1kEJFKY-50" value="A userWord can have only one direction, but multiple&lt;div&gt;&amp;nbsp;words can have the same direction type&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="1010" y="980" width="280" height="40" as="geometry" />
         </mxCell>
         <mxCell id="6JOUey5XouENT1kEJFKY-51" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="715" y="918" width="30" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="6JOUey5XouENT1kEJFKY-52" value="A word can have one position,&amp;nbsp;&lt;div&gt;and&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;no other word can have&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;the same&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;position&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="6JOUey5XouENT1kEJFKY-52" value="A userWord can have one position,&amp;nbsp;&lt;div&gt;and&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;no other userWord can have&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;the same&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;position&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="570" y="840" width="190" height="60" as="geometry" />
         </mxCell>
         <mxCell id="6JOUey5XouENT1kEJFKY-53" value="" style="endArrow=open;endFill=1;endSize=12;html=1;rounded=0;exitX=-0.007;exitY=0.403;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="6JOUey5XouENT1kEJFKY-20" target="6JOUey5XouENT1kEJFKY-21" edge="1">

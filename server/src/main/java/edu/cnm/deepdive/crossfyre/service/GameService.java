@@ -3,9 +3,8 @@ package edu.cnm.deepdive.crossfyre.service;
 import edu.cnm.deepdive.crossfyre.configuration.CrossfyreConfiguration;
 import edu.cnm.deepdive.crossfyre.configuration.CrossfyreConfiguration.Polling;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
-import edu.cnm.deepdive.crossfyre.model.entity.Word;
+import edu.cnm.deepdive.crossfyre.model.entity.UserWord;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
-import edu.cnm.deepdive.crossfyre.model.entity.Word;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.WordRepository;
 import java.time.Instant;
@@ -24,7 +23,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 @Profile("service")
 public class GameService implements AbstractGameService {
 
-  private static final List<Word> EMPTY_WORD_LIST = List.of();
+  private static final List<UserWord> EMPTY_USER_WORD_LIST = List.of();
 
   private final WordRepository wordRepository;
   private final PuzzleRepository puzzleRepository;
@@ -43,7 +42,7 @@ public class GameService implements AbstractGameService {
   }
 
   @Override
-  public Word get(UUID puzzleKey, UUID wordKey) {
+  public UserWord get(UUID puzzleKey, UUID wordKey) {
     return puzzleRepository
         .findByExternalKey(puzzleKey)
         .flatMap((Puzzle) -> wordRepository.findByPuzzleAndExternalKey(puzzle, wordKey))
@@ -51,7 +50,7 @@ public class GameService implements AbstractGameService {
   }
 
   @Override
-  public Iterable<Word> getAllInPuzzle(UUID puzzleKey) {
+  public Iterable<UserWord> getAllInPuzzle(UUID puzzleKey) {
     return puzzleRepository
         .findByExternalKey(puzzleKey)
         .map((Puzzle puzzle) -> wordRepository.findByPuzzleOrderByPostedAsc(puzzle))// TODO: 7/6/2025  map properly
@@ -59,11 +58,11 @@ public class GameService implements AbstractGameService {
   }
 
   @Override
-  public DeferredResult<Iterable<Word>> getAllInPuzzleSince(UUID puzzleKey, Instant cutoff) {
-    DeferredResult<Iterable<Word>> result =
+  public DeferredResult<Iterable<UserWord>> getAllInPuzzleSince(UUID puzzleKey, Instant cutoff) {
+    DeferredResult<Iterable<UserWord>> result =
         new DeferredResult<>(pollingInterval);
     ScheduledFuture<?>[] futurePolling = new ScheduledFuture[1];
-    Runnable timeoutTask = () -> sendResult(futurePolling, result, EMPTY_WORD_LIST);
+    Runnable timeoutTask = () -> sendResult(futurePolling, result, EMPTY_USER_WORD_LIST);
     result.onTimeout(timeoutTask);
       Puzzle puzzle = puzzleRepository
           .findByExternalKey(puzzleKey)
@@ -75,7 +74,7 @@ public class GameService implements AbstractGameService {
   }
 
   private void checkForWords(Instant cutoff, Puzzle puzzle, ScheduledFuture<?>[] futurePolling,
-      DeferredResult<Iterable<Word>> result) {
+      DeferredResult<Iterable<UserWord>> result) {
     wordRepository
         .findFirstByPuzzleAndPostedAfterOrderByPostedDesc(puzzle, cutoff)
         .ifPresent((posted) -> sendResult(futurePolling, result,
@@ -83,20 +82,20 @@ public class GameService implements AbstractGameService {
   }
 
   private void sendResult(ScheduledFuture<?>[] futurePolling,
-      DeferredResult<Iterable<Word>> result, Iterable<Word> words) {
+      DeferredResult<Iterable<UserWord>> result, Iterable<UserWord> words) {
     futurePolling[0].cancel(true);
     result.setResult(
         word);
   }
 
   @Override
-  public Word add(User author, UUID puzzleKey, Word word) {
+  public UserWord add(User author, UUID puzzleKey, UserWord userWord) {
     return puzzleRepository
         .findByExternalKey(puzzleKey)
         .map((puzzle) -> {
-          word.setAuthor(author);
+          userWord.setAuthor(author);
           puzzle.setPuzzle(puzzle);
-          return wordRepository.save(word);
+          return wordRepository.save(userWord);
         })
         .orElseThrow();
   }
