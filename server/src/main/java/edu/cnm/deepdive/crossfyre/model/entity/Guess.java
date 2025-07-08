@@ -30,7 +30,7 @@ public class Guess {
   private long id;
 
   @Column(nullable = false, updatable = true, length = CHARACTER_GUESS_LIMIT)
-  @JsonProperty(value = "guess", access = Access.WRITE_ONLY)
+  @JsonProperty(value = "guess", access = Access.READ_WRITE) // TN 2025-07-07 changed from WRITE.ONLY
   private Character guessChar;
 
   @Column(nullable = false, updatable = false)

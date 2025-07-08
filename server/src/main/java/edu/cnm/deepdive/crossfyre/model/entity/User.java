@@ -51,8 +51,8 @@ public class User {
 
 //  @NotBlank
 //  @Length(max = MAX_DISPLAY_NAME_LENGTH)
-    @Column(nullable = false, updatable = true, length = MAX_DISPLAY_NAME_LENGTH, unique = false)
-    private String displayName;
+  @Column(nullable = false, updatable = true, length = MAX_DISPLAY_NAME_LENGTH, unique = false)
+  private String displayName;
 
   @Column(nullable = true, updatable = true)
   private URL avatar;

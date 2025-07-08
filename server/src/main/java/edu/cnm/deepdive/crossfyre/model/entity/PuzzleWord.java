@@ -68,11 +68,11 @@ public class PuzzleWord {
     this.wordName = wordName;
   }
 
-  public Puzzle getSolutionPuzzle() {
+  public Puzzle getPuzzle() {
     return puzzle;
   }
 
-  public void setSolutionPuzzle(Puzzle puzzle) {
+  public void setPuzzle(Puzzle puzzle) {
     this.puzzle = puzzle;
   }
 
