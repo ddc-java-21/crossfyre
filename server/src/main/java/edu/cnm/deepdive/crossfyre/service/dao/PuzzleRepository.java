@@ -9,6 +9,4 @@ public interface PuzzleRepository extends CrudRepository<Puzzle, Long> {
 
   Optional<Puzzle> findByExternalKey(UUID externalKey);
 
-  Iterable<Puzzle> getAllByOrderByTitleAsc();
-
 }
