@@ -39,9 +39,9 @@ order: 20
 
 ### Repository Classes
 
-- [`UserRepository`](https://github.com/ddc-java-21/crossfyre/blob/repository-interfaces-tn/server/src/main/java/edu/cnm/deepdive/crossfyre/service/dao/UserRepository.java)
-- [`PuzzleRepository`](https://github.com/ddc-java-21/crossfyre/blob/repository-interfaces-tn/server/src/main/java/edu/cnm/deepdive/crossfyre/service/dao/PuzzleRepository.java)
-- [`UserPuzzleRepository`](https://github.com/ddc-java-21/crossfyre/blob/repository-interfaces-tn/server/src/main/java/edu/cnm/deepdive/crossfyre/service/dao/UserPuzzleRepository.java)
+- [`UserRepository`](https://github.com/ddc-java-21/crossfyre/blob/c405eaffd00715d02b785b7b48946ccb49a3c6d7/server/src/main/java/edu/cnm/deepdive/crossfyre/service/dao/UserRepository.java)
+- [`PuzzleRepository`](https://github.com/ddc-java-21/crossfyre/blob/c405eaffd00715d02b785b7b48946ccb49a3c6d7/server/src/main/java/edu/cnm/deepdive/crossfyre/service/dao/PuzzleRepository.java)
+- [`UserPuzzleRepository`](https://github.com/ddc-java-21/crossfyre/blob/c405eaffd00715d02b785b7b48946ccb49a3c6d7/server/src/main/java/edu/cnm/deepdive/crossfyre/service/dao/UserPuzzleRepository.java)
 
 
 ### Controller Classes
