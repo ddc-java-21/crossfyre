@@ -27,7 +27,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
-@Table(name = "user")
+@Table(name = "user_profile")
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({"key", "displayName", "avatar", "created"})
 public class User {
@@ -37,7 +37,7 @@ public class User {
 
   @Id
   @GeneratedValue
-  @Column(name = "user_id", nullable = false, updatable = false)
+  @Column(name = "user_profile_id", nullable = false, updatable = false)
   @JsonIgnore
   private long id;
 
@@ -51,8 +51,8 @@ public class User {
 
 //  @NotBlank
 //  @Length(max = MAX_DISPLAY_NAME_LENGTH)
-    @Column(nullable = false, updatable = true, length = MAX_DISPLAY_NAME_LENGTH, unique = false)
-    private String displayName;
+  @Column(nullable = false, updatable = true, length = MAX_DISPLAY_NAME_LENGTH, unique = false)
+  private String displayName;
 
   @Column(nullable = true, updatable = true)
   private URL avatar;

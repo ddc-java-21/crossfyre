@@ -56,10 +56,14 @@ public class Puzzle {
   @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
 
-  @OneToMany(mappedBy = "Puzzle", fetch = FetchType.LAZY,
-      cascade = CascadeType.ALL,orphanRemoval = true)
+  @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
   @JsonIgnore
   private final List<UserPuzzle> userPuzzles = new LinkedList<>();
+
+  @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY,
+      cascade = CascadeType.ALL,orphanRemoval = true)
+  @JsonIgnore
+  private final List<PuzzleWord> puzzleWords = new LinkedList<>(); // TN 2025-07-07 added puzzleWords list
 
 
   public long getId() {
@@ -100,6 +104,10 @@ public class Puzzle {
 
   public List<UserPuzzle> getUserPuzzles() {
     return userPuzzles;
+  }
+
+  public List<PuzzleWord> getPuzzleWords() {
+    return puzzleWords;
   }
 
   @Override
