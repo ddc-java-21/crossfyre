@@ -6,100 +6,108 @@ order: 0
 
 {% include ddc-abbreviations.md %}
 
-### Page contents
+## Page contents
+
 {:.no_toc}
 
 - ToC
-  {:toc}
+{:toc}
 
-### Summary
+## Summary
 
-* CrossFyre is a crossword-puzzle generator app for Android that allows users to work on a daily
-* generated cross word puzzle of the day. Its hallmark feature is a generated puzzled of the day 
-* that creates a unique puzzle for a selected theme. It uses a public API (or APIs) to retrieve 
-* content to serve as the content for the puzzles, allowing for unique puzzles to be created every 
-* day. It tracks user puzzle history using an account login system. So whether looking for a 
-* relaxing companion to a morning coffee, or feeling like expanding your vocabulary that day, this 
-* app is anyone's go-to source for fun puzzle-solving madness.
+CrossFyre is a crossword-puzzle generator app for Android that allows users to work on a daily
+generated cross word puzzle of a specific day. Its hallmark feature is its randomly generated puzzle
+that creates a unique puzzle every day. It uses a couple public API's to retrieve words and
+definitions to serve as the answer banks for the puzzles. By having a login system, it allows users
+to leave and comeback to play a puzzle whenever they feel like it. So whether they're looking for a
+brain-teaser with their morning coffee or feeling like expanding their vocabulary, CrossFyre is
+anyone's go-to source for some puzzle-solving entertainment.
 
+## Intended users and user stories
 
-### Intended users and user stories
+- A kid who wants a fun but challenging way to learn new words through quick, brain-teaser like
+  games
+  > As a kid out of school, I play my crossword game to teach myself new words while
+  I am on summer break.
 
-- A kid who wants a fun but challenging way to learn through quick brain teaser like games
-    > As a kid out of school, I play my crossword game to teach myself new words while
-    I am on summer break.
+- An elder who wants to keep away their brain fog and play word games that they're used to can
+  play our crosswords
+  > As an elder, I know that it can be hard to remember things, so I sharpen my brain by playing
+  CrossFyre as it lets me play a quick crossword game that I am familiar with the style of.
 
-- An elder who wants to keep away the memory fog and play older word games their used to do crosswords
-    > As a elder, I know that it can be hard to remember things so I sharpen my brain by playing 
-    CrossFyre as it lets me play a quick crossword game that I am familiar with the style of.
+## Functionality
 
-[//]: # (* Intended user 1: As a person who likes to do small brain teasers in their free time at work,)
+* If the user hasn't signed in or signed out, they will be asked to sign in using their Google account.
+* The app will load, and the user will be met with a pop-up to play that daily puzzle or sign out.
+* If the user clicks sign out, it will go back to asking for their login, else it will load the daily puzzle.
+* When the use inputs a letter, their state will be sent to the cloud, and it will check to see if they that letter is in the correct position.
+* The user can resume their puzzle of the day if their game was not completed, and it is still within the same day.
+* The generation of the puzzle will happen everytime the day on the calendar changes so that the puzzle will be generated as early as possible.
+* The puzzle layout will depend on the day of the week as there will be seven different puzzle layouts.
+* A set of 10 words and 10 clues for each word will be associated with each generation of a puzzle.
+* The puzzle will auto-select you to be in the first open position of row one.
+* The hint associated with the selected grid's word will be displayed and labeled underneath of the puzzle.
+* The hints of any grid in a word with respect to the selected direction will not be visible until that word and corresponding direction are selected to counteract cheating.
 
-[//]: # (* I play crosswords to help my brain ease off the stress caused at my job.)
+[//]: # (Finish persistent data)
+## Persistent data
 
-[//]: # (* Intended user 2: As someone who likes to learn new words when I don't have school in the summer,)
+* PuzzleWord
+    * Display name
+    * OAuth2.0 identifier
+    * Timestamp of first login to the app
 
-[//]: # (* I play crosswords to help expand my vocabulary to help my articulation.)
+* Puzzle
+    * Task title
+    * Task description
+    * Timestamp of task creation
+    * Assigned task date
+    * Completion of a task
 
+* UserPuzzle
+  * Puzzle identifier
+  * User identifier for puzzle of User
+  * Timestamp of task creation
+  * Timestamp of completion
 
-### Functionality
+* Guess
+    * Note title
+    * Note description
+    * Timestamp of task creation
+    * Optionally assigned note date
 
-* The user will be able to click a button that will load the daily crossword puzzle.
-* The user will log in with their email through a third party authentification service.
-* The user will be able to play past daily puzzles that they choose up to an extent.
-* There is an auto check that will happen with each letter implemented so after each letter the
-* puzzle will be sent back to the cloud and it will send back a check to see if there is a match.
-* A change of background color for correct or incorrect letters/words.
-* The user can resume their recent game state if the game was not completed before leaving to menu.
-* To initialize the game for the user it will load an initial game state that consists of the puzzle
-* structure(puzzle id) and the clues in a grid map to the side of the game in a column format.
-* The clues will be invisible to the user until they click on the corresponding grid in the puzzle.
-* and then only that clue will become visible to the user to counteract cheating.
-* A user can not have more than one daily puzzle of the day game open at one time.
-* There will be a check feature that the user can use to see if the corresponding letters in their
-* puzzle are matched anywhere.
+* User
+  * Display name
+  * OAuth2.0 identifier
+  * Timestamp of first login to the app
 
+## Device/external services
 
+* Google cloud console
+  * [`Service`](https://console.cloud.google.com)
+  * Will hande user authentification for sign-in
+  * This console will be used on the initial sign-in, and refreshing of the app if they don't sign out
 
-### Persistent data
+* Datamuse API
+  * [`Service`](https://www.datamuse.com/api)
+  * Word finding query engine
+  * Finds words that match a given set of constraints that are likely in a given context
+  * The constraints can be on meaning, spelling, sound, and vocabulary in any combination
 
-# Puzzle
-* Puzzle id
-* Grid layout
-* Clue list(across, down)
-* Word List
-* DateTime updated and created
+* Merriam-Webster Collegiate Dictionary
+  * [`Service`](https://dictionaryapi.com/products/api-collegiate-dictionary)
+  * Word and definition bank
+  * Gives us over 225,000 words and precise definitions
 
-# User
-* User ID
-* profile settings
-* progress data (ID's and timestamps of completion)
+## Stretch goals and possible enhancements
 
-# Dictionary
-* Active game words
-* clues for active game words
-
-
-### Device/external services
-
-* google authentication provider
-* crossword puzzle generator
-* pattern matcher
-* dictionary word api
-
-
-### Stretch goals and possible enhancements
-
-* Create animations for when the user gets a word in the crossword correct or finishes the game.
+* Change the background color of the grid depending on whether the letter is correct or not
+* The user can play previous puzzles of the day by selecting a date
+* Create animations for when the user gets a word in the crossword correct and/or finishes the game.
+* If user inputs a correct word there will be an audio queue when the animation would play.
 * Leaderboard implementation.
-* Once the user completes a crossword, if done in the top 5 least amount of time have their
-* username displayed in the leaderboard.
-* There is a score that is based on the end time subtracted by the initial time.
-* If user inputs a correct or incorrect word there will be an audio queue that activates when they
-* do a check.
-* Add an animation for a correct inputted answer and/or when the user finishes the game.
-* Have user be able to delete their username from the leaderboard if they wanted to.
-* Add multiple different themes so it gives variety to our crossword outside of just one theme.
+  * Have user be able to delete their username from the leaderboard if they wanted to.
+* Add multiple different themes.
 * Add a point system to the crossword puzzle (maybe penalize or increase depending on input tries).
-* Have a user choose the size of crossword generated from a few different choices for each theme.
+* Have a user choose a crossword size generated for a brand-new puzzle for personal use unrelated to puzzle of the day.
 
