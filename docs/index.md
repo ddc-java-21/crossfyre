@@ -15,7 +15,7 @@ order: 0
 
 ## Summary
 
-CrossFyre is a crossword-puzzle generator app for Android that allows users to work on a daily
+  CrossFyre is a crossword-puzzle generator app for Android that allows users to work on a daily
 generated cross word puzzle of a specific day. Its hallmark feature is its randomly generated puzzle
 that creates a unique puzzle every day. It uses a couple public API's to retrieve words and
 definitions to serve as the answer banks for the puzzles. By having a login system, it allows users
@@ -37,32 +37,32 @@ anyone's go-to source for some puzzle-solving entertainment.
 
 ## Functionality
 
-* If the user hasn't signed in or signed out, they will be asked to sign in using their Google account.
+* If the user hasn't signed in or is currently signed out, they will be asked to sign in using their Google account.
 * The app will load, and the user will be met with a pop-up to play that daily puzzle or sign out.
 * If the user clicks sign out, it will go back to asking for their login, else it will load the daily puzzle.
-* When the use inputs a letter, their state will be sent to the cloud, and it will check to see if they that letter is in the correct position.
+* When the user inputs a letter, their character will be sent to the server, and it will be logged up until the user guess every letter correctly in the puzzle.
 * The user can resume their puzzle of the day if their game was not completed, and it is still within the same day.
-* The generation of the puzzle will happen everytime the day on the calendar changes so that the puzzle will be generated as early as possible.
-* The puzzle layout will depend on the day of the week as there will be seven different puzzle layouts.
-* A set of 10 words and 10 clues for each word will be associated with each generation of a puzzle.
-* The puzzle will auto-select you to be in the first open position of row one.
-* The hint associated with the selected grid's word will be displayed and labeled underneath of the puzzle.
-* The hints of any grid in a word with respect to the selected direction will not be visible until that word and corresponding direction are selected to counteract cheating.
+* The generation of the puzzle will happen a day before the puzzle will be used and when the calendar date changes then the in queue puzzle will be used and another puzzle will be generated and waiting to be used for the next day.
+* The puzzle layout will depend on the day of the week as there will be seven different puzzle layouts of a 5x5 grid.
+* A set of 10 words and 10 clues will be associated with each generation of a puzzle (for a 5x5 grid).
+* The puzzle will auto-select the default starting position (one across).
+* The hint associated with the selection will be displayed and labeled underneath the puzzle.
+* The hints of any unselected words will not be visible until that word is selected to counteract cheating.
 
 [//]: # (Finish persistent data)
 ## Persistent data
 
 * PuzzleWord
-    * Display name
-    * OAuth2.0 identifier
-    * Timestamp of first login to the app
+  * Display name
+  * OAuth2.0 identifier
+  * Timestamp of first login to the app
 
 * Puzzle
-    * Task title
-    * Task description
-    * Timestamp of task creation
-    * Assigned task date
-    * Completion of a task
+  * Task title
+  * Task description
+  * Timestamp of task creation
+  * Assigned task date
+  * Completion of a task
 
 * UserPuzzle
   * Puzzle identifier
@@ -71,10 +71,10 @@ anyone's go-to source for some puzzle-solving entertainment.
   * Timestamp of completion
 
 * Guess
-    * Note title
-    * Note description
-    * Timestamp of task creation
-    * Optionally assigned note date
+  * Note title
+  * Note description
+  * Timestamp of task creation
+  * Optionally assigned note date
 
 * User
   * Display name
@@ -103,6 +103,7 @@ anyone's go-to source for some puzzle-solving entertainment.
 
 * Change the background color of the grid depending on whether the letter is correct or not
 * The user can play previous puzzles of the day by selecting a date
+* Create a LocalDate for each puzzle so that it is flexible depending on your timezone
 * Create animations for when the user gets a word in the crossword correct and/or finishes the game.
 * If user inputs a correct word there will be an audio queue when the animation would play.
 * Leaderboard implementation.
