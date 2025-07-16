@@ -14,11 +14,11 @@ order: 20
 
 ## UML class diagram
 
-[![CrossFyre UML Class Diagram](img/CrossFyre-UML.drawio.svg)](pdf/CrossFyre-UML.drawio.pdf)
+[![CrossFyre UML Class Diagram](img/CrossFyre-UML.svg)](pdf/CrossFyre-UML.pdf)
 
 ## ERD entity diagram
 
-[![CrossFyre ERD Entity Diagram](img/CrossFyre-ERD.drawio.svg)](pdf/CrossFyre-ERD.drawio.pdf)
+[![CrossFyre ERD Entity Diagram](img/CrossFyre-ERD.svg)](pdf/CrossFyre-ERD.pdf)
 
 ## Data Definition Language code
 
