@@ -25,10 +25,9 @@ import org.hibernate.annotations.CreationTimestamp;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "title", "size", "board", "created"})
+@JsonPropertyOrder({"key", "size", "board", "created"})
 public class Puzzle {
 
-  public static final int PUZZLE_TITLE_LENGTH = 15;
   @Id
   @GeneratedValue
   @Column(name = "puzzle_id", nullable = false, updatable = false)
@@ -38,10 +37,6 @@ public class Puzzle {
   @Column(nullable = false, updatable = false, unique = true)
   @JsonProperty(value = "key", access = Access.READ_ONLY)
   private UUID externalKey;
-
-  @Column(nullable = false, updatable = true, unique = true, length = PUZZLE_TITLE_LENGTH)
-  private String title;
-
 
   @Column(nullable = false, updatable = false)
   @JsonProperty(access = Access.READ_ONLY)
@@ -72,14 +67,6 @@ public class Puzzle {
 
   public UUID getExternalKey() {
     return externalKey;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
   }
 
   public int getSize() {
