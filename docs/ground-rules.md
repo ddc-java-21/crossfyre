@@ -25,7 +25,7 @@ order: 10
 
 ## Branch Merging
 
-* A team member will merge their local branch into the features based branch when they have completed or finished a section of the feature with working code
+* A team member will merge their local branch into the features-based branch when they have completed or finished a section of the feature with working code
 * To merge into main, team member1 will let their other team members know they are making a pull request into main so that there can be an overview on the pull request to main before it is merged
 * A feature branch (service) will be the only branch type merged into the main branch, as no branch with the personal naming convention (service-jd) will be allowed to be pulled into the main branch via a pull request
 
