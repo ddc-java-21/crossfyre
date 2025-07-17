@@ -8,29 +8,31 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotBlank;
+//import jakarta.validation.constraints.NotBlank;
 import java.net.URL;
 import java.time.Instant;
 import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.Length;
+//import org.hibernate.validator.constraints.Length;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
-@Table(
-    name = "user_profile"
-)
+@Table(name = "user_profile")
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({"key", "displayName", "avatar", "created"})
 public class User {
 
-  private static final int MAX_DISPLAY_NAME_LENGTH = 30;
+  private static final int MAX_DISPLAY_NAME_LENGTH = 20;
   private static final int MAX_OAUTH_KEY_LENGTH = 30;
 
   @Id
@@ -47,9 +49,9 @@ public class User {
   @JsonIgnore
   private String oauthKey;
 
-  @NotBlank
-  @Length(max = MAX_DISPLAY_NAME_LENGTH)
-  @Column(nullable = false, updatable = true, length = MAX_DISPLAY_NAME_LENGTH, unique = true)
+//  @NotBlank
+//  @Length(max = MAX_DISPLAY_NAME_LENGTH)
+  @Column(nullable = false, updatable = true, length = MAX_DISPLAY_NAME_LENGTH, unique = false)
   private String displayName;
 
   @Column(nullable = true, updatable = true)

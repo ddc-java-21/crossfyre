@@ -44,4 +44,5 @@ public class UserController {
     return service.updateMe(service.getCurrentUser(), delta);
   }
 
+  // TODO: 6/26/25 Implement additional controller methods for users.
 }
