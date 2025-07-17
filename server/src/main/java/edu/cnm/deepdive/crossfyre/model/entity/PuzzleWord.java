@@ -69,6 +69,10 @@ public class PuzzleWord {
   @JsonProperty(value = "direction", access = JsonProperty.Access.READ_ONLY)
   private Direction wordDirection;
 
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "length", access = Access.READ_ONLY)
+  private int wordLength;
+
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
@@ -124,6 +128,14 @@ public class PuzzleWord {
 
   public void setWordDirection(Direction wordDirection) {
     this.wordDirection = wordDirection;
+  }
+
+  public int getWordLength() {
+    return wordLength;
+  }
+
+  public void setWordLength(int wordLength) {
+    this.wordLength = wordLength;
   }
 
   @Override

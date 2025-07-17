@@ -11,13 +11,13 @@ public class UserPuzzle {
   private long id;
 
   @Expose
-  private UUID userExternalKey = null;
+  private final UUID userExternalKey = null;
 
   @Expose
   private final Instant created = null;
 
   @Expose
-  private final Instant solved = null;
+  private Instant solved = null;
 
   private final User user = null;
 
@@ -27,14 +27,8 @@ public class UserPuzzle {
     return id;
   }
 
-
   public UUID getUserExternalKey() {
     return userExternalKey;
-  }
-
-  public UserPuzzle setUserExternalKey(UUID userExternalKey) {
-    this.userExternalKey = userExternalKey;
-    return this;
   }
 
   public Instant getCreated() {
@@ -42,6 +36,11 @@ public class UserPuzzle {
   }
 
   public Instant getSolved() {
+    return solved;
+  }
+
+  public Instant setSolved(Instant solved) {
+    this.solved = solved;
     return solved;
   }
 

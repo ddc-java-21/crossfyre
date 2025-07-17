@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class Guess {
 
+  // TODO: 7/17/2025 add Direction for possible hints?* 
   @Expose(serialize = false)
   private long id;
 
