@@ -16,7 +16,7 @@ order: 0
 ## Summary
 
   CrossFyre is a crossword-puzzle generator app for Android that allows users to work on a daily
-generated cross word puzzle of a specific day. Its hallmark feature is its randomly generated puzzle
+generated cross-word puzzle of a specific day. Its hallmark feature is its randomly generated puzzle
 that creates a unique puzzle every day. It uses a couple public API's to retrieve words and
 definitions to serve as the answer banks for the puzzles. By having a login system, it allows users
 to leave and comeback to play a puzzle whenever they feel like it. So whether they're looking for a
@@ -40,9 +40,11 @@ anyone's go-to source for some puzzle-solving entertainment.
 * If the user hasn't signed in or is currently signed out, they will be asked to sign in using their Google account.
 * The app will load, and the user will be met with a pop-up to play that daily puzzle or sign out.
 * If the user clicks sign out, it will go back to asking for their login, else it will load the daily puzzle.
-* When the user inputs a letter, their character will be sent to the server, and it will be logged up until the user guess every letter correctly in the puzzle.
+* When the user inputs a letter, their character will be sent to the server, and it will be logged up until the user guesses every letter correctly in the puzzle.
 * The user can resume their puzzle of the day if their game was not completed, and it is still within the same day.
-* The generation of the puzzle will happen a day before the puzzle will be used and when the calendar date changes then the in queue puzzle will be used and another puzzle will be generated and waiting to be used for the next day.
+* The generation of the puzzle will happen a day before the puzzle is used.
+  * When the calendar date changes, then the in queue puzzle will be used.
+  * Another puzzle will be generated and put the puzzle in queue, waiting for it to be used for the next day.
 * The puzzle layout will depend on the day of the week as there will be seven different puzzle layouts of a 5x5 grid.
 * A set of 10 words and 10 clues will be associated with each generation of a puzzle (for a 5x5 grid).
 * The puzzle will auto-select the default starting position (one across).
