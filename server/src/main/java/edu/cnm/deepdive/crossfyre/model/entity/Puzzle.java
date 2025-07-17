@@ -51,6 +51,11 @@ public class Puzzle {
   @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
 
+  @Temporal(TemporalType.DATE)
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "date", access = Access.READ_ONLY)
+  private Instant date;
+
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
   @JsonIgnore
   private final List<UserPuzzle> userPuzzles = new LinkedList<>();
@@ -87,6 +92,18 @@ public class Puzzle {
 
   public Instant getCreated() {
     return created;
+  }
+
+  public void setCreated(Instant created) {
+    this.created = created;
+  }
+
+  public Instant getDate() {
+    return date;
+  }
+
+  public void setDate(Instant date) {
+    this.date = date;
   }
 
   public List<UserPuzzle> getUserPuzzles() {
