@@ -1,7 +1,7 @@
 ---
 title: Data Model
 description: "UML class diagram, entity-relationship diagram, and DDL."
-order: 20
+order: 30
 ---
 
 {% include ddc-abbreviations.md %}

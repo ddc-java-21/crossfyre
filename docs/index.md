@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Summary of in-progress or completed project."
+description: "Summary of project and future implementations."
 order: 0
 ---
 

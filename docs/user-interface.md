@@ -1,7 +1,7 @@
 ---
 title: User Interface
-description: "Entity-relationship diagram and DDL."
-order: 10
+description: "Wireframe layout for CrossFyre App."
+order: 20
 ---
 
 {% include ddc-abbreviations.md %}
