@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -33,13 +34,15 @@ public class Guess {
   @JsonProperty(value = "guess", access = Access.READ_WRITE) // TN 2025-07-07 changed from WRITE.ONLY
   private Character guessChar;
 
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "row", access = Access.READ_ONLY)
-  private int guessRow;
+  @Embeddable
+      private record guessPosition(
+          @Column(nullable = false, updatable = false)
+      @JsonProperty(value = "row", access = Access.READ_ONLY)
+      int guessRow,
 
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "column", access = Access.READ_ONLY)
-  private int guessColumn;
+      @Column(nullable = false, updatable = false)
+      @JsonProperty(value = "column", access = Access.READ_ONLY)
+      int guessColumn){}
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
@@ -56,22 +59,6 @@ public class Guess {
 
   public void setUserPuzzle(UserPuzzle userPuzzle) {
     this.userPuzzle = userPuzzle;
-  }
-
-  public int getGuessRow() {
-    return guessRow;
-  }
-
-  public void setGuessRow(int wordRow) {
-    this.guessRow = wordRow;
-  }
-
-  public int getGuessColumn() {
-    return guessColumn;
-  }
-
-  public void setGuessColumn(int wordColumn) {
-    this.guessColumn = wordColumn;
   }
 
   @Override

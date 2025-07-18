@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -55,13 +56,21 @@ public class PuzzleWord {
   @JsonProperty(value = "clue", access = Access.READ_ONLY)
   private String clue;
 
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "row", access = Access.READ_ONLY)
-  private int wordRow;
+  //Consider adding length to record?
+  @Embeddable
+  public record wordPosition(
+      @Column(nullable = false, updatable = false)
+      @JsonProperty(value = "row", access = Access.READ_ONLY)
+      int wordRow,
 
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "column", access = Access.READ_ONLY)
-  private int wordColumn;
+      @Column(nullable = false, updatable = false)
+      @JsonProperty(value = "column", access = Access.READ_ONLY)
+      int wordColumn,
+
+      @Column(nullable = false, updatable = false)
+      @JsonProperty(value = "length", access = Access.READ_ONLY)
+      int wordLength
+    ){}
 
   // TODO: 7/15/2025 Check enumerated/enum declaration
   @Enumerated(EnumType.STRING)
@@ -104,22 +113,6 @@ public class PuzzleWord {
 
   public void setClue(String clue) {
     this.clue = clue;
-  }
-
-  public int getWordRow() {
-    return wordRow;
-  }
-
-  public void setWordRow(int wordRow) {
-    this.wordRow = wordRow;
-  }
-
-  public int getWordColumn() {
-    return wordColumn;
-  }
-
-  public void setWordColumn(int wordColumn) {
-    this.wordColumn = wordColumn;
   }
 
   public Direction getWordDirection() {
