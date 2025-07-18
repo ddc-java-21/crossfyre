@@ -11,11 +11,13 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface UserPuzzleRepository extends CrudRepository<UserPuzzle, Long> {
 
-  Optional<UserPuzzle> findByExternalKey(UUID externalKey);
+  Optional<UserPuzzle> findById(long id);
 
-  Optional<UserPuzzle> findByUserAndPuzzleExternalKey(User user, UUID puzzleExternalKey);
+  Optional<UserPuzzle> findByUserAndUserPuzzle(User user, UserPuzzle puzzle);
 
-  Optional<UserPuzzle> findByUserAndPuzzle(User user, Puzzle puzzle);
+  Optional<UserPuzzle> findByUserAndDate(User user, Instant date);
+
+  // Optional<List<UserPuzzle>> findByUserAndDateSince(User user, Instant date);
 
   Optional<UserPuzzle> findByUserAndPuzzleDate(User user, Instant puzzleDate);
 

@@ -8,7 +8,11 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface PuzzleRepository extends CrudRepository<Puzzle, Long> {
 
-  Optional<Puzzle> findByExternalKey(UUID externalKey);
+  Optional<Puzzle> findById(long id);
+
+  Optional<Puzzle> findByDate(Instant date);
+
+  Optional<Puzzle> findByPuzzleExternalKey(UUID puzzleExternalKey);
 
   Optional<Puzzle> findByDate(Instant date);
 
