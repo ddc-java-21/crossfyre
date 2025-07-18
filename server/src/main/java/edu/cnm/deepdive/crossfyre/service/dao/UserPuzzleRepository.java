@@ -17,4 +17,6 @@ public interface UserPuzzleRepository extends CrudRepository<UserPuzzle, Long> {
 
   Optional<UserPuzzle> findByUserAndPuzzle(User user, Puzzle puzzle);
 
+  Optional<UserPuzzle> findByUserAndPuzzleDate(User user, Instant puzzleDate);
+
 }

@@ -75,11 +75,11 @@ public class ExceptionMapper {
   public void crosswordAlreadySolved() {}
 
   @ExceptionHandler(IllegalGuessCharacterException.class)
-  @ResponseStatus(code = HttpStatus.CONFLICT, reason = "Guess character must be alphabetic [A-Za-z].")
+  @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Guess character must be alphabetic [A-Za-z].")
   public void illegalGuessCharacter() {}
 
   @ExceptionHandler(IllegalGuessCoordinatesException.class)
-  @ResponseStatus(code = HttpStatus.CONFLICT, reason = "Guess coordinates out of bounds or otherwise invalid.")
+  @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Guess coordinates out of bounds or otherwise invalid.")
   public void illegalGuessCoordinates() {}
 
 }

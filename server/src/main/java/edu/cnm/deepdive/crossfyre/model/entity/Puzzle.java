@@ -42,7 +42,6 @@ public class Puzzle {
   @Column(nullable = false, updatable = true, unique = true, length = PUZZLE_TITLE_LENGTH)
   private String title;
 
-
   @Column(nullable = false, updatable = false)
   @JsonProperty(access = Access.READ_ONLY)
   private int size;
@@ -55,6 +54,11 @@ public class Puzzle {
   @Column(nullable = false, updatable = false)
   @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
+
+  @Temporal(TemporalType.DATE)
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "date", access = Access.READ_ONLY)
+  private Instant date;
 
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
   @JsonIgnore
@@ -100,6 +104,14 @@ public class Puzzle {
 
   public Instant getCreated() {
     return created;
+  }
+
+  public Instant getDate() {
+    return date;
+  }
+
+  public void setDate(Instant date) {
+    this.date = date;
   }
 
   public List<UserPuzzle> getUserPuzzles() {

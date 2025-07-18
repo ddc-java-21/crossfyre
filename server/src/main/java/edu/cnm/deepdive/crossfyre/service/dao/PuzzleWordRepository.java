@@ -1,15 +1,13 @@
 package edu.cnm.deepdive.crossfyre.service.dao;
 
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
-import java.time.Instant;
+import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.repository.CrudRepository;
 
-public interface PuzzleRepository extends CrudRepository<Puzzle, Long> {
+public interface PuzzleWordRepository extends CrudRepository<PuzzleWord, Long> {
 
-  Optional<Puzzle> findByExternalKey(UUID externalKey);
-
-  Optional<Puzzle> findByDate(Instant date);
+  Optional<PuzzleWord> findByExternalKey(UUID externalKey);
 
 }
