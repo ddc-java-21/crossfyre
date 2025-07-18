@@ -10,6 +10,8 @@ public interface PuzzleWordRepository extends CrudRepository <PuzzleWord, Long> 
 
   Optional<PuzzleWord> findBywordName(String wordName);
 
-  Optional<PuzzleWord> findBywordRowAndwordColumn(int wordRow, int wordColumn);
+  Optional<PuzzleWord> findByWordPosition_WordRowAndWordPosition_WordColumn(int wordRow, int wordColumn);
+
+  Optional<PuzzleWord> findByClue(String clue);
 
 }

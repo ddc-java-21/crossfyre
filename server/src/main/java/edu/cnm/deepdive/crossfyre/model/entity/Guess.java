@@ -15,6 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.Instant;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
@@ -34,6 +35,10 @@ public class Guess {
   @JsonProperty(value = "guess", access = Access.READ_WRITE) // TN 2025-07-07 changed from WRITE.ONLY
   private Character guessChar;
 
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "created", access = Access.READ_ONLY)
+  private Instant created;
+
   @Embeddable
       private record guessPosition(
           @Column(nullable = false, updatable = false)
@@ -43,6 +48,8 @@ public class Guess {
       @Column(nullable = false, updatable = false)
       @JsonProperty(value = "column", access = Access.READ_ONLY)
       int guessColumn){}
+
+  private guessPosition guessPosition;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
@@ -59,6 +66,29 @@ public class Guess {
 
   public void setUserPuzzle(UserPuzzle userPuzzle) {
     this.userPuzzle = userPuzzle;
+  }
+
+  public Guess setId(long id) {
+    this.id = id;
+    return this;
+  }
+
+  public Character getGuessChar() {
+    return guessChar;
+  }
+
+  public Guess setGuessChar(Character guessChar) {
+    this.guessChar = guessChar;
+    return this;
+  }
+
+  public Instant getCreated() {
+    return created;
+  }
+
+  public Guess setCreated(Instant created) {
+    this.created = created;
+    return this;
   }
 
   @Override

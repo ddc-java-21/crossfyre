@@ -72,15 +72,13 @@ public class PuzzleWord {
       int wordLength
     ){}
 
+  private wordPosition wordPosition;
+
   // TODO: 7/15/2025 Check enumerated/enum declaration
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, updatable = false)
   @JsonProperty(value = "direction", access = JsonProperty.Access.READ_ONLY)
   private Direction wordDirection;
-
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "length", access = Access.READ_ONLY)
-  private int wordLength;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
@@ -121,14 +119,6 @@ public class PuzzleWord {
 
   public void setWordDirection(Direction wordDirection) {
     this.wordDirection = wordDirection;
-  }
-
-  public int getWordLength() {
-    return wordLength;
-  }
-
-  public void setWordLength(int wordLength) {
-    this.wordLength = wordLength;
   }
 
   @Override

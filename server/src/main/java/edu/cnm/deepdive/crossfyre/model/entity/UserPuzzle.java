@@ -28,7 +28,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "created", "solved"})
+@JsonPropertyOrder({"key", "created", "solved", "isSolved"})
 public class UserPuzzle {
 
   @Id
@@ -70,6 +70,10 @@ public class UserPuzzle {
   @JsonIgnore
   private User user;
 
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "is_solved", access = Access.READ_ONLY)
+  private boolean isSolved;
+
   public long getId() {
     return id;
   }
@@ -109,6 +113,15 @@ public class UserPuzzle {
 
   public UserPuzzle setSolved(Instant solved) {
     this.solved = solved;
+    return this;
+  }
+
+  public boolean isSolved() {
+    return isSolved;
+  }
+
+  public UserPuzzle setSolved(boolean solved) {
+    isSolved = solved;
     return this;
   }
 
