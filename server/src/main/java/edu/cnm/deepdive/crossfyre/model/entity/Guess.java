@@ -15,11 +15,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import java.time.Instant;
+import org.hibernate.annotations.CreationTimestamp;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"puzzle", "clue", "wordName", "row", "column", "direction"})
+@JsonPropertyOrder({"puzzle", "clue", "wordName", "row", "column", "direction", "created"})
 public class Guess {
 
   private static final int CHARACTER_GUESS_LIMIT = 1;
@@ -33,6 +37,12 @@ public class Guess {
   @Column(nullable = false, updatable = true, length = CHARACTER_GUESS_LIMIT)
   @JsonProperty(value = "guess", access = Access.READ_WRITE) // TN 2025-07-07 changed from WRITE.ONLY
   private Character guessChar;
+
+  @CreationTimestamp
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "created", access = Access.READ_ONLY)
+  private Instant created;
 
   @Embeddable
       private record guessPosition(

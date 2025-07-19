@@ -15,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -51,7 +50,7 @@ public class UserPuzzle {
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
   @JsonProperty(value = "solved", access = Access.READ_ONLY)
-  private Instant solved;
+  private Instant isSolved;
 
   @OneToMany(mappedBy =
       "userPuzzle", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
@@ -103,12 +102,12 @@ public class UserPuzzle {
     return this;
   }
 
-  public Instant getSolved() {
-    return solved;
+  public Instant getIsSolved() {
+    return isSolved;
   }
 
-  public UserPuzzle setSolved(Instant solved) {
-    this.solved = solved;
+  public UserPuzzle setIsSolved(Instant solved) {
+    this.isSolved = solved;
     return this;
   }
 

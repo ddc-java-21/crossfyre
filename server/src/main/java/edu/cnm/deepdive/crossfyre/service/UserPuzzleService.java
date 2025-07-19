@@ -16,7 +16,4 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
     this.userPuzzleRepository = userPuzzleRepository;
   }
 
-  @Override
-  public UserPuzzle getOrAddUserPuzzle()
-
 }

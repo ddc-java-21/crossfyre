@@ -7,6 +7,7 @@ import edu.cnm.deepdive.crossfyre.model.projection.Created;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserPuzzleRepository extends CrudRepository<UserPuzzle, Long> {
@@ -17,8 +18,8 @@ public interface UserPuzzleRepository extends CrudRepository<UserPuzzle, Long> {
 
   Optional<UserPuzzle> findByUserAndDate(User user, Instant date);
 
-  // Optional<List<UserPuzzle>> findByUserAndDateSince(User user, Instant date);
-
-  Optional<UserPuzzle> findByUserAndPuzzleDate(User user, Instant puzzleDate);
+// Query to find a userpuzzle from first by   
+  @Query("SELECT up FROM UserPuzzle as up WHERE up.user = :user AND up.puzzle = (SELECT p from Puzzle as p WHERE p.date = :date)")
+  Optional<UserPuzzle> findByUserAndPuzzleDate(User user, Instant date);
 
 }
