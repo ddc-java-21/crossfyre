@@ -15,12 +15,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import java.time.Instant;
+import java.util.UUID;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"puzzle", "clue", "wordName", "row", "column", "direction"})
+@JsonPropertyOrder({"puzzle", "clue", "row", "column", "guess"})
 public class Guess {
 
   private static final int CHARACTER_GUESS_LIMIT = 1;
@@ -31,6 +33,10 @@ public class Guess {
   @JsonIgnore
   private long id;
 
+  @Column(nullable = false, updatable = false, unique = true)
+  @JsonProperty(value = "key", access = Access.READ_ONLY)
+  private UUID externalKey;
+
   @Column(nullable = false, updatable = true, length = CHARACTER_GUESS_LIMIT)
   @JsonProperty(value = "guess", access = Access.READ_WRITE) // TN 2025-07-07 changed from WRITE.ONLY
   private Character guessChar;
@@ -39,9 +45,11 @@ public class Guess {
   @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
 
+  @SuppressWarnings("JpaObjectClassSignatureInspection")
   @Embeddable
-      private record guessPosition(
-          @Column(nullable = false, updatable = false)
+  public record GuessPosition(
+
+      @Column(nullable = false, updatable = false)
       @JsonProperty(value = "row", access = Access.READ_ONLY)
       int guessRow,
 
@@ -49,15 +57,36 @@ public class Guess {
       @JsonProperty(value = "column", access = Access.READ_ONLY)
       int guessColumn){}
 
-  private guessPosition guessPosition;
+  private GuessPosition guessPosition;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_WRITE)
   private UserPuzzle userPuzzle;
 
+
   public long getId() {
     return id;
+  }
+
+  public UUID getExternalKey() {
+    return externalKey;
+  }
+
+  public Character getGuessChar() {
+    return guessChar;
+  }
+
+  public void setGuessChar(Character guessChar) {
+    this.guessChar = guessChar;
+  }
+
+  public Instant getCreated() {
+    return created;
+  }
+
+  public void setCreated(Instant created) {
+    this.created = created;
   }
 
   public UserPuzzle getUserPuzzle() {
@@ -68,27 +97,12 @@ public class Guess {
     this.userPuzzle = userPuzzle;
   }
 
-  public Guess setId(long id) {
-    this.id = id;
-    return this;
+  public GuessPosition getGuessPosition() {
+    return guessPosition;
   }
 
-  public Character getGuessChar() {
-    return guessChar;
-  }
-
-  public Guess setGuessChar(Character guessChar) {
-    this.guessChar = guessChar;
-    return this;
-  }
-
-  public Instant getCreated() {
-    return created;
-  }
-
-  public Guess setCreated(Instant created) {
-    this.created = created;
-    return this;
+  public void setGuessPosition(GuessPosition guessPosition) {
+    this.guessPosition = guessPosition;
   }
 
   @Override
@@ -108,4 +122,10 @@ public class Guess {
     }
     return comparison;
   }
+
+  @PrePersist
+  void generateFieldValues() {
+    externalKey = UUID.randomUUID();
+  }
+
 }

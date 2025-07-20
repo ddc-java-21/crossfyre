@@ -115,9 +115,9 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
           List<Guess> guesses = retrieved.getGuesses();
           boolean isSolved = checkGuesses(guesses, retrieved.getPuzzle());
           if (isSolved) {
-            delta.setFinished(Instant.now());
+            delta.setSolved(Instant.now());
             delta.setSolved(true);
-            retrieved.setFinished(delta.getFinished());
+            retrieved.setSolved(delta.getSolved());
             retrieved.setSolved(delta.isSolved());
           }
           return userPuzzleRepository.save(retrieved);
@@ -139,17 +139,17 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
       }
     }
     for (Guess guess : guesses) {
-      userBoard[guess.getGuessRow()][guess.getGuessColumn()] = guess.getGuessChar();
+      userBoard[guess.getGuessPosition().guessRow()][guess.getGuessPosition().guessColumn()] = guess.getGuessChar();
     }
     // 2. Use puzzle's word list to generate solution array on the fly
     //     - create empty char array --> char[][] solutionBoard = new char[5][5];
     //     - initialize the board to '0' characters
     List<PuzzleWord> words = solution.getPuzzleWords();
     for (PuzzleWord word : words) {
-      int row = word.getWordRow();
-      int col = word.getWordColumn();
-      String direction = word.getWordDirection();
-      int wordLength = word.getWordLength();
+      int row = word.getWordPosition().wordRow();
+      int col = word.getWordPosition().wordColumn();
+      String direction = word.getWordDirection().toString();
+      int wordLength = word.getWordPosition().wordLength();
       for (int i = 0; i < wordLength; i++) {
         if (direction.equals("ACROSS")) {
           solutionBoard[row][col + i] = word.getWordName().charAt(i);

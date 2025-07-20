@@ -56,7 +56,7 @@ public class UserPuzzle {
   @OneToMany(mappedBy =
       "userPuzzle", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
   @JsonIgnore
-  private final List<Guess> guesses = new LinkedList<>();
+  private List<Guess> guesses = new LinkedList<>();
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
@@ -82,47 +82,48 @@ public class UserPuzzle {
     return externalKey;
   }
 
-  public Puzzle getSolutionPuzzle() {
-    return puzzle;
-  }
-
-  public void setSolutionPuzzle (Puzzle puzzle) {
-    this.puzzle = puzzle;
-  }
-
   public Instant getCreated() {
     return created;
   }
 
-  public List<Guess> getUserWords() {
+  public List<Guess> getGuesses() {
     return guesses;
+  }
+
+  public void setGuesses(List<Guess> guesses) {
+    this.guesses = guesses;
+  }
+
+  public Puzzle getPuzzle() {
+    return puzzle;
+  }
+
+  public void setPuzzle (Puzzle puzzle) {
+    this.puzzle = puzzle;
   }
 
   public User getUser() {
     return user;
   }
 
-  public UserPuzzle setUser(User user) {
+  public void setUser(User user) {
     this.user = user;
-    return this;
   }
 
   public Instant getSolved() {
     return solved;
   }
 
-  public UserPuzzle setSolved(Instant solved) {
+  public void setSolved(Instant solved) {
     this.solved = solved;
-    return this;
   }
 
   public boolean isSolved() {
     return isSolved;
   }
 
-  public UserPuzzle setSolved(boolean solved) {
+  public void setSolved(boolean solved) {
     isSolved = solved;
-    return this;
   }
 
   @Override
@@ -147,4 +148,5 @@ public class UserPuzzle {
   void generateFieldValues() {
     externalKey = UUID.randomUUID();
   }
+
 }

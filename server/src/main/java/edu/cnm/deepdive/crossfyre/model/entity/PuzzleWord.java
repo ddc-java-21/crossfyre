@@ -16,9 +16,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
+import java.util.UUID;
 import org.hibernate.validator.constraints.Length;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
@@ -46,6 +48,10 @@ public class PuzzleWord {
   @JsonIgnore
   private long id;
 
+  @Column(nullable = false, updatable = false, unique = true)
+  @JsonProperty(value = "key", access = Access.READ_ONLY)
+  private UUID externalKey;
+
   @NotBlank
   @Length(max = MAX_WORD_LENGTH)
   @Column(unique = true, nullable = false, updatable = false)
@@ -57,6 +63,7 @@ public class PuzzleWord {
   private String clue;
 
   //Consider adding length to record?
+  @SuppressWarnings("JpaObjectClassSignatureInspection")
   @Embeddable
   public record wordPosition(
       @Column(nullable = false, updatable = false)
@@ -89,6 +96,10 @@ public class PuzzleWord {
     return id;
   }
 
+  public UUID getExternalKey() {
+    return externalKey;
+  }
+
   public String getWordName() {
     return wordName;
   }
@@ -111,6 +122,14 @@ public class PuzzleWord {
 
   public void setClue(String clue) {
     this.clue = clue;
+  }
+
+  public wordPosition getWordPosition() {
+    return wordPosition;
+  }
+
+  public void setWordPosition(wordPosition wordPosition) {
+    this.wordPosition = wordPosition;
   }
 
   public Direction getWordDirection() {
@@ -137,6 +156,11 @@ public class PuzzleWord {
       comparison = false;
     }
     return comparison;
+  }
+
+  @PrePersist
+  void generateFieldValues() {
+    externalKey = UUID.randomUUID();
   }
 
 }

@@ -10,7 +10,7 @@ public interface PuzzleRepository extends CrudRepository<Puzzle, Long> {
 
   Optional<Puzzle> findById(long id);
 
-  Optional<Puzzle> findByDate(Instant date);
+  Optional<Puzzle> findByExternalKey(UUID externalKey);
 
   Optional<Puzzle> findByDate(Instant date);
 
