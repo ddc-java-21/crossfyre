@@ -3,6 +3,7 @@ package edu.cnm.deepdive.crossfyre.controller;
 import edu.cnm.deepdive.crossfyre.model.entity.Guess;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
+import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.service.AbstractPuzzleService;
 import edu.cnm.deepdive.crossfyre.service.AbstractUserPuzzleService;
 import edu.cnm.deepdive.crossfyre.service.AbstractUserService;
@@ -10,6 +11,8 @@ import edu.cnm.deepdive.crossfyre.service.AbstractGuessService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -62,6 +65,18 @@ public class GuessController {
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Guess> post(@PathVariable Instant date, @Valid @RequestBody Guess guess) {
     Guess created =  guessService.add(currentUser, date, guess);
+    // Do we need to update UserPuzzle from here? messageService.add() in chat implies no, but...
+    UserPuzzle currentUserPuzzle = userPuzzleService.get(currentUser, date); // should get last saved version of game
+    List<Guess> guesses = new ArrayList<>();
+    Iterable<Guess> guessesIt = guessService.getAllInUserPuzzle(currentUser, date);
+    for (Guess g : guessesIt) {
+      guesses.add(g);
+    }
+    UserPuzzle delta = new UserPuzzle();
+    delta.setUser(currentUser);
+    delta.setPuzzle(puzzle);
+    delta.setGuesses(guesses);
+    userPuzzleService.updateUserPuzzle(currentUserPuzzle, delta);
     URI location = WebMvcLinkBuilder.linkTo(
       WebMvcLinkBuilder.methodOn(getClass())
           .get(date, created.getExternalKey())

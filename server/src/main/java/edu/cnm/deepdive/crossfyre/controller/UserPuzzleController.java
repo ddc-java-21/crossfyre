@@ -2,6 +2,8 @@ package edu.cnm.deepdive.crossfyre.controller;
 
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.service.AbstractUserPuzzleService;
+import edu.cnm.deepdive.crossfyre.service.AbstractUserService;
+import java.time.Instant;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -19,17 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserPuzzleController {
 
   private final AbstractUserPuzzleService userPuzzleService;
+  private final AbstractUserService userService;
 
   @Autowired
-  UserPuzzleController(AbstractUserPuzzleService userPuzzleService) {
+  UserPuzzleController(AbstractUserPuzzleService userPuzzleService, AbstractUserService userService) {
     this.userPuzzleService = userPuzzleService;
+    this.userService = userService;
   }
 
-
-
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public Iterable<UserPuzzle> get() {
-    return service.getAll();
+  @GetMapping(path = "/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public UserPuzzle get(@PathVariable Instant date) {
+    return userPuzzleService.get(userService.getCurrentUser(), date);
   }
 
   @GetMapping(path = "/{userPuzzleKey}", produces = MediaType.APPLICATION_JSON_VALUE)
