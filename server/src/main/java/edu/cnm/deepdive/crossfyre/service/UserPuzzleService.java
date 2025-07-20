@@ -1,5 +1,6 @@
 package edu.cnm.deepdive.crossfyre.service;
 
+import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
@@ -19,7 +20,13 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
     this.userPuzzleRepository = userPuzzleRepository;
   }
 
-  public UserPuzzle getUserPuzzle(User user,  Instant date) {
+  @Override
+  public Iterable<UserPuzzle> getAll(User user, Puzzle puzzle) {
+    return userPuzzleRepository.findByUserAndPuzzleOrderByCreatedAsc(user, puzzle);
+  }
+
+  @Override
+  public UserPuzzle get(User user,  Instant date) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, date)
         .orElseThrow();
