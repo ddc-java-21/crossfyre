@@ -3,6 +3,7 @@ package edu.cnm.deepdive.crossfyre.service;
 import edu.cnm.deepdive.crossfyre.model.entity.Guess;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
+import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.service.dao.GuessRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
@@ -29,22 +30,41 @@ public class GuessService implements AbstractGuessService {
   }
 
   @Override
-  public Iterable<Guess> getAllInUserPuzzle(UUID userPuzzleKey) {
+  public Guess get(User user, Instant date, UUID guessKey) {
     return userPuzzleRepository
-        .findByExternalKey(userPuzzleKey)
+        .findByUserAndPuzzleDate(user, date)
+        .flatMap((userPuzzle) -> guessRepository.findByUserPuzzleAndExternalKey(userPuzzle, guessKey))
+        .orElseThrow();
+  }
+
+  @Override
+  public Iterable<Guess> getAllInUserPuzzle(User requestor, Instant puzzleDate) {
+    return userPuzzleRepository
+        .findByUserAndPuzzleDate(requestor, puzzleDate)
         .map(guessRepository::findByUserPuzzleOrderByIdDesc)
         .orElseThrow();
   }
 
   @Override
-  public Iterable<Guess> getAllInUserPuzzle(Instant puzzleDate) {
-    return null; // TODO: 7/18/25 CHANGE THIS!
+  public Guess add(User requestor, Puzzle puzzle, Guess guess) {
+    return userPuzzleRepository
+        .findByUserAndPuzzle(requestor, puzzle)
+        .map((userPuzzle) -> {
+          guess.setUserPuzzle(userPuzzle);
+          return guess;
+        })
+        .orElseThrow(); // custom exception goes here
   }
 
   @Override
   public Guess add(User requestor, Instant puzzleDate, Guess guess) {
-    Puzzle puzzle = puzzleRepository
-        .findPuzzleByDate
+    return userPuzzleRepository
+        .findByUserAndPuzzleDate(requestor, puzzleDate)
+        .map((userPuzzle) -> {
+          guess.setUserPuzzle(userPuzzle);
+          return guess;
+        })
+        .orElseThrow(); // custom exception goes here
   }
 
 

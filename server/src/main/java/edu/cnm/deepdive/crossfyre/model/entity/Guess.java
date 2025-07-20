@@ -14,6 +14,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import java.time.Instant;
+import java.util.UUID;
+import org.hibernate.annotations.CreationTimestamp;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
@@ -29,6 +35,10 @@ public class Guess {
   @JsonIgnore
   private long id;
 
+  @Column(nullable = false, updatable = false, unique = true)
+  @JsonProperty(value = "key", access = Access.READ_ONLY)
+  private UUID externalKey;
+
   @Column(nullable = false, updatable = true, length = CHARACTER_GUESS_LIMIT)
   @JsonProperty(value = "guess", access = Access.READ_WRITE) // TN 2025-07-07 changed from WRITE.ONLY
   private Character guessChar;
@@ -41,21 +51,32 @@ public class Guess {
   @JsonProperty(value = "column", access = Access.READ_ONLY)
   private int guessColumn;
 
+  @CreationTimestamp
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(access = Access.READ_ONLY)
+  private Instant created;
+
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_WRITE)
   private UserPuzzle userPuzzle;
 
+
   public long getId() {
     return id;
   }
 
-  public UserPuzzle getUserPuzzle() {
-    return userPuzzle;
+  public UUID getExternalKey() {
+    return externalKey;
   }
 
-  public void setUserPuzzle(UserPuzzle userPuzzle) {
-    this.userPuzzle = userPuzzle;
+  public Character getGuessChar() {
+    return guessChar;
+  }
+
+  public void setGuessChar(Character guessChar) {
+    this.guessChar = guessChar;
   }
 
   public int getGuessRow() {
@@ -74,6 +95,19 @@ public class Guess {
     this.guessColumn = wordColumn;
   }
 
+  public Instant getCreated() {
+    return created;
+  }
+
+  public UserPuzzle getUserPuzzle() {
+    return userPuzzle;
+  }
+
+  public void setUserPuzzle(UserPuzzle userPuzzle) {
+    this.userPuzzle = userPuzzle;
+  }
+
+
   @Override
   public int hashCode() {
     return Long.hashCode(id);
@@ -91,4 +125,10 @@ public class Guess {
     }
     return comparison;
   }
+
+  @PrePersist
+  void generateFieldValues() {
+    externalKey = UUID.randomUUID();
+  }
+
 }

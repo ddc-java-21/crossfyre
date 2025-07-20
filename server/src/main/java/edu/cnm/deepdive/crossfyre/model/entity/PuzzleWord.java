@@ -13,7 +13,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotBlank;
+import java.util.UUID;
 import org.hibernate.validator.constraints.Length;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
@@ -30,14 +32,23 @@ public class PuzzleWord {
   @JsonIgnore
   private long id;
 
+  @Column(nullable = false, updatable = false, unique = true)
+  @JsonProperty(value = "key", access = Access.READ_ONLY)
+  private UUID externalKey;
+
   @NotBlank
   @Length(max = MAX_WORD_LENGTH)
   @Column(unique = true, nullable = false, updatable = false)
-  @JsonProperty(value = "word", access = Access.READ_ONLY)
+  @JsonIgnore
   private String wordName;
+
   @Column(nullable = false, updatable = false, unique = true)
   @JsonProperty(value = "clue", access = Access.READ_ONLY)
   private String clue;
+
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "column", access = Access.READ_ONLY)
+  private int wordLength;
 
   @Column(nullable = false, updatable = false)
   @JsonProperty(value = "row", access = Access.READ_ONLY)
@@ -56,8 +67,13 @@ public class PuzzleWord {
   @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
   private Puzzle puzzle;
 
+
   public long getId() {
     return id;
+  }
+
+  public UUID getExternalKey() {
+    return externalKey;
   }
 
   public String getWordName() {
@@ -68,20 +84,20 @@ public class PuzzleWord {
     this.wordName = wordName;
   }
 
-  public Puzzle getPuzzle() {
-    return puzzle;
-  }
-
-  public void setPuzzle(Puzzle puzzle) {
-    this.puzzle = puzzle;
-  }
-
   public String getClue() {
     return clue;
   }
 
   public void setClue(String clue) {
     this.clue = clue;
+  }
+
+  public int getWordLength() {
+    return wordLength;
+  }
+
+  public void setWordLength(int wordLength) {
+    this.wordLength = wordLength;
   }
 
   public int getWordRow() {
@@ -108,6 +124,15 @@ public class PuzzleWord {
     this.wordDirection = wordDirection;
   }
 
+  public Puzzle getPuzzle() {
+    return puzzle;
+  }
+
+  public void setPuzzle(Puzzle puzzle) {
+    this.puzzle = puzzle;
+  }
+
+
   @Override
   public int hashCode() {
     return Long.hashCode(id);
@@ -124,6 +149,11 @@ public class PuzzleWord {
       comparison = false;
     }
     return comparison;
+  }
+
+  @PrePersist
+  void generateFieldValues() {
+    externalKey = UUID.randomUUID();
   }
 
 }

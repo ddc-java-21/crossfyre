@@ -11,6 +11,10 @@ public interface GuessRepository extends CrudRepository<Guess, Long> {
 
   Optional<Guess> findByExternalKey(UUID externalKey);
 
+  Optional<Guess> findByUserPuzzleAndExternalKey(UserPuzzle userPuzzle, UUID externalKey);
+
   Iterable<Guess> findByUserPuzzleOrderByIdDesc(UserPuzzle userPuzzle);
+
+  Iterable<Guess> findByUserPuzzleOrderByCreatedDesc(UserPuzzle userPuzzle);
 
 }

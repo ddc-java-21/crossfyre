@@ -2,6 +2,7 @@ package edu.cnm.deepdive.crossfyre.service;
 
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
+import java.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,10 @@ public class PuzzleService implements AbstractPuzzleService {
   }
 
   @Override
-  public Puzzle getOrAddPuzzle(Puzzle puzzle) {
-
+  public Puzzle get(Instant date) {
+    return puzzleRepository
+        .findByDate(date)
+        .orElseThrow();
   }
 
 }
