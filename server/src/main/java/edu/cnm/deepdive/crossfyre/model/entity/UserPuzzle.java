@@ -28,7 +28,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "user", "puzzle", "guesses", "created", "finished", "isSolved"})
+@JsonPropertyOrder({"key", "created", "solved", "isSolved"})
 public class UserPuzzle {
 
   @Id
@@ -50,17 +50,13 @@ public class UserPuzzle {
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "finished", access = Access.READ_ONLY)
-  private Instant finished;
-
-  @Column(nullable = false, updatable = true)
-  @JsonProperty(value = "solved")
-  private boolean solved;
+  @JsonProperty(value = "solved", access = Access.READ_ONLY)
+  private Instant solved;
 
   @OneToMany(mappedBy =
       "userPuzzle", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
   @JsonIgnore
-  private List<Guess> guesses = new LinkedList<>();
+  private final List<Guess> guesses = new LinkedList<>();
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
@@ -74,6 +70,9 @@ public class UserPuzzle {
   @JsonIgnore
   private User user;
 
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "is_solved", access = Access.READ_ONLY)
+  private boolean isSolved;
 
   public long getId() {
     return id;
@@ -83,50 +82,48 @@ public class UserPuzzle {
     return externalKey;
   }
 
+  public Puzzle getSolutionPuzzle() {
+    return puzzle;
+  }
+
+  public void setSolutionPuzzle (Puzzle puzzle) {
+    this.puzzle = puzzle;
+  }
+
   public Instant getCreated() {
     return created;
   }
 
-  public Instant getFinished() {
-    return finished;
-  }
-
-  public void setFinished(Instant finished) {
-    this.finished = finished;
-  }
-
-  public boolean isSolved() {
-    return solved;
-  }
-
-  public void setSolved(boolean solved) {
-    this.solved = solved;
-  }
-
-  public List<Guess> getGuesses() {
+  public List<Guess> getUserWords() {
     return guesses;
-  }
-
-  public void setGuesses(List<Guess> guesses) {
-    this.guesses = guesses;
   }
 
   public User getUser() {
     return user;
   }
 
-  public void setUser(User user) {
+  public UserPuzzle setUser(User user) {
     this.user = user;
+    return this;
   }
 
-  public Puzzle getPuzzle() {
-    return puzzle;
+  public Instant getSolved() {
+    return solved;
   }
 
-  public void setPuzzle (Puzzle puzzle) {
-    this.puzzle = puzzle;
+  public UserPuzzle setSolved(Instant solved) {
+    this.solved = solved;
+    return this;
   }
 
+  public boolean isSolved() {
+    return isSolved;
+  }
+
+  public UserPuzzle setSolved(boolean solved) {
+    isSolved = solved;
+    return this;
+  }
 
   @Override
   public int hashCode() {
@@ -150,5 +147,4 @@ public class UserPuzzle {
   void generateFieldValues() {
     externalKey = UUID.randomUUID();
   }
-
 }

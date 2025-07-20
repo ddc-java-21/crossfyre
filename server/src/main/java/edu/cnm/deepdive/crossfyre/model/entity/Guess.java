@@ -8,18 +8,14 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import java.time.Instant;
-import java.util.UUID;
-import org.hibernate.annotations.CreationTimestamp;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
@@ -35,68 +31,33 @@ public class Guess {
   @JsonIgnore
   private long id;
 
-  @Column(nullable = false, updatable = false, unique = true)
-  @JsonProperty(value = "key", access = Access.READ_ONLY)
-  private UUID externalKey;
-
   @Column(nullable = false, updatable = true, length = CHARACTER_GUESS_LIMIT)
   @JsonProperty(value = "guess", access = Access.READ_WRITE) // TN 2025-07-07 changed from WRITE.ONLY
   private Character guessChar;
 
   @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "row", access = Access.READ_ONLY)
-  private int guessRow;
-
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "column", access = Access.READ_ONLY)
-  private int guessColumn;
-
-  @CreationTimestamp
-  @Temporal(TemporalType.TIMESTAMP)
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(access = Access.READ_ONLY)
+  @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
+
+  @Embeddable
+      private record guessPosition(
+          @Column(nullable = false, updatable = false)
+      @JsonProperty(value = "row", access = Access.READ_ONLY)
+      int guessRow,
+
+      @Column(nullable = false, updatable = false)
+      @JsonProperty(value = "column", access = Access.READ_ONLY)
+      int guessColumn){}
+
+  private guessPosition guessPosition;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_WRITE)
   private UserPuzzle userPuzzle;
 
-
   public long getId() {
     return id;
-  }
-
-  public UUID getExternalKey() {
-    return externalKey;
-  }
-
-  public Character getGuessChar() {
-    return guessChar;
-  }
-
-  public void setGuessChar(Character guessChar) {
-    this.guessChar = guessChar;
-  }
-
-  public int getGuessRow() {
-    return guessRow;
-  }
-
-  public void setGuessRow(int wordRow) {
-    this.guessRow = wordRow;
-  }
-
-  public int getGuessColumn() {
-    return guessColumn;
-  }
-
-  public void setGuessColumn(int wordColumn) {
-    this.guessColumn = wordColumn;
-  }
-
-  public Instant getCreated() {
-    return created;
   }
 
   public UserPuzzle getUserPuzzle() {
@@ -107,6 +68,28 @@ public class Guess {
     this.userPuzzle = userPuzzle;
   }
 
+  public Guess setId(long id) {
+    this.id = id;
+    return this;
+  }
+
+  public Character getGuessChar() {
+    return guessChar;
+  }
+
+  public Guess setGuessChar(Character guessChar) {
+    this.guessChar = guessChar;
+    return this;
+  }
+
+  public Instant getCreated() {
+    return created;
+  }
+
+  public Guess setCreated(Instant created) {
+    this.created = created;
+    return this;
+  }
 
   @Override
   public int hashCode() {
@@ -125,10 +108,4 @@ public class Guess {
     }
     return comparison;
   }
-
-  @PrePersist
-  void generateFieldValues() {
-    externalKey = UUID.randomUUID();
-  }
-
 }
