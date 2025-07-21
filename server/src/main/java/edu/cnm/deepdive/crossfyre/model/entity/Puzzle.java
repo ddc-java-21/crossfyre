@@ -137,4 +137,21 @@ public class Puzzle {
     externalKey = UUID.randomUUID();
   }
 
+  public enum Board {
+    SUNDAY   ("0__________________0____0"),
+    MONDAY   ("0___00___0_______________"),
+    TUESDAY  ("00_____________________00"),
+    WEDNESDAY("___00_______________00___"),
+    THURSDAY ("0___0_______________0___0"),
+    FRIDAY   ("____0____0_____0____0____"),
+    SATURDAY ("___00____0_____0____00___");
+
+    public final String day;
+
+    Board(String day) {
+      this.day = day;
+    }
+
+  }
+
 }
