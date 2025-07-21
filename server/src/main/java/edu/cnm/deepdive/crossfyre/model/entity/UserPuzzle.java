@@ -59,7 +59,7 @@ public class UserPuzzle {
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
-  @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
+  @JsonProperty(value = "user_puzzle", access = Access.READ_ONLY)
   @JsonIgnore
   private Puzzle puzzle;
 

@@ -7,5 +7,4 @@ spring:
 
 chat:
   preload:
-    # noinspection SpringBootApplicationYaml
     file: preload/puzzles.json

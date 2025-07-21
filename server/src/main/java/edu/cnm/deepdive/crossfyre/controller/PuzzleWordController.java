@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/puzzle/{puzzleDate}/puzzleWords")
+@RequestMapping("/puzzles/{puzzleDate}/puzzleWords")
 @Validated
 @Profile("service")
 public class PuzzleWordController {

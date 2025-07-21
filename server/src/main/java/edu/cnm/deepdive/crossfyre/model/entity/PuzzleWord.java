@@ -29,7 +29,7 @@ import org.hibernate.validator.constraints.Length;
     }
 )
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"word_name", "clue", "row", "column", "direction", "puzzle"})
+@JsonPropertyOrder({"word_name", "clue", "row", "column", "direction", "user_puzzle"})
 public class PuzzleWord {
 
   // TODO: 7/15/2025 enum declaration
