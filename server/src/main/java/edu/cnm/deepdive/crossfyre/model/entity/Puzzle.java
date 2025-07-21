@@ -43,7 +43,7 @@ public class Puzzle {
   private int size;
 
   @Column(nullable = false, updatable = false)
-  private String board;
+  private Board board;
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
@@ -82,11 +82,11 @@ public class Puzzle {
     this.size = size;
   }
 
-  public String getBoard() {
+  public Board getBoard() {
     return board;
   }
 
-  public void setBoard(String board) {
+  public void setBoard(Board board) {
     this.board = board;
   }
 
@@ -138,13 +138,13 @@ public class Puzzle {
   }
 
   public enum Board {
-    SUNDAY   ("0__________________0____0"),
-    MONDAY   ("0___00___0_______________"),
-    TUESDAY  ("00_____________________00"),
-    WEDNESDAY("___00_______________00___"),
-    THURSDAY ("0___0_______________0___0"),
-    FRIDAY   ("____0____0_____0____0____"),
-    SATURDAY ("___00____0_____0____00___");
+    SUNDAY    ("0__________________0____0"),
+    MONDAY    ("0___00___0_______________"),
+    TUESDAY   ("00_____________________00"),
+    WEDNESDAY ("___00_______________00___"),
+    THURSDAY  ("0___0_______________0___0"),
+    FRIDAY    ("____0____0_____0____0____"),
+    SATURDAY  ("___00____0_____0____00___");
 
     public final String day;
 
