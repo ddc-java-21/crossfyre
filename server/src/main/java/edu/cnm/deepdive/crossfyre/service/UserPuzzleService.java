@@ -5,6 +5,7 @@ import edu.cnm.deepdive.crossfyre.model.entity.User;
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
 import java.time.Instant;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,21 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
   @Override
   public Iterable<UserPuzzle> getAll(User user, Puzzle puzzle) {
     return userPuzzleRepository.findByUserAndPuzzleOrderByCreatedAsc(user, puzzle);
+  }
+
+  @Override
+  public UserPuzzle getOrAddUserPuzzle(User user, Puzzle puzzle) {
+    return userPuzzleRepository
+        .findByUserAndPuzzleDate(user, puzzle.getPuzzleDate())
+        .or(() -> {
+          UserPuzzle userPuzzle = new UserPuzzle();
+          userPuzzle.setUser(user);
+          userPuzzle.setSolutionPuzzle(puzzle);
+//          userPuzzle.setIsSolved(puzzle.get)
+          userPuzzleRepository.save(userPuzzle);
+          return Optional.of(userPuzzle);
+        })
+        .orElseThrow();
   }
 
   @Override

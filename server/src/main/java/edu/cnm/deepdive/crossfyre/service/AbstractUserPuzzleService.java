@@ -9,6 +9,8 @@ public interface AbstractUserPuzzleService {
 
   Iterable<UserPuzzle> getAll(User user, Puzzle puzzle);
 
+  UserPuzzle getOrAddUserPuzzle(User user, Puzzle puzzle);
+
   UserPuzzle get(User user, Instant date);
 
 }
