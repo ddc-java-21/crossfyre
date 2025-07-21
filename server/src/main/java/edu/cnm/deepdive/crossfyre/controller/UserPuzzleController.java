@@ -6,10 +6,12 @@ import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.service.AbstractPuzzleService;
 import edu.cnm.deepdive.crossfyre.service.AbstractUserPuzzleService;
 import edu.cnm.deepdive.crossfyre.service.AbstractUserService;
+import java.time.Instant;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,10 +33,10 @@ public class UserPuzzleController {
     this.puzzleService = puzzleService;
   }
 
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  @JsonView(User)
-  public UserPuzzle get() {
-    return userPuzzleService.get(userService.getCurrentUser(), puzzleService.getPuzzleWithDate(null).getDate());
+  @GetMapping(path = "/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
+//  @JsonView(User)
+  public UserPuzzle get(@PathVariable Instant date) {
+    return userPuzzleService.get(userService.getCurrentUser(), date);
   }
 
 }
