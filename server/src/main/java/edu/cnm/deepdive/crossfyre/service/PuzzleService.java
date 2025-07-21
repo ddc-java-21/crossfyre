@@ -19,6 +19,11 @@ public class PuzzleService implements AbstractPuzzleService {
   }
 
   @Override
+  public Puzzle getPuzzle(Puzzle puzzle) {
+    return null;
+  }
+
+  @Override
   public Puzzle get(Instant date) {
     return puzzleRepository
         .findByDate(date)
