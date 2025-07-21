@@ -49,19 +49,17 @@ public class UserPuzzle {
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "solved", access = Access.READ_ONLY)
+  @Column(nullable = true, updatable = true)
+  @JsonProperty(value = "solved", access = Access.READ_WRITE)
   private Instant solved;
 
   @OneToMany(mappedBy =
       "userPuzzle", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
-  @JsonIgnore
   private List<Guess> guesses = new LinkedList<>();
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
-  @JsonIgnore
   private Puzzle puzzle;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)

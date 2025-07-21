@@ -49,22 +49,21 @@ public class GuessController {
     this.userPuzzleService = userPuzzleService;
     this.userService = userService;
     this.puzzleService = puzzleService;
-    currentUser = userService.getCurrentUser();
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public Iterable<Guess> get(@PathVariable Instant date) {
-    return guessService.getAllInUserPuzzle(currentUser, date);
+    return guessService.getAllInUserPuzzle(userService.getCurrentUser(), date);
   }
 
   @GetMapping(path = "/{guessKey}", produces = MediaType.APPLICATION_JSON_VALUE)
   public Guess get(@PathVariable Instant date, @PathVariable UUID guessKey) {
-    return guessService.get(currentUser, date, guessKey);
+    return guessService.get(userService.getCurrentUser(), date, guessKey);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Guess> post(@PathVariable Instant date, @Valid @RequestBody Guess guess) {
-    Guess created =  guessService.add(currentUser, date, guess);
+    Guess created =  guessService.add(userService.getCurrentUser(), date, guess);
     // Do we need to update UserPuzzle from here? messageService.add() in chat implies no, but...
     UserPuzzle currentUserPuzzle = userPuzzleService.get(currentUser, date); // should get last saved version of game
     List<Guess> guesses = new ArrayList<>();

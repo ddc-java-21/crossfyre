@@ -55,7 +55,8 @@ public class PuzzleWord {
   @NotBlank
   @Length(max = MAX_WORD_LENGTH)
   @Column(unique = true, nullable = false, updatable = false)
-  @JsonProperty(value = "word_name", access = Access.READ_ONLY)
+  //@JsonProperty(value = "word_name", access = Access.READ_ONLY)
+  @JsonIgnore
   private String wordName;
 
   @Column(nullable = false, updatable = false, unique = true)
@@ -89,7 +90,8 @@ public class PuzzleWord {
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
-  @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
+  //@JsonProperty(value = "puzzle", access = Access.READ_ONLY)
+  @JsonIgnore
   private Puzzle puzzle;
 
   public long getId() {

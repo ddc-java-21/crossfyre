@@ -51,19 +51,19 @@ public class Puzzle {
   @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
 
-  @Temporal(TemporalType.DATE)
+  @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
   @JsonProperty(value = "date", access = Access.READ_ONLY)
   private Instant date;
 
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
   @JsonIgnore
-  private final List<UserPuzzle> userPuzzles = new LinkedList<>();
+  private List<UserPuzzle> userPuzzles = new LinkedList<>();
 
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY,
       cascade = CascadeType.ALL,orphanRemoval = true)
-  @JsonIgnore
-  private final List<PuzzleWord> puzzleWords = new LinkedList<>(); // TN 2025-07-07 added puzzleWords list
+  @JsonProperty(value = "puzzleWords", access = Access.READ_ONLY)
+  private List<PuzzleWord> puzzleWords = new LinkedList<>(); // TN 2025-07-07 added puzzleWords list
 
 
   public long getId() {

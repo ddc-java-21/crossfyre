@@ -65,24 +65,41 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
   }
 
   @Override
-  public UserPuzzle getOrAddUserPuzzle(User user, Instant date) {
+  public UserPuzzle getOrAddUserPuzzle(User user, Puzzle puzzle) {
     return userPuzzleRepository
-        .findByUserAndPuzzleDate(user, date)
+        .findByUserAndPuzzleDate(user, puzzle.getDate())
         // TODO: 7/20/25 Check with Nick/Reed to make sure this construction works as intended
-        .or(() -> Optional.of(
-            puzzleRepository
-            .findByDate(date)
-            .map((puzzle) -> {
-              UserPuzzle userPuzzle = new UserPuzzle();
-              userPuzzle.setUser(user);
-              userPuzzle.setPuzzle(puzzle);
-              userPuzzle.setGuesses(new ArrayList<>());
-              return userPuzzleRepository.save(userPuzzle);
-            })
-            .orElseThrow()
-        ))
+        .or(() -> {
+          UserPuzzle userPuzzle = new UserPuzzle();
+          userPuzzle.setUser(user);
+          userPuzzle.setPuzzle(puzzle);
+          userPuzzle.setGuesses(new ArrayList<>());
+          userPuzzle.setSolved(false);
+          userPuzzleRepository.save(userPuzzle);
+          return Optional.of(userPuzzle);
+        })
         .orElseThrow();
   }
+
+//  @Override
+//  public UserPuzzle getOrAddUserPuzzle(User user, Instant date) {
+//    return userPuzzleRepository
+//        .findByUserAndPuzzleDate(user, date)
+//        // TODO: 7/20/25 Check with Nick/Reed to make sure this construction works as intended
+//        .or(() -> Optional.of(
+//            puzzleRepository
+//                .findByDate(date)
+//                .map((puzzle) -> {
+//                  UserPuzzle userPuzzle = new UserPuzzle();
+//                  userPuzzle.setUser(user);
+//                  userPuzzle.setPuzzle(puzzle);
+//                  userPuzzle.setGuesses(new ArrayList<>());
+//                  return userPuzzleRepository.save(userPuzzle);
+//                })
+//                .orElseThrow()
+//        ))
+//        .orElseThrow();
+//  }
 
   @Override
   public UserPuzzle get(User user, Instant date) {
@@ -130,7 +147,7 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
     // 1. Get list of guesses, create 5x5 array, and load into array
     //    - initialize board to zeros
     //    - fill in guesses, one after another
-    int boardLength = 5;
+    int boardLength = solution.getSize();
     char[][] userBoard = new char[boardLength][boardLength];
     char[][] solutionBoard = new char[boardLength][boardLength];
     for (int i = 0; i < boardLength; i++) {

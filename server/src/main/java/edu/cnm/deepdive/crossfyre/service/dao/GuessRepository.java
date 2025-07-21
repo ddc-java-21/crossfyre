@@ -22,7 +22,11 @@ public interface GuessRepository extends CrudRepository<Guess, Long> {
   List<Guess> findByUserPuzzleOrderByCreatedAsc(UserPuzzle puzzle);
 
   Iterable<Guess> findByUserPuzzleOrderByCreatedDesc(UserPuzzle userPuzzle);
-  Optional<Guess> findByguessPosition_GuessRowAndguessPosition_guessColumn(int wordRow, int wordColumn);
+//  Optional<Guess> findByguessPosition_GuessRowAndguessPosition_guessColumn(int wordRow, int wordColumn);
+
+
+
+
 //
 //  This is included to show a JPQL implementation of a Spring Data inferred query.
 //  @Query("SELECT m FROM Message AS m WHERE m.UserPuzzle = :UserPuzzle AND m.posted > :cutoff")
