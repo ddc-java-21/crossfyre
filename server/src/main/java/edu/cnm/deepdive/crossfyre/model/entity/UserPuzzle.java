@@ -109,8 +109,8 @@ public class UserPuzzle {
     this.user = user;
   }
 
-  public Instant getIsSolved() {
-    return isSolved;
+  public Instant getSolved() {
+    return solved;
   }
 
   public void setSolved(Instant solved) {

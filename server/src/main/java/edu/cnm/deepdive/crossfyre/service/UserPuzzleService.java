@@ -139,7 +139,9 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
       }
     }
     for (Guess guess : guesses) {
-      userBoard[guess.getGuessPosition().guessRow()][guess.getGuessPosition().guessColumn()] = guess.getGuessChar();
+      int row = guess.guessPosition.guessRow();
+      int col = guess.guessPosition.guessColumn();
+      userBoard[row][col] = guess.getGuessChar();
     }
     // 2. Use puzzle's word list to generate solution array on the fly
     //     - create empty char array --> char[][] solutionBoard = new char[5][5];

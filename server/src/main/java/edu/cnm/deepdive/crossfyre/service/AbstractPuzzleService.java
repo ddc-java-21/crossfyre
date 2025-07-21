@@ -8,5 +8,5 @@ public interface AbstractPuzzleService {
 
   Puzzle getPuzzle(Puzzle puzzle);
 
-  Puzzle getPuzzleWithDate(Instant date);
+  Puzzle get(Instant date);
 }
