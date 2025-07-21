@@ -55,8 +55,8 @@ anyone's go-to source for some puzzle-solving entertainment.
 ## Persistent data
 
 * PuzzleWord
-  * Display name
-  * OAuth2.0 identifier
+  * PuzzleWord word
+  * Word clue
   * Timestamp of first login to the app
 
 * Puzzle
