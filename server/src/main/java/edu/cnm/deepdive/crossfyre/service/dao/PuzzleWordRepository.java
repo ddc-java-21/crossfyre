@@ -1,15 +1,15 @@
 package edu.cnm.deepdive.crossfyre.service.dao;
 
+import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
+import java.time.Instant;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 
 public interface PuzzleWordRepository extends CrudRepository <PuzzleWord, Long> {
 
-  Optional<PuzzleWord> findById(long id);
+  Optional<PuzzleWord> findByPuzzle_PuzzleDate(Instant date);
 
-  Optional<PuzzleWord> findBywordName(String wordName);
-
-  Optional<PuzzleWord> findBywordRowAndwordColumn(int wordRow, int wordColumn);
+  Iterable<PuzzleWord> findByPuzzleOrderByWordLengthDesc(Puzzle puzzle);
 
 }

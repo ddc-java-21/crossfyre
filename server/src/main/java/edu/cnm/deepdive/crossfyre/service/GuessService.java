@@ -1,7 +1,6 @@
 package edu.cnm.deepdive.crossfyre.service;
 
 import edu.cnm.deepdive.crossfyre.model.entity.Guess;
-import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
 import edu.cnm.deepdive.crossfyre.service.dao.GuessRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
@@ -19,20 +18,15 @@ public class GuessService implements AbstractGuessService {
 
   private final GuessRepository guessRepository;
   private final UserPuzzleRepository userPuzzleRepository;
-  private final PuzzleRepository puzzleRepository;
-  private final UserRepository userRepository;
 
   @Autowired
-  GuessService(GuessRepository guessRepository, UserPuzzleRepository userPuzzleRepository,
-      PuzzleRepository puzzleRepository, UserRepository userRepository) {
+  GuessService(GuessRepository guessRepository, UserPuzzleRepository userPuzzleRepository) {
     this.guessRepository = guessRepository;
     this.userPuzzleRepository = userPuzzleRepository;
-    this.puzzleRepository = puzzleRepository;
-    this.userRepository = userRepository;
   }
 
   @Override
-  public Iterable<Guess> getAllInUserPuzzle(UUID userPuzzleKey, User user, Instant date) {
+  public Iterable<Guess> getAllInUserPuzzle(User user, Instant date) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, date)
         .map(guessRepository::findByUserPuzzleOrderByCreatedAsc)
@@ -43,7 +37,7 @@ public class GuessService implements AbstractGuessService {
   }
 
   @Override
-  public Guess add(UUID userPuzzleKey, User user, Instant date, Guess guess) {
+  public Guess add(User user, Instant date, Guess guess) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, date)
         .map((userPuzzle) -> {
@@ -54,10 +48,10 @@ public class GuessService implements AbstractGuessService {
   }
 
   @Override
-  public Guess get(UUID userPuzzleKey, User user, Instant date, UUID guessKey) {
+  public Guess get(User user, Instant date) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, date)
-        .flatMap((userPuzzle) -> guessRepository.findByUserPuzzleAndExternalKey(userPuzzle, guessKey))
+        .flatMap(guessRepository::findByUserPuzzle)
         .orElseThrow();
   }
 

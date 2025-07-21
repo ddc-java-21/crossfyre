@@ -11,7 +11,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface UserPuzzleRepository extends CrudRepository<UserPuzzle, Long> {
 
 // Query to find a userpuzzle from first by   
-  @Query("SELECT up FROM UserPuzzle as up WHERE up.user = :user AND up.puzzle = (SELECT p from Puzzle as p WHERE p.date = :date)")
+  @Query("SELECT up FROM UserPuzzle as up WHERE up.user = :user AND up.puzzle = (SELECT p from Puzzle as p WHERE p.puzzleDate = :date)")
   Optional<UserPuzzle> findByUserAndPuzzleDate(User user, Instant date);
 
   Iterable<UserPuzzle> findByUserAndPuzzleOrderByCreatedAsc(User user, Puzzle puzzle);

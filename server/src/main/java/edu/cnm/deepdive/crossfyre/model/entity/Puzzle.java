@@ -54,7 +54,7 @@ public class Puzzle {
   @Temporal(TemporalType.DATE)
   @Column(nullable = false, updatable = false)
   @JsonProperty(value = "date", access = Access.READ_ONLY)
-  private Instant date;
+  private Instant puzzleDate;
 
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
   @JsonIgnore
@@ -98,12 +98,12 @@ public class Puzzle {
     this.created = created;
   }
 
-  public Instant getDate() {
-    return date;
+  public Instant getPuzzleDate() {
+    return puzzleDate;
   }
 
-  public void setDate(Instant date) {
-    this.date = date;
+  public void setPuzzleDate(Instant date) {
+    this.puzzleDate = date;
   }
 
   public List<UserPuzzle> getUserPuzzles() {

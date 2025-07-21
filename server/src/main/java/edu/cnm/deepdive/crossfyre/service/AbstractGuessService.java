@@ -7,11 +7,11 @@ import java.util.UUID;
 
 public interface AbstractGuessService {
 
-  Iterable<Guess> getAllInUserPuzzle(UUID userPuzzleKey, User user, Instant date);
+  Iterable<Guess> getAllInUserPuzzle(User user, Instant date);
 
-  Guess add(UUID userPuzzleKey, User user, Instant date, Guess guess);
+  Guess add(User user, Instant date, Guess guess);
 
-  Guess get(UUID userPuzzleKey, User user, Instant date, UUID guessKey);
+  Guess get(User user, Instant date);
 
 //  Iterable<Guess> getAllInUserPuzzle(Instant puzzleDate);
 

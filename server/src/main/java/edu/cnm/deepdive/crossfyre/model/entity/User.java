@@ -31,7 +31,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table(name = "user_profile")
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "displayName", "avatar", "created"})
+@JsonPropertyOrder({"key", "displayName", "avatar", "created", "date"})
 @JsonView(UserViews.Public.class)
 public class User {
 

@@ -4,7 +4,7 @@ import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
-@ConfigurationProperties(prefix = "crossfyre")
+//@ConfigurationProperties(prefix = "crossfyre")
 public class CrossfyreConfiguration {
 
   /**

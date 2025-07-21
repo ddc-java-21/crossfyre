@@ -1,7 +1,6 @@
 package edu.cnm.deepdive.crossfyre.service.dao;
 
 import edu.cnm.deepdive.crossfyre.model.entity.Guess;
-import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import java.time.Instant;
 import java.util.Optional;
@@ -10,9 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface GuessRepository extends CrudRepository<Guess, Character> {
 
-  Optional<Guess> findByExternalKey(UUID externalKey);
-
-  Optional<Guess> findByUserPuzzleAndExternalKey(UserPuzzle puzzle, UUID externalKey);
+  Optional<Guess> findByUserPuzzle(UserPuzzle puzzle);
 
   Iterable<Guess> findByUserPuzzleOrderByCreatedAsc(UserPuzzle puzzle);
 

@@ -3,7 +3,6 @@ package edu.cnm.deepdive.crossfyre.service;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import java.time.Instant;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -21,14 +20,24 @@ public class PuzzleService implements AbstractPuzzleService {
 
 
   @Override
-  public Puzzle getPuzzle(Puzzle currentPuzzle) {
-    return currentPuzzle;
+  public Iterable<Puzzle> getAll() {
+    return puzzleRepository.getAllByOrderByPuzzleDateDesc();
   }
 
   @Override
-  public Puzzle getPuzzleWithDate(Instant date) {
+  public Puzzle add(Puzzle newPuzzle) {
+    Puzzle puzzle = new Puzzle();
+    puzzle.setBoard(newPuzzle.getBoard());
+    puzzle.setPuzzleDate(newPuzzle.getPuzzleDate());
+    puzzle.setSize(newPuzzle.getSize());
+    puzzle.setCreated(Instant.now());
+    return puzzleRepository.save(puzzle);
+  }
+
+  @Override
+  public Puzzle get(Instant puzzleDate) {
     return puzzleRepository
-        .findByDate(date)
+        .findByPuzzleDate(puzzleDate)
         .orElseThrow();
   }
 

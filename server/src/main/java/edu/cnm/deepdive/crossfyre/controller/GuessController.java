@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/userPuzzles/{userPuzzleKey}/guesses")
+@RequestMapping("/userPuzzles/{userPuzzleDate}/guesses")
 @Validated
 @Profile("service")
 public class GuessController {
@@ -33,37 +33,31 @@ public class GuessController {
   // TODO: 7/18/2025 Add Dorian's endpoints
 
   private final AbstractGuessService guessService;
-private final PuzzleService puzzleService;
-private final UserService userService;
+  private final UserService userService;
 
   @Autowired
-  public GuessController(AbstractGuessService guessService, UserPuzzleService userPuzzleService,
-      PuzzleService puzzleService,
-      UserService userService) {
+  public GuessController(AbstractGuessService guessService, UserService userService) {
     this.guessService = guessService;
-    this.puzzleService = puzzleService;
     this.userService = userService;
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public Iterable<Guess> get(@PathVariable UUID userPuzzleKey, User user, Instant date) {
-    return guessService.getAllInUserPuzzle(userPuzzleKey, user, date);
+  public Iterable<Guess> get(User user, @PathVariable Instant userPuzzleDate) {
+    return guessService.getAllInUserPuzzle(user, userPuzzleDate);
   }
 
-  @GetMapping(path = "/{guessKey}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Guess get(
-      @PathVariable UUID userPuzzleKey, User user, Instant date,
-      @PathVariable UUID guessKey) {
-    return guessService.get(userPuzzleKey, user, date, guessKey);
-  }
+//  @GetMapping(path = "/{guessKey}", produces = MediaType.APPLICATION_JSON_VALUE)
+//  public Guess get(User user, Instant date, @PathVariable UUID guessKey) {
+//    return guessService.get(user, date, guessKey);
+//  }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Guess> post(@PathVariable UUID userPuzzleKey, @Valid @RequestBody Guess guess, Instant date) {
-    Guess created = guessService.add(userPuzzleKey, userService.getCurrentUser(), date, guess);
+  public ResponseEntity<Guess> post(@Valid @RequestBody Guess guess, @PathVariable Instant userPuzzleDate) {
+    Guess created = guessService.add(userService.getCurrentUser(), userPuzzleDate, guess);
     URI location = WebMvcLinkBuilder.linkTo(
-        WebMvcLinkBuilder.methodOn(getClass())
-            .get(created.getUserPuzzle().getExternalKey(), userService.getCurrentUser(), date)
-    )
+            WebMvcLinkBuilder.methodOn(getClass())
+                .get(userService.getCurrentUser(), userPuzzleDate)
+        )
         .toUri();
     return ResponseEntity.created(location).body(created);
   }

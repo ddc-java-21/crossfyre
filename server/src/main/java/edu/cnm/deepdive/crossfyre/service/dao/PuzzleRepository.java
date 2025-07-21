@@ -8,7 +8,8 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface PuzzleRepository extends CrudRepository<Puzzle, Long> {
 
-  Optional<Puzzle> findByDate(Instant date);
+  Optional<Puzzle> findByPuzzleDate(Instant date);
 
-  Iterable<Puzzle> getAllByDateOrderByDateDesc();
+
+  Iterable<Puzzle> getAllByOrderByPuzzleDateDesc();
 }
