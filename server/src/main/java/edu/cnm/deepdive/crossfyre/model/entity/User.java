@@ -63,6 +63,7 @@ public class User {
   @JsonProperty(access = Access.READ_ONLY)
   private Instant created;
 
+
   public long getId() {
     return id;
   }
@@ -98,6 +99,7 @@ public class User {
   public Instant getCreated() {
     return created;
   }
+
 
   @Override
   public int hashCode() {

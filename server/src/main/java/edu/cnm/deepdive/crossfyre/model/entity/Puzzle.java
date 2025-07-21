@@ -25,10 +25,9 @@ import org.hibernate.annotations.CreationTimestamp;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "title", "size", "board", "created"})
+@JsonPropertyOrder({"key", "size", "board", "created"})
 public class Puzzle {
 
-  public static final int PUZZLE_TITLE_LENGTH = 15;
   @Id
   @GeneratedValue
   @Column(name = "puzzle_id", nullable = false, updatable = false)
@@ -39,16 +38,12 @@ public class Puzzle {
   @JsonProperty(value = "key", access = Access.READ_ONLY)
   private UUID externalKey;
 
-  @Column(nullable = false, updatable = true, unique = true, length = PUZZLE_TITLE_LENGTH)
-  private String title;
-
-
   @Column(nullable = false, updatable = false)
   @JsonProperty(access = Access.READ_ONLY)
   private int size;
 
   @Column(nullable = false, updatable = false)
-  private String board;
+  private Board board;
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
@@ -56,14 +51,19 @@ public class Puzzle {
   @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
 
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(nullable = false, updatable = false)
+  @JsonProperty(value = "date", access = Access.READ_ONLY)
+  private Instant date;
+
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
   @JsonIgnore
-  private final List<UserPuzzle> userPuzzles = new LinkedList<>();
+  private List<UserPuzzle> userPuzzles = new LinkedList<>();
 
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY,
       cascade = CascadeType.ALL,orphanRemoval = true)
-  @JsonIgnore
-  private final List<PuzzleWord> puzzleWords = new LinkedList<>(); // TN 2025-07-07 added puzzleWords list
+  @JsonProperty(value = "puzzleWords", access = Access.READ_ONLY)
+  private List<PuzzleWord> puzzleWords = new LinkedList<>(); // TN 2025-07-07 added puzzleWords list
 
 
   public long getId() {
@@ -74,14 +74,6 @@ public class Puzzle {
     return externalKey;
   }
 
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
   public int getSize() {
     return size;
   }
@@ -90,16 +82,28 @@ public class Puzzle {
     this.size = size;
   }
 
-  public String getBoard() {
+  public Board getBoard() {
     return board;
   }
 
-  public void setBoard(String board) {
+  public void setBoard(Board board) {
     this.board = board;
   }
 
   public Instant getCreated() {
     return created;
+  }
+
+  public void setCreated(Instant created) {
+    this.created = created;
+  }
+
+  public Instant getDate() {
+    return date;
+  }
+
+  public void setDate(Instant date) {
+    this.date = date;
   }
 
   public List<UserPuzzle> getUserPuzzles() {
@@ -132,4 +136,22 @@ public class Puzzle {
   void generateFieldValues() {
     externalKey = UUID.randomUUID();
   }
+
+  public enum Board {
+    SUNDAY    ("0__________________0____0"),
+    MONDAY    ("0___00___0_______________"),
+    TUESDAY   ("00_____________________00"),
+    WEDNESDAY ("___00_______________00___"),
+    THURSDAY  ("0___0_______________0___0"),
+    FRIDAY    ("____0____0_____0____0____"),
+    SATURDAY  ("___00____0_____0____00___");
+
+    public final String day;
+
+    Board(String day) {
+      this.day = day;
+    }
+
+  }
+
 }
