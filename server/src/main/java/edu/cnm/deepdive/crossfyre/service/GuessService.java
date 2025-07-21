@@ -7,6 +7,7 @@ import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.service.dao.GuessRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
+import edu.cnm.deepdive.crossfyre.service.dao.UserRepository;
 import java.time.Instant;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ public class GuessService implements AbstractGuessService {
   private final GuessRepository guessRepository;
   private final UserPuzzleRepository userPuzzleRepository;
   private final PuzzleRepository puzzleRepository;
+  private final UserRepository userRepository;
 
   @Autowired
   GuessService(GuessRepository guessRepository, UserPuzzleRepository userPuzzleRepository,
@@ -27,6 +29,7 @@ public class GuessService implements AbstractGuessService {
     this.guessRepository = guessRepository;
     this.userPuzzleRepository = userPuzzleRepository;
     this.puzzleRepository = puzzleRepository;
+    this.userRepository = userRepository;
   }
 
   @Override

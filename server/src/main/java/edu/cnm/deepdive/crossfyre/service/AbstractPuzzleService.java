@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public interface AbstractPuzzleService {
 
-  Puzzle get(Instant date);
+  Puzzle getPuzzle(Puzzle puzzle);
 
+  Puzzle getPuzzleWithDate(Instant date);
 }

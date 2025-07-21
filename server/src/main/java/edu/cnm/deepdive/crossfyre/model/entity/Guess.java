@@ -15,14 +15,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import java.time.Instant;
-import java.util.UUID;
+import org.hibernate.annotations.CreationTimestamp;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"puzzle", "clue", "row", "column", "guess"})
+@JsonPropertyOrder({"puzzle", "clue", "wordName", "row", "column", "direction"})
 public class Guess {
 
   private static final int CHARACTER_GUESS_LIMIT = 1;
@@ -57,13 +58,10 @@ public class Guess {
       @JsonProperty(value = "column", access = Access.READ_ONLY)
       int guessColumn){}
 
-  private GuessPosition guessPosition;
-
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_WRITE)
   private UserPuzzle userPuzzle;
-
 
   public long getId() {
     return id;
@@ -95,14 +93,6 @@ public class Guess {
 
   public void setUserPuzzle(UserPuzzle userPuzzle) {
     this.userPuzzle = userPuzzle;
-  }
-
-  public GuessPosition getGuessPosition() {
-    return guessPosition;
-  }
-
-  public void setGuessPosition(GuessPosition guessPosition) {
-    this.guessPosition = guessPosition;
   }
 
   @Override

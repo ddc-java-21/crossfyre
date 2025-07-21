@@ -15,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -28,7 +27,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "created", "solved", "isSolved"})
+@JsonPropertyOrder({"key", "created", "solved"})
 public class UserPuzzle {
 
   @Id
@@ -110,8 +109,8 @@ public class UserPuzzle {
     this.user = user;
   }
 
-  public Instant getSolved() {
-    return solved;
+  public Instant getIsSolved() {
+    return isSolved;
   }
 
   public void setSolved(Instant solved) {
@@ -148,5 +147,4 @@ public class UserPuzzle {
   void generateFieldValues() {
     externalKey = UUID.randomUUID();
   }
-
 }
