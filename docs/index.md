@@ -55,28 +55,29 @@ anyone's go-to source for some puzzle-solving entertainment.
 ## Persistent data
 
 * PuzzleWord
-  * PuzzleWord word
-  * Word clue
-  * Timestamp of first login to the app
+  * Clue
+  * Direction
+  * Word Position
+    * Row
+    * Column
+    * Word Length
 
 * Puzzle
-  * Task title
-  * Task description
-  * Timestamp of task creation
-  * Assigned task date
-  * Completion of a task
+  * External Key
+  * Size
+  * Board
+  * Created Instant
+  * Assigned Date Instant
 
 * UserPuzzle
-  * Puzzle identifier
-  * User identifier for puzzle of User
-  * Timestamp of task creation
+  * External Key
+  * isSolved
+  * List<Guesses>
   * Timestamp of completion
 
 * Guess
-  * Note title
-  * Note description
-  * Timestamp of task creation
-  * Optionally assigned note date
+  * External Key
+  * Guess Character
 
 * User
   * Display name
