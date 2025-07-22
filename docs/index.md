@@ -39,8 +39,10 @@ allowing for construction (and reconstruction) of the board.
 * Implementation of puzzle generator (algorithm candidates have been found, but not yet added);
 * Setup of Merriam Webster API for dictionary entry retrieval for PuzzleWord clues;
 * (Optional) Setup of Datamuse API for assistance in generator processing;
+* Throwing of custom exception classes;
+* Implementation of remaining endpoints;
 * Javadoc documentation;
-* Stretch Goals (see below).
+* Stretch goals (see below).
 
 
 ## Intended users and user stories
