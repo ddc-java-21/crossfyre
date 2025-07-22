@@ -14,4 +14,4 @@ order: 20
 
 ## Wireframe diagram
 
-[![CrossFyre Wireframe Entity Diagram](img/CrossFyre-Wireframe.svg)](pdf/CrossFyre-Wireframe.pdf)
+[![CrossFyre Wireframe Entity Diagram](img/CrossFyre-Wireframe.drawio.svg)](pdf/CrossFyre-Wireframe.drawio.pdf)

@@ -23,6 +23,28 @@ to leave and comeback to play a puzzle whenever they feel like it. So whether th
 brain-teaser with their morning coffee or feeling like expanding their vocabulary, CrossFyre is
 anyone's go-to source for some puzzle-solving entertainment.
 
+## Current State of the Project, Milestone 3 - July 21, 2025
+
+  As it stands, the main CrossFyre server application is mostly implemented, with endpoint requests
+allowing retrieval of game state information for a user by puzzle on a given date. Specifically,
+calls to the /crossfyre/userpuzzles/{date} endpoint are able to create a new UserPuzzle if one does
+not already exist, or retrieve one if it does; this UserPuzzle then contains both a list of the 
+user's guesses for that puzzle up to that point, along with the list of clues and word vectors
+allowing for construction (and reconstruction) of the board.
+
+  Features that remain to be implemented:
+* Android front-end client application;
+* Guess submission to load UserPuzzle with guesses (updating/progressing game state) (needs test);
+* Testing of validation logic for game state (method implemented but not yet hooked to game logic);
+* Implementation of puzzle generator (algorithm candidates have been found, but not yet added);
+* Setup of Merriam Webster API for dictionary entry retrieval for PuzzleWord clues;
+* (Optional) Setup of Datamuse API for assistance in generator processing;
+* Throwing of custom exception classes;
+* Implementation of remaining endpoints;
+* Javadoc documentation;
+* Stretch goals (see below).
+
+
 ## Intended users and user stories
 
 - A kid who wants a fun but challenging way to learn new words through quick, brain-teaser like
@@ -55,28 +77,29 @@ anyone's go-to source for some puzzle-solving entertainment.
 ## Persistent data
 
 * PuzzleWord
-  * Display name
-  * OAuth2.0 identifier
-  * Timestamp of first login to the app
+  * Clue
+  * Direction
+  * Word Position
+    * Row
+    * Column
+    * Word Length
 
 * Puzzle
-  * Task title
-  * Task description
-  * Timestamp of task creation
-  * Assigned task date
-  * Completion of a task
+  * External Key
+  * Size
+  * Board
+  * Created Instant
+  * Assigned Date Instant
 
 * UserPuzzle
-  * Puzzle identifier
-  * User identifier for puzzle of User
-  * Timestamp of task creation
+  * External Key
+  * isSolved
+  * List<Guesses>
   * Timestamp of completion
 
 * Guess
-  * Note title
-  * Note description
-  * Timestamp of task creation
-  * Optionally assigned note date
+  * External Key
+  * Guess Character
 
 * User
   * Display name
