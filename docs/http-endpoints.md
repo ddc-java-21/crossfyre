@@ -1,5 +1,5 @@
 ---
-title: Data Model
+title: HTTP Endpoints
 description: "HTTP Endpoint Methods and Request Information"
 order: 40
 ---
