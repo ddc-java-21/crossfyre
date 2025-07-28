@@ -1,95 +1,77 @@
 package edu.cnm.deepdive.crossfyre.view.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import dagger.hilt.android.qualifiers.ActivityContext;
 import dagger.hilt.android.scopes.FragmentScoped;
 import edu.cnm.deepdive.crossfyre.databinding.ItemSquareBinding;
-import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
 @FragmentScoped
-public class SquareAdapter extends Adapter<ViewHolder> {
+public class SquareAdapter extends RecyclerView.Adapter<SquareAdapter.Holder> {
 
-  private final List<PuzzleWord> words;
+
   private final LayoutInflater inflater;
-
-  @NonNull
-  private OnClickListener clickListener;
-  @NonNull
-  private OnLongClickListener longClickListener;
+  private final List<String> squares = new ArrayList<>();
 
   @Inject
   SquareAdapter(@ActivityContext Context context) {
-    words = new ArrayList<>();
     inflater = LayoutInflater.from(context);
-    clickListener = (word, position) -> {};
   }
 
+  public void setMask(String mask, int gridSize) {
+    squares.clear();
+    for (int i = 0; i < mask.length(); i++) {
+      char c = mask.charAt(i);
+      squares.add((c == '0') ? null : ""); // null for black cell, "" for empty
+    }
+    notifyDataSetChanged();
+  }
 
   @NonNull
   @Override
-  public ViewHolder onCreateViewHolder(@NonNull ViewGroup container, int i) {
-    ItemSquareBinding binding =ItemSquareBinding.inflate(inflater, container, false);
-    return new Holder(binding, clickListener, longClickListener);
+  public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    ItemSquareBinding binding = ItemSquareBinding.inflate(inflater, parent, false);
+    return new Holder(binding);
   }
 
   @Override
-  public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-
+  public void onBindViewHolder(@NonNull Holder holder, int position) {
+    holder.bind(squares.get(position));
   }
 
   @Override
   public int getItemCount() {
-    return words.size();
+    return squares.size();
   }
 
-  private static class Holder extends ViewHolder {
+    static class Holder extends RecyclerView.ViewHolder {
 
-    private final ItemSquareBinding binding;
+      private final ItemSquareBinding binding;
 
-    private OnClickListener clickListener;
-    private OnLongClickListener longClickListener;
+      public Holder(@NonNull ItemSquareBinding binding) {
+        super(binding.getRoot());
+        this.binding = binding;
+      }
 
-    Holder(@NonNull ItemSquareBinding binding,
-        @NonNull OnClickListener clickListener, @NonNull OnLongClickListener longClickListener) {
-      super(binding.getRoot());
-      this.binding =binding;
-      this.clickListener = clickListener;
-      this.longClickListener = longClickListener;
+      public void bind(String content) {
+        if (content == null) {
+          // Black (dead) square
+          binding.getRoot().setBackgroundColor(Color.BLACK);
+          binding.square.setText("");
+        } else {
+          binding.getRoot().setBackgroundColor(Color.WHITE);
+          binding.square.setText(content);
+        }
+      }
     }
-
-    void bind(int positionRow, int positionCol, PuzzleWord word) {
-      binding.title.setText(note.getTitle());
-      String noteDescription = note.getDescription();
-      binding.description.setText(noteDescription != null ? noteDescription : "");
-      binding.created.setText(
-          formatter.format(
-              ZonedDateTime.ofInstant(note.getCreated(), ZoneId.systemDefault())));
-      binding.thumbnail.setVisibility((View.GONE));
-      // TODO: 6/17/2025 Display Thumbnail
-      binding
-          .getRoot()
-          .setOnClickListener((v) -> listener.onNoteClick(note, position));
-    }
-
-
-  }
-
-  public interface OnNoteClickListener {
-    void onNoteClick(NoteWithImages note, int position);
-
-  }
 }
