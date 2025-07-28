@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -25,7 +27,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"key", "size", "board", "created"})
+@JsonPropertyOrder({"key", "size", "board", "created, date, puzzleWords"})
 public class Puzzle {
 
   @Id
@@ -42,6 +44,7 @@ public class Puzzle {
   @JsonProperty(access = Access.READ_ONLY)
   private int size;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false, updatable = false)
   private Board board;
 
@@ -52,8 +55,8 @@ public class Puzzle {
   private Instant created;
 
   @Temporal(TemporalType.TIMESTAMP)
-  @Column(nullable = false, updatable = false)
-  @JsonProperty(value = "date", access = Access.READ_ONLY)
+  @Column(nullable = true, updatable = true)
+  @JsonProperty(value = "date", access = Access.READ_WRITE)
   private Instant date;
 
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship

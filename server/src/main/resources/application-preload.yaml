@@ -5,7 +5,9 @@ spring:
   main:
     web-application-type: none
 
-chat:
+crossfyre:
   preload:
     # noinspection SpringBootApplicationYaml
-    file: preload/puzzles.json
+    file:
+      puzzle: preload/puzzle.json
+      words: preload/words.json

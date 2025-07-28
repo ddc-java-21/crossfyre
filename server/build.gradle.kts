@@ -88,6 +88,7 @@ dependencies {
     testImplementation(libs.spring.restdocs.mockmvc)
     testImplementation(libs.spring.security.test)
     testRuntimeOnly(libs.junit.platform)
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0")
 }
 
 tasks.withType<Test> {
