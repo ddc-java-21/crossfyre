@@ -7,4 +7,5 @@
   <string name="settings_fragment_label">Crossfyre Settings</string>
   <string name="bearer_token_title">Bearer Token</string>
   <string name="app_name">Crossfyre</string>
+  <string name="todays_puzzle_title">Today\'s Puzzle</string>
 </resources>

@@ -4,26 +4,25 @@
   android:layout_height="match_parent"
   xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <LinearLayout
-    android:id="@+id/top_bar"
-    android:layout_width="match_parent"
-    android:layout_height="64dp"
-    android:background="#88CCCCCC"
-    android:orientation="horizontal"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent">
+<!--  <LinearLayout-->
+<!--    android:id="@+id/top_bar"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="64dp"-->
+<!--    android:background="#88CCCCCC"-->
+<!--    android:orientation="horizontal"-->
+<!--    app:layout_constraintTop_toTopOf="parent"-->
+<!--    app:layout_constraintStart_toStartOf="parent"-->
+<!--    app:layout_constraintEnd_toEndOf="parent">-->
 
-<ImageView
-  android:id="@+id/crossfyre_icon"
-  android:layout_width="48dp"
-  android:layout_height="match_parent"
-  android:src="@drawable/crossfyre_icon_no_texts"
-  android:layout_margin="@dimen/half_dynamic_spacing"
-  />
-
-
-  </LinearLayout>
+<!--<ImageView-->
+<!--  android:id="@+id/crossfyre_icon"-->
+<!--  android:layout_width="48dp"-->
+<!--  android:layout_height="match_parent"-->
+<!--  android:src="@drawable/crossfyre_icon_no_texts"-->
+<!--  android:layout_margin="@dimen/half_dynamic_spacing"-->
+<!--  />-->
+<!--    -->
+<!--  </LinearLayout>-->
 
   <GridLayout
     android:id="@+id/puzzle_grid"
@@ -33,7 +32,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="1.0"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/top_bar"
+    app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintVertical_bias="0.025"/>
   <androidx.constraintlayout.widget.Guideline
     android:id="@+id/guideline_horizontal"

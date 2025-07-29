@@ -66,7 +66,7 @@ public class PuzzleWord {
   //Consider adding length to record?
   @SuppressWarnings("JpaObjectClassSignatureInspection")
   @Embeddable
-  public record wordPosition(
+  public record WordPosition(
       @Column(nullable = false, updatable = false)
       @JsonProperty(value = "row", access = Access.READ_ONLY)
       int wordRow,
@@ -80,7 +80,7 @@ public class PuzzleWord {
       int wordLength
     ){}
 
-  private wordPosition wordPosition;
+  private WordPosition wordPosition;
 
   // TODO: 7/15/2025 Check enumerated/enum declaration
   @Enumerated(EnumType.STRING)
@@ -124,14 +124,6 @@ public class PuzzleWord {
 
   public void setClue(String clue) {
     this.clue = clue;
-  }
-
-  public wordPosition getWordPosition() {
-    return wordPosition;
-  }
-
-  public void setWordPosition(wordPosition wordPosition) {
-    this.wordPosition = wordPosition;
   }
 
   public Direction getWordDirection() {

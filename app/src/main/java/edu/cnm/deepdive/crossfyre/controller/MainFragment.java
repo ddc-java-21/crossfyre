@@ -40,9 +40,6 @@ public class MainFragment extends Fragment implements MenuProvider {
     FragmentActivity activity = requireActivity();
     viewModel = new ViewModelProvider(activity).get(LoginViewModel.class);
     LifecycleOwner owner = getViewLifecycleOwner();
-    viewModel
-        .getAccount()
-        .observe(owner, this::handleAccount);
     activity.addMenuProvider(this, owner, State.RESUMED);
   }
 
@@ -62,18 +59,13 @@ public class MainFragment extends Fragment implements MenuProvider {
     boolean handled = false;
     if (menuItem.getItemId() == R.id.sign_out) {
       viewModel.signOut();
+    } else if (menuItem.getItemId() == R.id.puzzle_menu) {
+      Navigation.findNavController(requireView())
+          .navigate(R.id.action_main_fragment_to_puzzle_fragment);
     }
     return handled;
   }
 
-  /** @noinspection deprecation*/
-  private void handleAccount(GoogleSignInAccount account) {
-    if (account == null) {
-      Navigation.findNavController(binding.getRoot())
-          .navigate(MainFragmentDirections.showPreLogin());
-    } else {
-      binding.bearerToken.setText(account.getIdToken());
-    }
-  }
+
 
 }

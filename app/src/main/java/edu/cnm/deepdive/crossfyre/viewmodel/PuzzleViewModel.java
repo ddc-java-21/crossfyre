@@ -2,11 +2,12 @@ package edu.cnm.deepdive.crossfyre.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PuzzleViewModel {
+public class PuzzleViewModel extends ViewModel {
 
   private final MutableLiveData<List<PuzzleWord>> words = new MutableLiveData<>(new ArrayList<>());
   private final MutableLiveData<PuzzleWord.Direction> selectedDirection = new MutableLiveData<>(PuzzleWord.Direction.ACROSS);

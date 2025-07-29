@@ -4,8 +4,21 @@
   xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
+    android:id="@+id/puzzle_menu"
+    android:title="@string/todays_puzzle_title"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/half_dynamic_spacing"
+    />
+
+
+  <item
     android:id="@+id/sign_out"
     android:title="@string/sign_out_title"
+    android:background="#88CCCCCC"
     app:showAsAction="never"/>
+
+
+
 
 </menu>

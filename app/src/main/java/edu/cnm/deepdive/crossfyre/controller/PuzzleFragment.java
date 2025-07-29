@@ -12,12 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import dagger.hilt.android.AndroidEntryPoint;
-import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.FragmentPuzzleBinding;
 import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.view.adapter.SquareAdapter;
 import edu.cnm.deepdive.crossfyre.viewmodel.PuzzleViewModel;
-import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -40,7 +38,7 @@ public class PuzzleFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    viewModel = new ViewModelProvider(this).get(PuzzleViewModel.class);
+    viewModel = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
 
     // Observe ViewModel state
     viewModel.getSelectedWord().observe(getViewLifecycleOwner(), word -> {
@@ -56,9 +54,6 @@ public class PuzzleFragment extends Fragment {
     viewModel.getWords().observe(getViewLifecycleOwner(), words -> {
       populateGrid(words);
     });
-
-    // Dummy test data
-    viewModel.setWords(generateFakeWords());
   }
 
   private void populateGrid(List<PuzzleWord> words) {
@@ -68,14 +63,13 @@ public class PuzzleFragment extends Fragment {
     grid.setColumnCount(15);
 
     for (PuzzleWord word : words) {
-      PuzzleWord.wordPosition pos = word.wordPosition();
+      PuzzleWord.WordPosition pos = word.wordPosition;
       for (int i = 0; i < pos.wordLength(); i++) {
         int row = word.getWordDirection() == PuzzleWord.Direction.ACROSS ? pos.wordRow() : pos.wordRow() + i;
         int col = word.getWordDirection() == PuzzleWord.Direction.ACROSS ? pos.wordColumn() + i : pos.wordColumn();
 
         TextView cell = new TextView(requireContext());
         cell.setText(" ");
-        cell.setBackgroundResource(R.drawable.cell_border);
         cell.setPadding(8, 8, 8, 8);
         cell.setGravity(Gravity.CENTER);
 
@@ -97,20 +91,5 @@ public class PuzzleFragment extends Fragment {
         grid.addView(cell);
       }
     }
-  }
-
-  private List<PuzzleWord> generateFakeWords() {
-    List<PuzzleWord> words = new ArrayList<>();
-    words.add(new PuzzleWord()
-        .setId(1)
-        .setClue("A programming language")
-        .setWordDirection(PuzzleWord.Direction.ACROSS)
-        .setWordPosition(new PuzzleWord.wordPosition(3, 1, 4)));
-    words.add(new PuzzleWord()
-        .setId(2)
-        .setClue("Something you drink")
-        .setWordDirection(PuzzleWord.Direction.DOWN)
-        .setWordPosition(new PuzzleWord.wordPosition(2, 2, 4)));
-    return words;
   }
 }
