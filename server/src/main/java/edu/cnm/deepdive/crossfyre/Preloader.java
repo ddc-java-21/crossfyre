@@ -10,6 +10,7 @@ import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleWordRepository;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,12 +65,13 @@ public class Preloader implements CommandLineRunner {
       puzzle.setDate(puzzleDto.getDate());
       puzzle.setSize(puzzleDto.getSize());
       puzzle.setBoard(Puzzle.Board.valueOf(puzzleDto.getBoard().toString()));
-      repository.save(puzzle);
+      Puzzle updated = repository.save(puzzle);
+      System.out.println("Updated puzzle id: " + updated.getId());
 
       List<PuzzleWord> puzzleWords = new ArrayList<>();
       for (int i = 0; i < puzzleDto.getPuzzleWords().size(); i++) {
         PuzzleWord puzzleWord = new PuzzleWord();
-        puzzleWord.setPuzzle(puzzle);
+        puzzleWord.setPuzzle(updated);
         puzzleWord.setWordName(puzzleDto.getPuzzleWords().get(i).getWordName());
         puzzleWord.setClue(puzzleDto.getPuzzleWords().get(i).getClue());
         puzzleWord.setWordDirection(PuzzleWord.Direction.valueOf(puzzleDto.getPuzzleWords().get(i).getDirection().toString()));
@@ -79,6 +81,13 @@ public class Preloader implements CommandLineRunner {
             puzzleDto.getPuzzleWords().get(i).getWordPosition().getLength()
         ));
         puzzleWords.add(puzzleWord);
+      }
+      for (PuzzleWord puzzleWord : puzzleWords) {
+        System.out.println("Preloaded puzzleWords: ");
+        System.out.println(puzzleWord.getWordName());
+        System.out.println(puzzleWord.getClue());
+        System.out.println(puzzleWord.getExternalKey());
+        System.out.println(puzzleWord.getPuzzle().getId());
       }
       puzzleWordRepository.saveAll(puzzleWords);
 
