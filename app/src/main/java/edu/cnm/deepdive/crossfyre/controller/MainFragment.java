@@ -40,6 +40,9 @@ public class MainFragment extends Fragment implements MenuProvider {
     FragmentActivity activity = requireActivity();
     viewModel = new ViewModelProvider(activity).get(LoginViewModel.class);
     LifecycleOwner owner = getViewLifecycleOwner();
+    viewModel
+        .getAccount()
+        .observe(owner, this::handleAccount);
     activity.addMenuProvider(this, owner, State.RESUMED);
   }
 
@@ -66,6 +69,15 @@ public class MainFragment extends Fragment implements MenuProvider {
     return handled;
   }
 
-
-
+  /**
+   * @noinspection deprecation
+   */
+  private void handleAccount(GoogleSignInAccount account) {
+    if (account == null) {
+      Navigation.findNavController(binding.getRoot())
+          .navigate(MainFragmentDirections.showPreLogin());
+    } else {
+      binding.bearerToken.setText(account.getIdToken());
+    }
+  }
 }
