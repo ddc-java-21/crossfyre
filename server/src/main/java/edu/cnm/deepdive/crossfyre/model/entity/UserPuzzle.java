@@ -47,7 +47,6 @@ public class UserPuzzle {
   @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
 
-  @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = true, updatable = true)
   @JsonProperty(value = "solved", access = Access.READ_WRITE)

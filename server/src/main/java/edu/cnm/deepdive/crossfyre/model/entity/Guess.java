@@ -16,8 +16,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import java.time.Instant;
 import java.util.UUID;
+import org.hibernate.annotations.CreationTimestamp;
 
 @SuppressWarnings({"JpaDataSourceORMInspection", "RedundantSuppression"})
 @Entity
@@ -41,6 +44,8 @@ public class Guess {
   @JsonProperty(value = "guess", access = Access.READ_WRITE) // TN 2025-07-07 changed from WRITE.ONLY
   private Character guessChar;
 
+  @CreationTimestamp
+  @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
   @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
@@ -62,6 +67,7 @@ public class Guess {
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_WRITE)
+  @JsonIgnore
   private UserPuzzle userPuzzle;
 
 
