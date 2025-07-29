@@ -5,6 +5,24 @@
   android:layout_height="match_parent"
   xmlns:app="http://schemas.android.com/apk/res-auto">
 
+  <Button
+    android:id="@+id/play_button"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:text="@string/play_button_text"
+    app:layout_constraintBottom_toTopOf="@id/play_button"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    />
+
+  <Button
+    android:id="@+id/sign_out_button"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toBottomOf="@id/play_button"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"/>
+
   <TextView
     android:id="@+id/bearer_token"
     android:layout_width="0dp"
@@ -15,5 +33,7 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintWidth_percent="0.75"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

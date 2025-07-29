@@ -13,7 +13,7 @@
 
   <item
     android:id="@+id/bearer_token"
-    android:title="@string/todays_puzzle_title"
+    android:title="@string/bearer_token_title"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/half_dynamic_spacing"
