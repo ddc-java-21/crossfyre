@@ -1,7 +1,6 @@
 package edu.cnm.deepdive.crossfyre.model.dto;
 
 import com.google.gson.annotations.Expose;
-import edu.cnm.deepdive.crossfyre.model.dto.Guess.guessPosition;
 
 public class PuzzleWord {
 
@@ -16,16 +15,45 @@ public class PuzzleWord {
   @Expose
   private String clue;
 
-  public record WordPosition(
-      @Expose
-      int wordRow,
+  public static class WordPosition {
 
-      @Expose
-      int wordColumn,
+    @Expose
+    int wordRow;
 
-      @Expose
-      int wordLength){}
+    @Expose
+    int wordColumn;
 
+    @Expose
+    int wordLength;
+
+
+    public int getWordRow() {
+      return wordRow;
+    }
+
+    public void setWordRow(int wordRow) {
+      this.wordRow = wordRow;
+    }
+
+    public int getWordColumn() {
+      return wordColumn;
+    }
+
+    public void setWordColumn(int wordColumn) {
+      this.wordColumn = wordColumn;
+    }
+
+    public int getWordLength() {
+      return wordLength;
+    }
+
+    public void setWordLength(int wordLength) {
+      this.wordLength = wordLength;
+    }
+
+  }
+
+  @Expose
   public WordPosition wordPosition;
 
   @Expose
@@ -35,27 +63,24 @@ public class PuzzleWord {
     return id;
   }
 
-  public PuzzleWord setId(long id) {
+  public void setId(long id) {
     this.id = id;
-    return this;
   }
 
   public String getClue() {
     return clue;
   }
 
-  public PuzzleWord setClue(String clue) {
+  public void setClue(String clue) {
     this.clue = clue;
-    return this;
   }
 
   public Direction getWordDirection() {
     return wordDirection;
   }
 
-  public PuzzleWord setWordDirection(
-      Direction wordDirection) {
+  public void setWordDirection(Direction wordDirection) {
     this.wordDirection = wordDirection;
-    return this;
   }
+
 }

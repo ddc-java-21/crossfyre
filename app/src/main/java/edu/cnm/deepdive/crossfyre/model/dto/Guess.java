@@ -7,51 +7,55 @@ import java.util.UUID;
 
 public class Guess {
 
-  // TODO: 7/17/2025 add Direction for possible hints?* 
   @Expose(serialize = false)
   private long id;
 
-  public record guessPosition(
-      @Expose(serialize = false)
-      int guessRow,
+  @Expose(serialize = false)
+  private GuessPosition guessPosition;
 
-      @Expose(serialize = false)
-      int guessColumn){}
-
-  guessPosition guessPosition;
-
-  private char guessChar;
-
-  private Instant created;
-
-  private UUID userPuzzleExternalKey;
 
   public long getId() {
     return id;
-  }
-
-  public char getGuessChar() {
-    return guessChar;
-  }
-
-  public UUID getUserPuzzleExternalKey() {
-    return userPuzzleExternalKey;
   }
 
   public void setId(long id) {
     this.id = id;
   }
 
-  public void setGuessChar(char guessChar) {
-    this.guessChar = guessChar;
+  public GuessPosition getGuessPosition() {
+    return guessPosition;
   }
 
-  public Instant getCreated() {
-    return created;
+  public void setGuessPosition(GuessPosition guessPosition) {
+    this.guessPosition = guessPosition;
   }
 
-  public void setCreated(Instant created) {
-    this.created = created;
+
+  public static class GuessPosition {
+
+    @Expose(serialize = false)
+    int row;
+
+    @Expose(serialize = false)
+    int column;
+
+
+    public int getRow() {
+      return row;
+    }
+
+    public void setRow(int row) {
+      this.row = row;
+    }
+
+    public int getColumn() {
+      return column;
+    }
+
+    public void setColumn(int column) {
+      this.column = column;
+    }
+
   }
 
 }

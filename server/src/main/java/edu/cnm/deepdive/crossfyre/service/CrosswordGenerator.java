@@ -1,5 +1,6 @@
 package edu.cnm.deepdive.crossfyre.service;
 
+import edu.cnm.deepdive.crossfyre.model.entity.Puzzle.Board;
 import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord.Direction;
 import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord.WordPosition;
@@ -152,7 +153,6 @@ public class CrosswordGenerator {
 			
 		// If no word can work, return false.
 		return false;
-		
 	}
 
 	private static String printSolution(int[][] word_starts, char[][] board) {
@@ -194,105 +194,28 @@ public class CrosswordGenerator {
       System.out.println();
     }
 	}
-	
-	private static void loadBoards() {
-	
-		boolean[][] board1 = {
-			{false, true, true, true, true},
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-			{true, true, true, true, false},
-			{true, true, true, true, false},
-		};
-		boolean[][] board2 = {
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-			{true, true, true, true, false},
-			{true, true, true, true, false},
-		};
-		boolean[][] board3 = {
-			{false, true, true, true, false},
-			{false, true, true, true, false},
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-		};
-		boolean[][] board4 = {
-			{false, false, true, true, true},
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-			{true, true, true, false, false},
-		};
-		boolean[][] board5 = {
-			{true, true, true, false, false},
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-			{false, false, true, true, true},
-		};
-		boolean[][] board6 = {
-			{false, true, true, true, false},
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-			{true, true, true, true, true},
-			{false, true, true, true, false},
-		};
-		boolean[][] board7 = {
-			{true, true, true, true, false},
-			{true, true, true, true, false},
-			{true, true, true, true, true},
-			{false, true, true, true, true},
-			{false, true, true, true, true},
-		};
-		boolean[][] board8 = {
-			{true, true, true, false, false},
-			{true, true, true, true, false},
-			{true, true, true, true, true},
-			{false, true, true, true, true},
-			{false, false, true, true, true},
-		};
 
-		
-		boolean[][] board9 = {
-				{false, false, true, true, true, true},
-				{true, true, true, false, true, false},
-				{true, true, true, true, true, false},
-				{true, false, true, true, true, true},
-				{false, true, true, true, false, true},
-				{true, true, true, false, false, true},
-		};
-		
-		boards = new boolean[][][]{
-			board1,
-			board2,
-			board3,
-			board4,
-			board5,
-			board6,
-			board7,
-			board8,
-			board9
-		};
-	
-	}
-	
-	public static void main(String[] args) throws IOException {
-
-		generate();
-
-	}
-
-	public static List<PuzzleWord> generate() throws IOException {
+	public static List<PuzzleWord> generate(String frame, int boardSize) throws IOException {
 
 		loadWords();
-		loadBoards();
-
 		puzzleWords.clear();
 		wordsUsed.clear();
 
-		boolean[][] hasLetter = boards[8];
+		boolean[][] hasLetter = new boolean[boardSize][boardSize];
+		for (int i = 0; i < frame.length(); i++) {
+      hasLetter[i / boardSize][i % boardSize] = frame.charAt(i) != '0';
+		}
+
+//		boolean[][] hasLetter = boards[8];
+
+//		boolean[][] hasLetter = {
+//				{false, false, true, true, true, true},
+//				{true, true, true, false, true, false},
+//				{true, true, true, true, true, false},
+//				{true, false, true, true, true, true},
+//				{false, true, true, true, false, true},
+//				{true, true, true, false, false, true},
+//		};
 
 		word_starts = new int[hasLetter.length][hasLetter.length];
 		char[][] board = new char[hasLetter.length][hasLetter.length];
@@ -370,9 +293,6 @@ public class CrosswordGenerator {
 			}
 
 			if (tryToSolve(word_start_list, board, 0)) {
-				System.out.println("Solution:");
-				System.out.println(printSolution(word_starts, board));
-				System.out.println();
 				puzzleGenerated = true;
 			} else {
 				System.out.println("NO SOLUTION FOUND");
@@ -380,15 +300,13 @@ public class CrosswordGenerator {
 
 			words = new ArrayList<>(wordsBackup);
 		}
-		System.out.println("words:");
-		for (String s : wordsUsed) {
-			System.out.println(s);
-		}
-		for (PuzzleWord pz : puzzleWords) {
-			System.out.println(pz.getWordName() + " " + pz.getWordDirection() + " " + pz.getWordPosition());
-		}
-		System.out.println(printSolution(word_starts, board));
 		return puzzleWords;
+	}
+
+	public static void main(String[] args) throws IOException {
+		System.out.println(generate(
+				"00_______0_0_____0_0____0___0____00_",
+				6));
 	}
 
 }

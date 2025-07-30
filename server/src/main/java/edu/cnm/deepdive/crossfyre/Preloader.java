@@ -2,6 +2,7 @@ package edu.cnm.deepdive.crossfyre;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import edu.cnm.deepdive.crossfyre.model.dto.endpoint.Definition;
 import edu.cnm.deepdive.crossfyre.model.dto.preload.PuzzlePreloadDto;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
@@ -17,11 +18,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 @Profile("preload")
 public class Preloader implements CommandLineRunner {
+
+  private static final String DEFINITION_URL = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/voluminous?key=";
 
   private final PuzzleRepository repository;
   private final PuzzleWordRepository puzzleWordRepository;
@@ -40,32 +45,17 @@ public class Preloader implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    System.out.println(puzzlePreloadFile);
-    System.out.println(wordsPreloadFile);
     Resource puzzleData = new ClassPathResource(puzzlePreloadFile);
-    Resource wordsData = new ClassPathResource(wordsPreloadFile);
-    try (InputStream input = puzzleData.getInputStream(); InputStream input2 = wordsData.getInputStream()) {
+    try (InputStream input = puzzleData.getInputStream()) {
       ObjectMapper mapper = new ObjectMapper();
       mapper.registerModule(new JavaTimeModule());
       PuzzlePreloadDto puzzleDto = mapper.readValue(input, PuzzlePreloadDto.class);
-//      System.out.println("Preloaded puzzle: ");
-//      System.out.println(puzzleDto.getExternalKey());
-//      System.out.println(puzzleDto.getSize());
-//      System.out.println(puzzleDto.getBoard());
-//      System.out.println(puzzleDto.getCreated());
-//      System.out.println(puzzleDto.getDate());
-//      System.out.println(puzzleDto.getPuzzleWords().getFirst().getWordPosition().getLength());
-
-      // Set values into actual puzzle and send into the brig:
-
-
 
       Puzzle puzzle  = new Puzzle();
       puzzle.setDate(puzzleDto.getDate());
       puzzle.setSize(puzzleDto.getSize());
       puzzle.setBoard(Puzzle.Board.valueOf(puzzleDto.getBoard().toString()));
       Puzzle updated = repository.save(puzzle);
-      System.out.println("Updated puzzle id: " + updated.getId());
 
       List<PuzzleWord> puzzleWords = new ArrayList<>();
       for (int i = 0; i < puzzleDto.getPuzzleWords().size(); i++) {
@@ -81,13 +71,19 @@ public class Preloader implements CommandLineRunner {
         ));
         puzzleWords.add(puzzleWord);
       }
-//      for (PuzzleWord puzzleWord : puzzleWords) {
-//        System.out.println("Preloaded puzzleWords: ");
-//        System.out.println(puzzleWord.getWordName());
-//        System.out.println(puzzleWord.getClue());
-//        System.out.println(puzzleWord.getExternalKey());
-//        System.out.println(puzzleWord.getPuzzle().getId());
+
+      // Merriam Webster Call
+//      RestTemplate template = new RestTemplate();
+//      ResponseEntity<Definition> response = template.getForEntity(ZEN_QUOTE_URL, Definition.class);
+//      ZenQuote[] quotes;
+//      if (
+//          response.getStatusCode().is2xxSuccessful()
+//              && (quotes = response.getBody()) != null
+//              && quotes.length > 0
+//      ) {
+//        ZenQuote quote = quotes[0];
 //      }
+
       puzzleWordRepository.saveAll(puzzleWords);
 
 //      repository.save(puzzle);
