@@ -6,6 +6,7 @@ import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord.WordPosition;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
+import edu.cnm.deepdive.crossfyre.service.dao.GuessRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.UserRepository;
@@ -26,12 +27,15 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
   private final PuzzleRepository puzzleRepository;
   private final UserRepository userRepository;
 
+  private final GuessRepository guessRepository;
+
   @Autowired
   UserPuzzleService(UserPuzzleRepository userPuzzleRepository, PuzzleRepository puzzleRepository,
-      UserRepository userRepository) {
+      UserRepository userRepository, GuessRepository guessRepository) {
     this.userPuzzleRepository = userPuzzleRepository;
     this.puzzleRepository = puzzleRepository;
     this.userRepository = userRepository;
+    this.guessRepository = guessRepository;
   }
 
   @Override
@@ -66,9 +70,25 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
   }
 
   @Override
-  public UserPuzzle getOrAddUserPuzzle(User user, Puzzle puzzle) {
+  public synchronized UserPuzzle getOrAddUserPuzzle(User user, Puzzle puzzle) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, puzzle.getDate())
+        // update the user puzzle with
+        .map((retrieved) -> {
+//          retrieved.setSolved(delta.isSolved());
+
+          // DONE: 7/20/25 Check if puzzle is solved
+          List<Guess> guesses = retrieved.getGuesses();
+          boolean isSolved = checkGuesses(guesses, retrieved.getPuzzle());
+          if (isSolved) {
+            retrieved.setSolved(Instant.now());
+            retrieved.setSolved(true);
+            // only update the userPuzzle record if the state has changed
+            return userPuzzleRepository.save(retrieved);
+          }
+          // if nothing has changed, return the unchanged user puzzle
+          return retrieved;
+        })
         // TODO: 7/20/25 Check with Nick/Reed to make sure this construction works as intended
         .or(() -> {
           UserPuzzle userPuzzle = new UserPuzzle();
@@ -153,9 +173,11 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
     char[][] solutionBoard = new char[boardLength][boardLength];
     for (int i = 0; i < boardLength; i++) {
       for (int j = 0; j < boardLength; j++) {
-         userBoard[i][j] = solutionBoard[i][j] = '0';
+         userBoard[i][j] = '0';
+         solutionBoard[i][j] = '0';
       }
     }
+
     for (Guess guess : guesses) {
       userBoard[guess.getGuessPosition().guessRow()][guess.getGuessPosition().guessColumn()] = guess.getGuessChar();
     }
@@ -181,11 +203,15 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
     boolean bSolved = true;
     for (int i = 0; i < boardLength; i++) {
       for (int j = 0; j < boardLength; j++) {
+        System.out.printf("UserBoard at %d,%d: %c%n", i, j, userBoard[i][j]);
+        System.out.printf("SoluBoard at %d,%d: %c%n", i, j, solutionBoard[i][j]);
+        System.out.println("Equal? " + (userBoard[i][j] == solutionBoard[i][j]));
         if (userBoard[i][j] != solutionBoard[i][j]) {
           bSolved = false;
         }
       }
     }
+    System.out.println("Solved: " + bSolved);
     return bSolved;
   }
 

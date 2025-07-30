@@ -41,7 +41,9 @@ public class GuessService implements AbstractGuessService {
   public Iterable<Guess> getAllInUserPuzzle(User requestor, Instant puzzleDate) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
-        .map(guessRepository::findByUserPuzzleOrderByIdDesc)
+        .map(userPuzzle -> {
+          return guessRepository.findByUserPuzzleOrderByIdAsc(userPuzzle);
+        })
         .orElseThrow();
   }
 
@@ -51,7 +53,7 @@ public class GuessService implements AbstractGuessService {
         .findByUserAndPuzzle(requestor, puzzle)
         .map((userPuzzle) -> {
           guess.setUserPuzzle(userPuzzle);
-          return guess;
+          return guessRepository.save(guess);
         })
         .orElseThrow(); // custom exception goes here
   }
@@ -62,7 +64,7 @@ public class GuessService implements AbstractGuessService {
         .findByUserAndPuzzleDate(requestor, puzzleDate)
         .map((userPuzzle) -> {
           guess.setUserPuzzle(userPuzzle);
-          return guess;
+          return guessRepository.save(guess);
         })
         .orElseThrow(); // custom exception goes here
   }
