@@ -14,16 +14,6 @@
 <!--    app:layout_constraintStart_toStartOf="parent"-->
 <!--    app:layout_constraintEnd_toEndOf="parent">-->
 
-<!--<ImageView-->
-<!--  android:id="@+id/crossfyre_icon"-->
-<!--  android:layout_width="48dp"-->
-<!--  android:layout_height="match_parent"-->
-<!--  android:src="@drawable/crossfyre_icon_no_texts"-->
-<!--  android:layout_margin="@dimen/half_dynamic_spacing"-->
-<!--  />-->
-<!--    -->
-<!--  </LinearLayout>-->
-
   <GridLayout
     android:id="@+id/puzzle_grid"
     android:layout_width="0dp"

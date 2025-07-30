@@ -77,6 +77,9 @@ public class MainFragment extends Fragment implements MenuProvider {
       Navigation.findNavController(requireView())
           .navigate(R.id.action_main_fragment_to_puzzle_fragment);
       handled = true;
+    } else {
+      Navigation.findNavController(requireView())
+          .navigate(R.id.show_bearer_fragment);
     }
     return handled;
   }
