@@ -1,6 +1,8 @@
 package edu.cnm.deepdive.crossfyre.model.dto;
 
 import com.google.gson.annotations.Expose;
+import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord.Direction;
+import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord.wordPosition;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +22,7 @@ public class UserPuzzle {
   @Expose
   private Boolean isSolved = false;
 
+  @Expose
   private List<Guess> guesses;
 
 
@@ -54,6 +57,7 @@ public class UserPuzzle {
     @Expose
     private char guessChar;
 
+    @Expose
     private GuessPosition guessPosition;
 
     public char getGuessChar() {
@@ -101,6 +105,7 @@ public class UserPuzzle {
       }
     }
 
+    @Expose
     private Puzzle puzzle;
 
     public Puzzle getPuzzle() {
@@ -115,20 +120,21 @@ public class UserPuzzle {
     public static class Puzzle {
 
       @Expose
-      private final UUID externaPuzzlelKey = null;
+      private UUID externaPuzzlelKey;
 
       @Expose
       private final int size = 5;
 
       public enum Board {
-        SUNDAY    ("0__________________0____0"),
-        MONDAY    ("0___00___0_______________"),
-        TUESDAY   ("00_____________________00"),
-        WEDNESDAY ("___00_______________00___"),
-        THURSDAY  ("0___0_______________0___0"),
-        FRIDAY    ("____0____0_____0____0____"),
-        SATURDAY  ("___00____0_____0____00___");
+        SUNDAY("0__________________0____0"),
+        MONDAY("0___00___0_______________"),
+        TUESDAY("00_____________________00"),
+        WEDNESDAY("___00_______________00___"),
+        THURSDAY("0___0_______________0___0"),
+        FRIDAY("____0____0_____0____0____"),
+        SATURDAY("___00____0_____0____00___");
 
+        @Expose
         public final String day;
 
         Board(String day) {
@@ -136,10 +142,148 @@ public class UserPuzzle {
         }
 
       }
-//      @Expose
-//      private final Board board = getPuzzleBoard();
-    }
 
+      @Expose
+      private Board board;
+
+      @Expose
+      private Instant created;
+
+      @Expose
+      private Instant date;
+
+
+      public UUID getExternaPuzzlelKey() {
+        return externaPuzzlelKey;
+      }
+
+      public int getSize() {
+        return size;
+      }
+
+      public Board getBoard() {
+        return board;
+      }
+
+      public Puzzle setBoard(Board board) {
+        this.board = board;
+        return this;
+      }
+
+      public Instant getCreated() {
+        return created;
+      }
+
+      public Puzzle setCreated(Instant created) {
+        this.created = created;
+        return this;
+      }
+
+      public Instant getDate() {
+        return date;
+      }
+
+      public Puzzle setDate(Instant date) {
+        this.date = date;
+        return this;
+      }
+
+      public List<PuzzleWord> getPuzzleWords() {
+        return puzzleWords;
+      }
+
+      public Puzzle setPuzzleWords(
+          List<PuzzleWord> puzzleWords) {
+        this.puzzleWords = puzzleWords;
+        return this;
+      }
+
+      @Expose
+      private List<PuzzleWord> puzzleWords;
+
+      public static class PuzzleWord {
+
+        @Expose
+        private String clue;
+
+        public enum Direction {
+          ACROSS,
+          DOWN
+        }
+
+        @Expose
+        private Direction direction;
+
+        @Expose
+        private wordPosition wordPosition;
+
+        public String getClue() {
+          return clue;
+        }
+
+        public Direction getDirection() {
+          return direction;
+        }
+
+        public PuzzleWord setDirection(
+            Direction direction) {
+          this.direction = direction;
+          return this;
+        }
+
+        public wordPosition getWordPosition() {
+          return wordPosition;
+        }
+
+        public PuzzleWord setWordPosition(
+            wordPosition wordPosition) {
+          this.wordPosition = wordPosition;
+          return this;
+        }
+
+        public static class wordPosition {
+
+          @Expose
+          private int row;
+
+          @Expose
+          private int column;
+
+          @Expose
+          private int length;
+
+          public int getRow() {
+            return row;
+          }
+
+          public wordPosition setRow(int row) {
+            this.row = row;
+            return this;
+          }
+
+          public int getColumn() {
+            return column;
+          }
+
+          public wordPosition setColumn(int column) {
+            this.column = column;
+            return this;
+          }
+
+          public int getLength() {
+            return length;
+          }
+
+          public wordPosition setLength(int length) {
+            this.length = length;
+            return this;
+          }
+
+        }
+
+      }
+
+    }
 
   }
 
