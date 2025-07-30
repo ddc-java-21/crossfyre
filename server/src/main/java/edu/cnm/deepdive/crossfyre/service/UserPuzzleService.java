@@ -69,7 +69,7 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
   }
 
   @Override
-  public UserPuzzle getOrAddUserPuzzle(User user, Puzzle puzzle) {
+  public synchronized UserPuzzle getOrAddUserPuzzle(User user, Puzzle puzzle) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, puzzle.getDate())
         // update the user puzzle with
@@ -176,6 +176,7 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
          solutionBoard[i][j] = '0';
       }
     }
+
     for (Guess guess : guesses) {
       userBoard[guess.getGuessPosition().guessRow()][guess.getGuessPosition().guessColumn()] = guess.getGuessChar();
     }

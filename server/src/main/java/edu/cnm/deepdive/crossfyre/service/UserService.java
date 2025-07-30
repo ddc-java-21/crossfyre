@@ -21,7 +21,7 @@ public class UserService implements AbstractUserService {
   }
 
   @Override
-  public User getOrAddUser(String oauthKey, User profile) {
+  public synchronized User getOrAddUser(String oauthKey, User profile) {
     return repository
         .findByOauthKey(oauthKey)
         .or(() -> {

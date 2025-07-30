@@ -5,12 +5,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.cnm.deepdive.crossfyre.model.dto.preload.PuzzlePreloadDto;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
-import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord.wordPosition;
+import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord.WordPosition;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleWordRepository;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,13 +48,13 @@ public class Preloader implements CommandLineRunner {
       ObjectMapper mapper = new ObjectMapper();
       mapper.registerModule(new JavaTimeModule());
       PuzzlePreloadDto puzzleDto = mapper.readValue(input, PuzzlePreloadDto.class);
-      System.out.println("Preloaded puzzle: ");
-      System.out.println(puzzleDto.getExternalKey());
-      System.out.println(puzzleDto.getSize());
-      System.out.println(puzzleDto.getBoard());
-      System.out.println(puzzleDto.getCreated());
-      System.out.println(puzzleDto.getDate());
-      System.out.println(puzzleDto.getPuzzleWords().getFirst().getWordPosition().getLength());
+//      System.out.println("Preloaded puzzle: ");
+//      System.out.println(puzzleDto.getExternalKey());
+//      System.out.println(puzzleDto.getSize());
+//      System.out.println(puzzleDto.getBoard());
+//      System.out.println(puzzleDto.getCreated());
+//      System.out.println(puzzleDto.getDate());
+//      System.out.println(puzzleDto.getPuzzleWords().getFirst().getWordPosition().getLength());
 
       // Set values into actual puzzle and send into the brig:
 
@@ -75,20 +74,20 @@ public class Preloader implements CommandLineRunner {
         puzzleWord.setWordName(puzzleDto.getPuzzleWords().get(i).getWordName());
         puzzleWord.setClue(puzzleDto.getPuzzleWords().get(i).getClue());
         puzzleWord.setWordDirection(PuzzleWord.Direction.valueOf(puzzleDto.getPuzzleWords().get(i).getDirection().toString()));
-        puzzleWord.setWordPosition(new wordPosition(
+        puzzleWord.setWordPosition(new WordPosition(
             puzzleDto.getPuzzleWords().get(i).getWordPosition().getRow(),
             puzzleDto.getPuzzleWords().get(i).getWordPosition().getColumn(),
             puzzleDto.getPuzzleWords().get(i).getWordPosition().getLength()
         ));
         puzzleWords.add(puzzleWord);
       }
-      for (PuzzleWord puzzleWord : puzzleWords) {
-        System.out.println("Preloaded puzzleWords: ");
-        System.out.println(puzzleWord.getWordName());
-        System.out.println(puzzleWord.getClue());
-        System.out.println(puzzleWord.getExternalKey());
-        System.out.println(puzzleWord.getPuzzle().getId());
-      }
+//      for (PuzzleWord puzzleWord : puzzleWords) {
+//        System.out.println("Preloaded puzzleWords: ");
+//        System.out.println(puzzleWord.getWordName());
+//        System.out.println(puzzleWord.getClue());
+//        System.out.println(puzzleWord.getExternalKey());
+//        System.out.println(puzzleWord.getPuzzle().getId());
+//      }
       puzzleWordRepository.saveAll(puzzleWords);
 
 //      repository.save(puzzle);
