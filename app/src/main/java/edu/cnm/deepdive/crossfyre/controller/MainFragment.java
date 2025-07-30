@@ -88,8 +88,6 @@ public class MainFragment extends Fragment implements MenuProvider {
     if (account == null) {
       Navigation.findNavController(binding.getRoot())
           .navigate(MainFragmentDirections.showPreLogin());
-    } else {
-      binding.bearerToken.setText(account.getIdToken());
     }
   }
 }
