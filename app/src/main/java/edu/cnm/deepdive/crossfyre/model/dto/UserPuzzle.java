@@ -5,10 +5,11 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+
 public class UserPuzzle {
 
-  @Expose
-  private long id;
+//  @Expose
+//  private long id;
 
   @Expose
   private final UUID userExternalKey = null;
@@ -17,15 +18,10 @@ public class UserPuzzle {
   private final Instant created = null;
 
   @Expose
-  private Instant solved = null;
-
-  private final User user = null;
+  private Boolean isSolved = false;
 
   private List<Guess> guesses;
 
-  public long getId() {
-    return id;
-  }
 
   public UUID getUserExternalKey() {
     return userExternalKey;
@@ -35,17 +31,13 @@ public class UserPuzzle {
     return created;
   }
 
-  public Instant getSolved() {
-    return solved;
+  public Boolean getIsSolved() {
+    return isSolved;
   }
 
-  public Instant setSolved(Instant solved) {
-    this.solved = solved;
+  public Boolean setSolved(Boolean solved) {
+    this.isSolved = solved;
     return solved;
-  }
-
-  public User getUser() {
-    return user;
   }
 
   public List<Guess> getGuesses() {
@@ -56,4 +48,61 @@ public class UserPuzzle {
     this.guesses = guesses;
     return this;
   }
+
+  public static class Guess {
+
+    @Expose
+    private char guessChar;
+
+    private GuessPosition guessPosition;
+
+    public char getGuessChar() {
+      return guessChar;
+    }
+
+    public Guess setGuessChar(char guessChar) {
+      this.guessChar = guessChar;
+      return this;
+    }
+
+    public GuessPosition getGuessPosition() {
+      return guessPosition;
+    }
+
+    public Guess setGuessPosition(GuessPosition guessPosition) {
+      this.guessPosition = guessPosition;
+      return this;
+    }
+
+    public static class GuessPosition {
+
+      @Expose
+      private int guessRow;
+
+      @Expose
+      private int guessColumn;
+
+      public int getGuessRow() {
+        return guessRow;
+      }
+
+      public GuessPosition setGuessRow(int guessRow) {
+        this.guessRow = guessRow;
+        return this;
+      }
+
+      public int getGuessColumn() {
+        return guessColumn;
+      }
+
+      public GuessPosition setGuessColumn(int guessColumn) {
+        this.guessColumn = guessColumn;
+        return this;
+      }
+    }
+
+//    private Puzzle puzzle;
+
+  }
+
 }
