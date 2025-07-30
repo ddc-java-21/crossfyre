@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
+
 public class CrosswordGenerator {
 	
 	static int[][] word_starts;

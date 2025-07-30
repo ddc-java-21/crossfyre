@@ -1,4 +1,4 @@
-package edu.cnm.deepdive.crossfyre.util;
+package edu.cnm.deepdive.crossfyre.service;
 
 
 import com.google.gson.JsonArray;
@@ -6,8 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.nimbusds.jose.shaded.gson.Gson;
+import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,13 +61,30 @@ public class DictionaryClueQuery {
   }
 
   // For testing/demo purposes
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     DictionaryClueQuery fetcher = new DictionaryClueQuery();
-    List<String> words = Arrays.asList("voluminous", "ephemeral", "resilient");
 
-    Map<String, String> results = fetcher.fetchDefinitions(words);
-    results.forEach((word, definition) -> {
-      System.out.println(word + ": " + definition);
+    List<PuzzleWord> words = CrosswordGenerator.generate();
+
+    // Extract word names from the PuzzleWords
+    List<String> wordNames = words.stream()
+        .map(PuzzleWord::getWordName)
+        .toList();
+
+    // Fetch definitions from the external source
+    Map<String, String> results = fetcher.fetchDefinitions(wordNames);
+
+    // Set each PuzzleWord's clue using the fetched definition
+    for (PuzzleWord word : words) {
+      String clue = results.get(word.getWordName());
+      if (clue != null) {
+        word.setClue(clue);
+      }
+    }
+
+    // Print out the final result for testing/demo
+    words.forEach((word) -> {
+      System.out.println(word.getWordName() + ": " + word.getClue());
     });
   }
 }

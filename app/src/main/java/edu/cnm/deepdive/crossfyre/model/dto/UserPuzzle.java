@@ -1,8 +1,6 @@
 package edu.cnm.deepdive.crossfyre.model.dto;
 
 import com.google.gson.annotations.Expose;
-import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord.Direction;
-import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord.wordPosition;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
