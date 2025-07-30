@@ -82,6 +82,8 @@ dependencies {
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.validation)
     implementation(libs.thymeleaf.spring.security)
+    implementation(libs.gson)
+    implementation("com.squareup.okhttp3:okhttp:5.1.0")
     runtimeOnly(libs.h2)
     annotationProcessor(libs.spring.boot.configuration.processor)
     testImplementation(libs.spring.boot.starter.test)

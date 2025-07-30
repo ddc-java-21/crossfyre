@@ -80,7 +80,7 @@ public class PuzzleWord {
       int wordLength
     ){}
 
-  private WordPosition wordPosition;
+  public WordPosition wordPosition;
 
   // TODO: 7/15/2025 Check enumerated/enum declaration
   @Enumerated(EnumType.STRING)

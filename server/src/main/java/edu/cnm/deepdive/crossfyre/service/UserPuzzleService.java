@@ -3,6 +3,7 @@ package edu.cnm.deepdive.crossfyre.service;
 import edu.cnm.deepdive.crossfyre.model.entity.Guess;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
+import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord.WordPosition;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
@@ -163,10 +164,10 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
     //     - initialize the board to '0' characters
     List<PuzzleWord> words = solution.getPuzzleWords();
     for (PuzzleWord word : words) {
-      int row = word.getWordPosition().wordRow();
-      int col = word.getWordPosition().wordColumn();
+      int row = word.wordPosition.wordRow();
+      int col = word.wordPosition.wordColumn();
       String direction = word.getWordDirection().toString();
-      int wordLength = word.getWordPosition().wordLength();
+      int wordLength = word.wordPosition.wordLength();
       for (int i = 0; i < wordLength; i++) {
         if (direction.equals("ACROSS")) {
           solutionBoard[row][col + i] = word.getWordName().charAt(i);
