@@ -101,7 +101,45 @@ public class UserPuzzle {
       }
     }
 
-//    private Puzzle puzzle;
+    private Puzzle puzzle;
+
+    public Puzzle getPuzzle() {
+      return puzzle;
+    }
+
+    public Guess setPuzzle(Puzzle puzzle) {
+      this.puzzle = puzzle;
+      return this;
+    }
+
+    public static class Puzzle {
+
+      @Expose
+      private final UUID externaPuzzlelKey = null;
+
+      @Expose
+      private final int size = 5;
+
+      public enum Board {
+        SUNDAY    ("0__________________0____0"),
+        MONDAY    ("0___00___0_______________"),
+        TUESDAY   ("00_____________________00"),
+        WEDNESDAY ("___00_______________00___"),
+        THURSDAY  ("0___0_______________0___0"),
+        FRIDAY    ("____0____0_____0____0____"),
+        SATURDAY  ("___00____0_____0____00___");
+
+        public final String day;
+
+        Board(String day) {
+          this.day = day;
+        }
+
+      }
+//      @Expose
+//      private final Board board = getPuzzleBoard();
+    }
+
 
   }
 
