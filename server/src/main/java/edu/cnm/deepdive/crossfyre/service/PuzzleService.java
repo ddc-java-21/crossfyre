@@ -29,17 +29,16 @@ public class PuzzleService implements AbstractPuzzleService {
 
   private static final long PUZZLE_CREATION_POLLING_INTERVAL = 30_000;
   private static final long PUZZLE_CREATION_IDLE_TIMEOUT = 90_000;
-  private final AbstractPuzzleService abstractPuzzleService;
-  private final PuzzleWordService puzzleWordService;
+//  private final AbstractPuzzleService abstractPuzzleService;
+//  private final PuzzleWordService puzzleWordService;
 
 
   @Autowired
-  PuzzleService(PuzzleRepository puzzleRepository, PuzzleWordRepository puzzleWordRepository,
-      AbstractPuzzleService abstractPuzzleService, PuzzleWordService puzzleWordService) {
+  PuzzleService(PuzzleRepository puzzleRepository, PuzzleWordRepository puzzleWordRepository) {
     this.puzzleRepository = puzzleRepository;
     this.puzzleWordRepository = puzzleWordRepository;
-    this.abstractPuzzleService = abstractPuzzleService;
-    this.puzzleWordService = puzzleWordService;
+//    this.abstractPuzzleService = abstractPuzzleService;
+//    this.puzzleWordService = puzzleWordService;
   }
 
 
@@ -72,7 +71,7 @@ public class PuzzleService implements AbstractPuzzleService {
     puzzle = puzzleRepository.save(puzzle);
 
     // Fetch puzzle words and associate them with this puzzle
-    Iterable<PuzzleWord> puzzleWords = puzzleWordService.getAllInPuzzle(date);
+    Iterable<PuzzleWord> puzzleWords = puzzleWordRepository.findByPuzzleDate(date);
     for (PuzzleWord word : puzzleWords) {
       word.setPuzzle(puzzle);
       puzzleWordRepository.save(word);
