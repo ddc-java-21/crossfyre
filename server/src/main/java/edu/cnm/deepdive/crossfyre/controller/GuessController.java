@@ -1,6 +1,8 @@
 package edu.cnm.deepdive.crossfyre.controller;
 
+import edu.cnm.deepdive.crossfyre.model.dto.endpoint.GuessEndpointDto;
 import edu.cnm.deepdive.crossfyre.model.entity.Guess;
+import edu.cnm.deepdive.crossfyre.model.entity.Guess.GuessPosition;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
@@ -40,7 +42,7 @@ public class GuessController {
   private final AbstractUserService userService;
   private final AbstractPuzzleService puzzleService;
   private Puzzle puzzle;
-  private User currentUser;
+
 
   @Autowired
   GuessController(AbstractGuessService guessService, AbstractUserPuzzleService userPuzzleService, AbstractUserService userService,
@@ -62,26 +64,32 @@ public class GuessController {
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Guess> post(@PathVariable Instant date, @Valid @RequestBody Guess guess) {
-    Guess created =  guessService.add(userService.getCurrentUser(), date, guess);
+  public ResponseEntity<Iterable<Guess>> post(@PathVariable Instant date, @Valid @RequestBody GuessEndpointDto guessEndpointDto) {
+    Guess guess = new Guess();
+    guess.setGuessChar(guessEndpointDto.getGuess().charAt(0));
+    guess.setGuessPosition(new GuessPosition(
+        guessEndpointDto.getGuessPosition().getRow(),
+        guessEndpointDto.getGuessPosition().getColumn()
+    ));
+    Guess created = guessService.add(userService.getCurrentUser(), date, guess);
     // Do we need to update UserPuzzle from here? messageService.add() in chat implies no, but...
-    UserPuzzle currentUserPuzzle = userPuzzleService.get(currentUser, date); // should get last saved version of game
-    List<Guess> guesses = new ArrayList<>();
-    Iterable<Guess> guessesIt = guessService.getAllInUserPuzzle(currentUser, date);
-    for (Guess g : guessesIt) {
-      guesses.add(g);
-    }
-    UserPuzzle delta = new UserPuzzle();
-    delta.setUser(currentUser);
-    delta.setPuzzle(puzzle);
-    delta.setGuesses(guesses);
-    userPuzzleService.updateUserPuzzle(currentUserPuzzle, delta);
+//    UserPuzzle currentUserPuzzle = userPuzzleService.get(currentUser, date); // should get last saved version of game
+//    List<Guess> guesses = new ArrayList<>();
+    Iterable<Guess> guessesIt = guessService.getAllInUserPuzzle(userService.getCurrentUser(), date);
+//    for (Guess g : guessesIt) {
+//      guesses.add(g);
+//    }
+//    UserPuzzle delta = new UserPuzzle();
+//    delta.setUser(currentUser);
+//    delta.setPuzzle(puzzle);
+//    delta.setGuesses(guesses);
+//    userPuzzleService.updateUserPuzzle(currentUserPuzzle, delta);
     URI location = WebMvcLinkBuilder.linkTo(
       WebMvcLinkBuilder.methodOn(getClass())
-          .get(date, created.getExternalKey())
+          .get(date)
     )
         .toUri();
-    return ResponseEntity.created(location).body(created);
+    return ResponseEntity.created(location).body(guessesIt);
   }
 
 }

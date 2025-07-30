@@ -54,12 +54,12 @@ public class PuzzleWord {
 
   @NotBlank
   @Length(max = MAX_WORD_LENGTH)
-  @Column(unique = true, nullable = false, updatable = false)
+  @Column(nullable = false, updatable = false)
   //@JsonProperty(value = "word_name", access = Access.READ_ONLY)
   @JsonIgnore
   private String wordName;
 
-  @Column(nullable = false, updatable = false, unique = true)
+  @Column(nullable = false, updatable = false)
   @JsonProperty(value = "clue", access = Access.READ_ONLY)
   private String clue;
 

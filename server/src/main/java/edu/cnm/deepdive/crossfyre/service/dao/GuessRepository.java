@@ -19,6 +19,8 @@ public interface GuessRepository extends CrudRepository<Guess, Long> {
   List<Guess> findAllByUserPuzzle(UserPuzzle userPuzzle);
 
   Iterable<Guess> findByUserPuzzleOrderByIdDesc(UserPuzzle userPuzzle);
+  Iterable<Guess> findByUserPuzzleOrderByIdAsc(UserPuzzle userPuzzle);
+
   List<Guess> findByUserPuzzleOrderByCreatedAsc(UserPuzzle puzzle);
 
   Iterable<Guess> findByUserPuzzleOrderByCreatedDesc(UserPuzzle userPuzzle);

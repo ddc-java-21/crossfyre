@@ -1,0 +1,134 @@
+[
+  {
+    "word_name": "came",
+    "clue": "arrived",
+    "direction": "ACROSS",
+    "wordPosition": {
+      "row": 0,
+      "column": 2,
+      "length": 4
+    },
+    "key": "c2565d25-9e5a-4cac-868d-48c36a7e2814"
+  },
+  {
+    "word_name": "air",
+    "clue": "ether, element",
+    "direction": "ACROSS",
+    "wordPosition": {
+    "row": 1,
+    "column": 0,
+    "length": 3
+    },
+    "key": "b8d259f0-0170-4cdb-957f-b99928144843"
+  },
+  {
+    "word_name": "stead",
+    "clue": "one's standing",
+    "direction": "ACROSS",
+    "wordPosition": {
+    "row": 2,
+    "column": 0,
+    "length": 5
+    },
+    "key": "a02ac33f-3a5c-4bb7-a928-74dec205b45a"
+  },
+  {
+    "word_name": "area",
+    "clue": "locale",
+    "direction": "ACROSS",
+    "wordPosition": {
+    "row": 3,
+    "column": 2,
+    "length": 4
+    },
+    "key": "5954ca41-5932-47ed-a449-391639de32ae"
+  },
+  {
+    "word_name": "use",
+    "clue": "utilize",
+    "direction": "ACROSS",
+    "wordPosition": {
+    "row": 4,
+    "column": 1,
+    "length": 3
+    },
+    "key": "0afb6673-6f24-458d-bdfc-054cf4749fbe"
+  },
+  {
+    "word_name": "eye",
+    "clue": "inedible potato component",
+    "direction": "ACROSS",
+    "wordPosition": {
+    "row": 5,
+    "column": 0,
+    "length": 3
+    },
+    "key": "d4f2021c-655f-4857-8f58-b7c17ce00d8a"
+  },
+  {
+    "word_name": "ask",
+    "clue": "inquire",
+    "direction": "DOWN",
+    "wordPosition": {
+    "row": 1,
+    "column": 0,
+    "length": 3
+    },
+    "key": "c71d26a2-960c-4623-b84a-9efeb88861dd"
+  },
+  {
+    "word_name": "it",
+    "clue": "thing",
+    "direction": "DOWN",
+    "wordPosition": {
+    "row": 1,
+    "column": 1,
+    "length": 2
+    },
+    "key": "ce62e709-77a3-421d-92a1-7d6ac3fdadd4"
+  },
+  {
+    "word_name": "crease",
+    "clue": "fold",
+    "direction": "DOWN",
+    "wordPosition": {
+    "row": 0,
+    "column": 2,
+    "length": 6
+    },
+    "key": "71aaf16e-e360-4c66-b160-91f3e5ba5830"
+  },
+  {
+    "word_name": "are",
+    "clue": "to be, second person singular present",
+    "direction": "DOWN",
+    "wordPosition": {
+    "row": 2,
+    "column": 3,
+    "length": 3
+    },
+    "key": "a03ec93b-9f08-4c8c-b81d-939ecfdeb014"
+  },
+  {
+    "word_name": "made",
+    "clue": "manufactured",
+    "direction": "DOWN",
+    "wordPosition": {
+    "row": 0,
+    "column": 4,
+    "length": 4
+    },
+    "key": "e060c17f-4262-4e50-9950-2b5f0b01377f"
+  },
+  {
+    "word_name": "ago",
+    "clue": "a long time...",
+    "direction": "DOWN",
+    "wordPosition": {
+    "row": 3,
+    "column": 5,
+    "length": 3
+    },
+    "key": "357a3e62-70c2-4398-87c7-48a63bc3023e"
+  }
+]
