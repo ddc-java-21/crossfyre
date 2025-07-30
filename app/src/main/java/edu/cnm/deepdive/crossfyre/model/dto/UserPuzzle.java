@@ -7,8 +7,8 @@ import java.util.UUID;
 
 public class UserPuzzle {
 
-  @Expose
-  private long id;
+//  @Expose
+//  private long id;
 
   @Expose
   private final UUID userExternalKey = null;
@@ -17,15 +17,9 @@ public class UserPuzzle {
   private final Instant created = null;
 
   @Expose
-  private Instant solved = null;
-
-  private final User user = null;
+  private Boolean isSolved = null;
 
   private List<Guess> guesses;
-
-  public long getId() {
-    return id;
-  }
 
   public UUID getUserExternalKey() {
     return userExternalKey;
@@ -35,17 +29,13 @@ public class UserPuzzle {
     return created;
   }
 
-  public Instant getSolved() {
-    return solved;
+  public Boolean getSolved() {
+    return isSolved;
   }
 
-  public Instant setSolved(Instant solved) {
-    this.solved = solved;
-    return solved;
-  }
-
-  public User getUser() {
-    return user;
+  public UserPuzzle setSolved(Boolean solved) {
+    isSolved = solved;
+    return this;
   }
 
   public List<Guess> getGuesses() {
@@ -56,4 +46,5 @@ public class UserPuzzle {
     this.guesses = guesses;
     return this;
   }
+
 }
