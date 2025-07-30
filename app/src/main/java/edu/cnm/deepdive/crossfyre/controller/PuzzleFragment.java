@@ -30,6 +30,15 @@ public class PuzzleFragment extends Fragment {
   public SquareAdapter squareAdapter; // Injected via Hilt
 
   @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    binding = FragmentPuzzleBinding.inflate(getLayoutInflater());
+
+    // TODO: 7/30/25 Finish adding on create
+//    binding.clueDirection.listen
+  }
+
+  @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentPuzzleBinding.inflate(inflater, container, false);
     return binding.getRoot();
@@ -64,9 +73,9 @@ public class PuzzleFragment extends Fragment {
 
     for (PuzzleWord word : words) {
       PuzzleWord.WordPosition pos = word.wordPosition;
-      for (int i = 0; i < pos.wordLength(); i++) {
-        int row = word.getWordDirection() == PuzzleWord.Direction.ACROSS ? pos.wordRow() : pos.wordRow() + i;
-        int col = word.getWordDirection() == PuzzleWord.Direction.ACROSS ? pos.wordColumn() + i : pos.wordColumn();
+      for (int i = 0; i < pos.getWordLength(); i++) {
+        int row = word.getWordDirection() == PuzzleWord.Direction.ACROSS ? pos.getWordRow() : pos.getWordRow() + i;
+        int col = word.getWordDirection() == PuzzleWord.Direction.ACROSS ? pos.getWordColumn() + i : pos.getWordColumn();
 
         TextView cell = new TextView(requireContext());
         cell.setText(" ");
