@@ -44,6 +44,16 @@ public class MainFragment extends Fragment implements MenuProvider {
         .getAccount()
         .observe(owner, this::handleAccount);
     activity.addMenuProvider(this, owner, State.RESUMED);
+    binding.playButton.setOnClickListener(v ->
+        Navigation.findNavController(v)
+            .navigate(R.id.action_main_fragment_to_puzzle_fragment)
+    );
+    binding.signOutButton.setOnClickListener(v -> {
+          viewModel.signOut();
+          Navigation.findNavController(v)
+              .navigate(R.id.show_pre_login);
+        }
+    );
   }
 
   @Override
@@ -62,9 +72,11 @@ public class MainFragment extends Fragment implements MenuProvider {
     boolean handled = false;
     if (menuItem.getItemId() == R.id.sign_out) {
       viewModel.signOut();
+      handled = true;
     } else if (menuItem.getItemId() == R.id.puzzle_menu) {
       Navigation.findNavController(requireView())
           .navigate(R.id.action_main_fragment_to_puzzle_fragment);
+      handled = true;
     }
     return handled;
   }
