@@ -16,7 +16,7 @@ public class PuzzleWord {
   @Expose
   private String clue;
 
-  public record wordPosition(
+  public record WordPosition(
       @Expose
       int wordRow,
 
@@ -26,7 +26,7 @@ public class PuzzleWord {
       @Expose
       int wordLength){}
 
-  wordPosition wordPosition;
+  public WordPosition wordPosition;
 
   @Expose
   private Direction wordDirection;
