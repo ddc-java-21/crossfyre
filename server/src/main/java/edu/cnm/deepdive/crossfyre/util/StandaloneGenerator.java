@@ -7,12 +7,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.CommandLineRunner;
@@ -25,17 +28,23 @@ import org.springframework.stereotype.Component;
 @Profile("generate")
 public class StandaloneGenerator implements CommandLineRunner {
 
-  private static final String WORDS_FILE = "crossword/common-english-words.txt";
-  private final List<String> words;
+  private static final String WORDS_FILE = "crossword/englishWords.txt";
+  //private final List<String> words;
+  private final Map<Integer, List<String>> wordListsMap;
 
   public StandaloneGenerator() throws IOException {
     Resource resource = new ClassPathResource(WORDS_FILE);
     try (Stream<String> lines = Files.lines(Paths.get(resource.getURI()))) {
-      words = lines
+      wordListsMap = lines
           .filter((line) -> !line.isBlank())
           .map(String::strip)
           .map(String::toLowerCase)
-          .toList();
+          .collect(Collectors.groupingBy(String::length, HashMap::new,
+              Collector.of(ArrayList::new, List::add, (list1, list2) -> {
+                list1.addAll(list2);
+                return list1;
+              })
+          ));
     }
   }
 
@@ -43,14 +52,34 @@ public class StandaloneGenerator implements CommandLineRunner {
   public void run(String... args) throws Exception {
     String pattern = Board.MONDAY.day;
     int size = (int) Math.round(Math.sqrt(pattern.length()));
-    List<String> candidates = getCandidates(size);
+//    List<String> candidates = getCandidates(size);
+
+    // Declare a local map variable and copy field values (wordListsMap) into it
+    Map<Integer, List<String>> candidatesMap = new HashMap<>();
+    for (Map.Entry<Integer, List<String>> entry : wordListsMap.entrySet())
+    {
+      candidatesMap.put(entry.getKey(),
+          // Or whatever List implementation you'd like here.
+          new ArrayList<>(entry.getValue()));
+    }
+
+    // Shuffle list of words for each word length
+    for (Map.Entry<Integer, List<String>> entry : candidatesMap.entrySet())
+    {
+      Collections.shuffle(entry.getValue());
+    }
+
+    //
+
+
 
     char[][] board = buildBoard(size, pattern);
 
     List<WordStart> starts = findStarts(size, board);
 
     Map<WordStart, String> placements = new TreeMap<>();
-    boolean success = generate(board, starts, candidates, new HashSet<>(), placements);
+    boolean success = generate(board, starts, candidatesMap, new HashSet<>(), placements);
+    System.out.println(success ? "Success" : "Failed");
     System.out.println(placements);
   }
 
@@ -84,15 +113,15 @@ public class StandaloneGenerator implements CommandLineRunner {
     return starts;
   }
 
-  @NotNull
-  private List<String> getCandidates(int size) {
-    List<String> candidates = words
-        .stream()
-        .filter((word) -> word.length() <= size)
-        .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-    Collections.shuffle(candidates);
-    return candidates;
-  }
+//  @NotNull
+//  private List<String> getCandidates(int size) {
+//    List<String> candidates = words
+//        .stream()
+//        .filter((word) -> word.length() <= size)
+//        .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+//    Collections.shuffle(candidates);
+//    return candidates;
+//  }
 
   private static char[][] buildBoard(int size, String pattern) {
     char[][] board = new char[size][];
@@ -102,12 +131,12 @@ public class StandaloneGenerator implements CommandLineRunner {
     return board;
   }
 
-  private static boolean generate(char[][] board, List<WordStart> starts, List<String> candidates,
+  private static boolean generate(char[][] board, List<WordStart> starts, Map<Integer, List<String>> candidatesMap,
       Set<String> usedWords, Map<WordStart, String> placements) {
 
-    return starts.isEmpty() || candidates
+    return starts.isEmpty() || candidatesMap.get(starts.getFirst().length())
         .stream()
-        .filter((word) -> word.length() == starts.getFirst().length())
+//        .filter((word) -> word.length() == starts.getFirst().length())
         .filter((word) -> !usedWords.contains(word))
         .anyMatch((word) -> {
           WordStart start = starts.getFirst();
@@ -131,7 +160,7 @@ public class StandaloneGenerator implements CommandLineRunner {
             int column = start.column() + start.direction().columnOffset() * i;
             trialBoard[row][column] = word.charAt(i);
           }
-          return generate(trialBoard, starts.subList(1, starts.size()), candidates,
+          return generate(trialBoard, starts.subList(1, starts.size()), candidatesMap,
               trialUsedWords, placements);
         });
   }
@@ -160,9 +189,9 @@ public class StandaloneGenerator implements CommandLineRunner {
   }
   private record WordStart(int row, int column, int length, Direction direction) implements Comparable<WordStart> {
 
-    private static final Comparator<WordStart> COMPARATOR = Comparator.comparingInt(WordStart::row)
-        .thenComparingInt(WordStart::column)
-        .thenComparing(WordStart::direction);
+    private static final Comparator<WordStart> COMPARATOR = Comparator.comparing(WordStart::direction)
+        .thenComparingInt(WordStart::row)
+        .thenComparingInt(WordStart::column);
 
     @Override
     public int compareTo(@NotNull WordStart other) {

@@ -120,19 +120,19 @@ public class PuzzleService implements AbstractPuzzleService {
 
               if (shortDefs != null && !shortDefs.isEmpty()) {
                 String definition = shortDefs.get(0).getAsString();
-                definitions.put(pw.toString(), definition);
+                definitions.put(pw.getWordName(), definition);
               } else {
-                definitions.put(pw.toString(), "(No short definition found)");
+                definitions.put(pw.getWordName(), "(No short definition found)");
               }
             } else {
-              definitions.put(pw.toString(), "(No valid entry found)");
+              definitions.put(pw.getWordName(), "(No valid entry found)");
             }
           } else {
-            definitions.put(pw.toString(), "(Failed to fetch)");
+            definitions.put(pw.getWordName(), "(Failed to fetch)");
           }
         }
       } catch (IOException | IllegalStateException | JsonParseException e) {
-        definitions.put(pw.toString(), "(Error: " + e.getMessage() + ")");
+        definitions.put(pw.getWordName(), "(Error: " + e.getMessage() + ")");
       }
     }
 
