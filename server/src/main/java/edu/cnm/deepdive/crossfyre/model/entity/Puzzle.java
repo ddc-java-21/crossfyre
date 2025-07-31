@@ -141,19 +141,27 @@ public class Puzzle {
   }
 
   public enum Board {
-    SUNDAY    ("0__________________0____0"),
+    SUNDAY    ("0__________________0____0"/*, 5*/),   //   \u0000 OR \000
     MONDAY    ("0___00___0_______________"),
     TUESDAY   ("00_____________________00"),
     WEDNESDAY ("___00_______________00___"),
     THURSDAY  ("0___0_______________0___0"),
     FRIDAY    ("____0____0_____0____0____"),
-    SATURDAY  ("___00____0_____0____00___");
+    SATURDAY  ("___00____0_____0____00___"),
+    FAKEDAY   ("000________0_____0_0____0___0____00_"),
 
-    public final String day;
+    BAKEDAY   ("_____000_000____0000____000_000_____");
 
-    Board(String day) {
+
+    public final String day; // private
+    // field for row
+
+    Board(String day/*, int size*/) {
       this.day = day;
+      //this.size = size;
     }
+
+    // getter/accessor
 
   }
 

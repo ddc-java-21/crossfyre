@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CrosswordGenerator {
 
@@ -80,15 +81,19 @@ public class CrosswordGenerator {
     }
     int r = ws.i;
     int c = ws.j;
+    int rowOffset = ws.is_across ? 0 : 1;
+    int colOffset = ws.is_across ? 1 : 0;
     for (int i = 0; i < ws.length; i++) {
       if (board[r][c] == 0) {
         had_letter[i] = false;
       }
-			if (ws.is_across) {
-				c++;
-			} else {
-				r++;
-			}
+      c += colOffset;
+      r += rowOffset;
+//      if (ws.is_across) {
+//        c++;
+//      } else {
+//        r++;
+//      }
     }
 
     // Find a word that fits here, given the letters already on the board
@@ -98,20 +103,20 @@ public class CrosswordGenerator {
         r = ws.i;
         c = ws.j;
         for (int j = 0; j < ws.length; j++) {
-          if (board[r][c] != 0 && board[r][c] != word.charAt(j)) {
+          if (board[r][c] != 0 && board[r][c] != word.charAt(j)) { // verify this logic
             word_fits = false;
             break;
           }
-					if (ws.is_across) {
-						c++;
-					} else {
-						r++;
-					}
+          if (ws.is_across) {
+            c++;
+          } else {
+            r++;
+          }
         }
 
         if (word_fits) {
           // Place this word on the board
-          wordsUsed.add(word);
+          wordsUsed.add(word); // make wordsUsed a set
           PuzzleWord puzzleWord = new PuzzleWord();
           puzzleWord.setWordName(word);
           puzzleWord.setWordDirection(ws.is_across ? Direction.ACROSS : Direction.DOWN);
@@ -121,15 +126,16 @@ public class CrosswordGenerator {
               ws.length
           ));
           puzzleWords.add(puzzleWord);
+
           r = ws.i;
           c = ws.j;
           for (int j = 0; j < ws.length; j++) {
             board[r][c] = word.charAt(j);
-						if (ws.is_across) {
-							c++;
-						} else {
-							r++;
-						}
+            if (ws.is_across) {
+              c++;
+            } else {
+              r++;
+            }
           }
 
           // If puzzle can be solved this way, we're done
@@ -141,14 +147,14 @@ public class CrosswordGenerator {
           r = ws.i;
           c = ws.j;
           for (int j = 0; j < ws.length; j++) {
-						if (!had_letter[j]) {
-							board[r][c] = 0;
-						}
-						if (ws.is_across) {
-							c++;
-						} else {
-							r++;
-						}
+            if (!had_letter[j]) {
+              board[r][c] = 0;
+            }
+            if (ws.is_across) {
+              c++;
+            } else {
+              r++;
+            }
           }
 
           wordsUsed.remove(word);
@@ -242,12 +248,12 @@ public class CrosswordGenerator {
           continue;
         }
         if ((i == 0 || !hasLetter[i - 1][j]) && // there is a wall above us AND
-            (i < 5 && hasLetter[i + 1][j])) { // no wall below us
+            (i < 4 && hasLetter[i + 1][j])) { // no wall below us
           word_starts[i][j] = DOWN;
           thing++;
         }
         if ((j == 0 || !hasLetter[i][j - 1]) &&
-            (j < 5 && hasLetter[i][j + 1])) {
+            (j < 4 && hasLetter[i][j + 1])) {
           if (thing == 1) {
             word_starts[i][j] = BOTH;
           } else {
@@ -266,18 +272,22 @@ public class CrosswordGenerator {
     while (!puzzleGenerated) {
       RandomGenerator rng = new SecureRandom();
       List<String> wordsBackup = new ArrayList<>(words);
-      List<String> newList = rng.ints(words.size(), 0, words.size())
-          .mapToObj(words::get)
-          .sorted(Comparator.comparingInt(String::length))
+//      List<String> newList = rng.ints(words.size(), 0, words.size())
+//          .mapToObj(words::get)
+//          .sorted(Comparator.comparingInt(String::length))
+//          .filter((word) -> word.length() <= hasLetter.length)
+//          .collect(Collectors.toList());
+      List<String> selectedWords = words.stream()
           .filter((word) -> word.length() <= hasLetter.length)
-          .collect(Collectors.toList());
-      Collections.reverse(newList);
-      words = new ArrayList<>(newList);
+          .toList();
+      Collections.shuffle(selectedWords, rng);
+//      Collections.reverse(newList);
+//      words = new ArrayList<>(newList);
       System.out.println("Iteration: " + attemptCount);
       attemptCount++;
       counts = null;
       wordsUsed = null;
-      counts = new ArrayList<>();
+//      counts = new ArrayList<>();
       wordsUsed = new ArrayList<>();
 
       ArrayList<WordStart> word_start_list = new ArrayList<>();
@@ -293,10 +303,12 @@ public class CrosswordGenerator {
         }
       }
 
-      counts = new ArrayList<>();
-      for (int i = 0; i < word_start_list.size(); i++) {
-        counts.add(0);
-      }
+      counts = Stream.generate(() -> 0)
+          .limit(word_start_list.size())
+          .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+//      for (int i = 0; i < word_start_list.size(); i++) {
+//        counts.add(0);
+//      }
 
       if (tryToSolve(word_start_list, board, 0)) {
         System.out.println("Solution:");

@@ -16,12 +16,12 @@ create table guess
 );
 create table puzzle
 (
-    date         date                        not null,
-    size         integer                     not null,
-    created      timestamp(6) with time zone not null,
-    puzzle_id    bigint                      not null,
-    external_key uuid                        not null unique,
-    board        varchar(255)                not null,
+    size         integer                                                                                 not null,
+    created      timestamp(6) with time zone                                                             not null,
+    date         timestamp(6) with time zone,
+    puzzle_id    bigint                                                                                  not null,
+    external_key uuid                                                                                    not null unique,
+    board        enum ('FAKEDAY','FRIDAY','MONDAY','SATURDAY','SUNDAY','THURSDAY','TUESDAY','WEDNESDAY') not null,
     primary key (puzzle_id)
 );
 create table puzzle_word
@@ -32,8 +32,8 @@ create table puzzle_word
     puzzle_id      bigint                 not null,
     puzzle_word_id bigint                 not null,
     external_key   uuid                   not null unique,
-    clue           varchar(255)           not null unique,
-    word_name      varchar(255)           not null unique,
+    clue           varchar(255)           not null,
+    word_name      varchar(255)           not null,
     word_direction enum ('ACROSS','DOWN') not null,
     primary key (puzzle_word_id),
     unique (puzzle_id, word_name)
@@ -53,7 +53,7 @@ create table user_puzzle
     is_solved      boolean                     not null,
     created        timestamp(6) with time zone not null,
     puzzle_id      bigint                      not null,
-    solved         timestamp(6) with time zone not null,
+    solved         timestamp(6) with time zone,
     user_id        bigint                      not null,
     user_puzzle_id bigint                      not null,
     external_key   uuid                        not null unique,

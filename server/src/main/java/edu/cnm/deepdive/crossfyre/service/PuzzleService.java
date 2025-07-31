@@ -50,7 +50,7 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
-  @Scheduled(cron = "0 0 0 * * *") // Runs every day at midnight
+  @Scheduled(cron = "0 30 9 * * *") // Runs every day at midnight
   public void createPuzzle() {
 
     // Create date for today and get value of the currentDay
@@ -61,7 +61,9 @@ public class PuzzleService implements AbstractPuzzleService {
     int boardIndex = currentDayValue % 7; // Sunday (7) → 0
 
     Board[] boards = Board.values();
-    Board todaysBoard = boards[boardIndex];
+//    Board todaysBoard = boards[boardIndex];
+    Board todaysBoard = Board.FAKEDAY;
+    int boardSize = (int) Math.round(Math.sqrt(todaysBoard.toString().length()));
 
     Instant date = today.atStartOfDay(ZoneOffset.UTC).toInstant();
 
@@ -69,7 +71,7 @@ public class PuzzleService implements AbstractPuzzleService {
     Puzzle puzzle = new Puzzle();
     puzzle.setBoard(todaysBoard);
     puzzle.setDate(date);
-    puzzle.setSize(5);
+    puzzle.setSize(boardSize);
     puzzle.setCreated(Instant.now());
 
     // Save puzzle first so it gets an ID
@@ -83,9 +85,11 @@ public class PuzzleService implements AbstractPuzzleService {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    Map<String, String> definitions = new HashMap<>();
+    fetchDefinitions(puzzleWords, definitions);
     for (PuzzleWord word : puzzleWords) {
-      fetchDefinitions(puzzleWords);
       word.setPuzzle(puzzle);
+      word.setClue(definitions.get(word.getWordName()));
     }
     puzzleWordRepository.saveAll(puzzleWords);
   }
@@ -98,34 +102,34 @@ public class PuzzleService implements AbstractPuzzleService {
         .orElseThrow();
   }
 
-  public void fetchDefinitions(Iterable<PuzzleWord> puzzleWords) {
-    Map<String, String> definitions = new HashMap<>();
+  public void fetchDefinitions(Iterable<PuzzleWord> puzzleWords, Map<String, String> definitions) {
 
     for (PuzzleWord pw : puzzleWords) {
       try {
         String url = BASE_URL + pw + "?key=" + API_KEY;
         Request request = new Request.Builder().url(url).build();
-        Response response = client.newCall(request).execute();
+        try (Response response = client.newCall(request).execute()) {
 
-        if (response.isSuccessful() && response.body() != null) {
-          String json = response.body().string();
-          JsonArray array = JsonParser.parseString(json).getAsJsonArray();
+          if (response.isSuccessful()) {
+            String json = response.body().string();
+            JsonArray array = JsonParser.parseString(json).getAsJsonArray();
 
-          if (array.size() > 0 && array.get(0).isJsonObject()) {
-            JsonObject entry = array.get(0).getAsJsonObject();
-            JsonArray shortDefs = entry.getAsJsonArray("shortdef");
+            if (!array.isEmpty() && array.get(0).isJsonObject()) {
+              JsonObject entry = array.get(0).getAsJsonObject();
+              JsonArray shortDefs = entry.getAsJsonArray("shortdef");
 
-            if (shortDefs != null && shortDefs.size() > 0) {
-              String definition = shortDefs.get(0).getAsString();
-              definitions.put(pw.toString(), definition);
+              if (shortDefs != null && !shortDefs.isEmpty()) {
+                String definition = shortDefs.get(0).getAsString();
+                definitions.put(pw.toString(), definition);
+              } else {
+                definitions.put(pw.toString(), "(No short definition found)");
+              }
             } else {
-              definitions.put(pw.toString(), "(No short definition found)");
+              definitions.put(pw.toString(), "(No valid entry found)");
             }
           } else {
-            definitions.put(pw.toString(), "(No valid entry found)");
+            definitions.put(pw.toString(), "(Failed to fetch)");
           }
-        } else {
-          definitions.put(pw.toString(), "(Failed to fetch)");
         }
       } catch (IOException | IllegalStateException | JsonParseException e) {
         definitions.put(pw.toString(), "(Error: " + e.getMessage() + ")");
