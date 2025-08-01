@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface AbstractGeneratorService {
 
-  public List<PuzzleWord> generatePuzzleWords(Board board);
+  // Have it return a List<PuzzleWords> with a Board
+  List<PuzzleWord> generatePuzzleWords(Board frame);
+
 
 }
