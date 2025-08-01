@@ -30,5 +30,4 @@ public class CrossfyreApplication extends Application {
   public void onCreate() {
     super.onCreate();
   }
-
 }

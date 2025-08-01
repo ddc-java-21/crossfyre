@@ -1,6 +1,6 @@
 <resources>
   <string name="login_fragment_label">Sign in to Crossfyre</string>
-  <string name="main_fragment_label">Service Bearer Token</string>
+  <string name="main_fragment_label">Crossfyre</string>
   <string name="sign_in_failure_message">Unable to sign in with provided credentials.</string>
   <string name="sign_out_title">Sign out</string>
   <string name="settings_title">Settings</string>

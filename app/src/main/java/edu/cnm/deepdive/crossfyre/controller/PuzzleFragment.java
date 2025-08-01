@@ -24,7 +24,6 @@ public class PuzzleFragment extends Fragment {
 
   private FragmentPuzzleBinding binding;
   private PuzzleViewModel viewModel;
-  private SquareAdapter adapter;
 
   @Inject
   public SquareAdapter squareAdapter; // Injected via Hilt
@@ -60,16 +59,14 @@ public class PuzzleFragment extends Fragment {
       binding.clueDirection.setText(dir.name());
     });
 
-    viewModel.getWords().observe(getViewLifecycleOwner(), words -> {
-      populateGrid(words);
-    });
+    viewModel.getWords().observe(getViewLifecycleOwner(), this::populateGrid);
   }
 
   private void populateGrid(List<PuzzleWord> words) {
     GridLayout grid = binding.puzzleGrid;
     grid.removeAllViews();
-    grid.setRowCount(15);
-    grid.setColumnCount(15);
+    grid.setRowCount(5);
+    grid.setColumnCount(5);
 
     for (PuzzleWord word : words) {
       PuzzleWord.WordPosition pos = word.wordPosition;

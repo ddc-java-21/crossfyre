@@ -54,7 +54,7 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
-  @Scheduled(cron = "0 12 2 * * *") // Runs every day at midnight
+  @Scheduled(cron = "0 38 13 * * *") // Runs every day at midnight
   public void createPuzzle() {
 
     // Create date for today and get value of the currentDay
@@ -112,7 +112,7 @@ public class PuzzleService implements AbstractPuzzleService {
 
     for (PuzzleWord pw : puzzleWords) {
       try {
-        String url = BASE_URL + pw + "?key=" + API_KEY;
+        String url = BASE_URL + pw.getWordName() + "?key=" + API_KEY;
         Request request = new Request.Builder().url(url).build();
         try (Response response = client.newCall(request).execute()) {
 
@@ -123,12 +123,19 @@ public class PuzzleService implements AbstractPuzzleService {
             if (!array.isEmpty() && array.get(0).isJsonObject()) {
               JsonObject entry = array.get(0).getAsJsonObject();
               JsonArray shortDefs = entry.getAsJsonArray("shortdef");
+              JsonArray crossRefs = entry.getAsJsonArray("cxl");
 
               if (shortDefs != null && !shortDefs.isEmpty()) {
                 String definition = shortDefs.get(0).getAsString();
                 definitions.put(pw.getWordName(), definition);
               } else {
-                definitions.put(pw.getWordName(), "(No short definition found)");
+                if (crossRefs != null && !crossRefs.isEmpty()) {
+                  String definition = crossRefs.get(0).getAsString();
+                  definitions.put(pw.getWordName(), definition);
+                }
+                else {
+                  definitions.put(pw.getWordName(), "(No short definition or cross reference found)");
+                }
               }
             } else {
               definitions.put(pw.getWordName(), "(No valid entry found)");

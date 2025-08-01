@@ -10,6 +10,7 @@ public class CrossfyreApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CrossfyreApplication.class, args);
+
 	}
 
 }
