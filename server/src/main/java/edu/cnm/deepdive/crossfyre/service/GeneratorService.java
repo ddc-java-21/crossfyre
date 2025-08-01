@@ -51,7 +51,7 @@ public class GeneratorService implements AbstractGeneratorService {
 
   @Override
   public List<PuzzleWord> generatePuzzleWords(Board frame) {
-    String pattern = Board.MONDAY.day;
+    String pattern = frame.day;
     int size = (int) Math.round(Math.sqrt(pattern.length()));
 //    List<String> candidates = getCandidates(size);
 
@@ -71,7 +71,14 @@ public class GeneratorService implements AbstractGeneratorService {
     char[][] board = buildBoard(size, pattern);
     List<WordStart> starts = findStarts(size, board);
 
-    Map<WordStart, String> placements = new TreeMap<>();
+    Comparator<WordStart> wordLengthComparator = Comparator.comparingInt(WordStart::length)
+        .reversed()
+        .thenComparingInt(WordStart::row)
+        .thenComparingInt(WordStart::column)
+        .thenComparing(WordStart::direction);
+
+    starts.sort(wordLengthComparator);
+    Map<WordStart, String> placements = new TreeMap<>(wordLengthComparator);
     boolean success = generate(board, starts, candidatesMap, new HashSet<>(), placements);
     System.out.println(success ? "Success" : "Failed");
     System.out.println(placements);
@@ -85,9 +92,9 @@ public class GeneratorService implements AbstractGeneratorService {
       puzzleWord.setWordName(word);
       puzzleWord.setWordDirection(PuzzleWord.Direction.valueOf(String.valueOf(wordStart.direction)));
       puzzleWord.setWordPosition(new WordPosition(
-          wordStart.row,
-          wordStart.column,
-          wordStart.length
+          wordStart.row(),
+          wordStart.column(),
+          wordStart.length()
       ));
       puzzleWords.add(puzzleWord);
     }
@@ -171,8 +178,12 @@ public class GeneratorService implements AbstractGeneratorService {
             int column = start.column() + start.direction().columnOffset() * i;
             trialBoard[row][column] = word.charAt(i);
           }
-          return generate(trialBoard, starts.subList(1, starts.size()), candidatesMap,
+          boolean success = generate(trialBoard, starts.subList(1, starts.size()), candidatesMap,
               trialUsedWords, placements);
+          if (!success) {
+            placements.remove(start);
+          }
+          return success;
         });
   }
 

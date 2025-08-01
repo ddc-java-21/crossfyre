@@ -66,7 +66,7 @@ public class Puzzle {
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY,
       cascade = CascadeType.ALL,orphanRemoval = true)
   @JsonProperty(value = "puzzleWords", access = Access.READ_ONLY)
-  private List<PuzzleWord> puzzleWords = new LinkedList<>(); // TN 2025-07-07 added puzzleWords list
+  private final List<PuzzleWord> puzzleWords = new LinkedList<>(); // TN 2025-07-07 added puzzleWords list
 
 
   public long getId() {

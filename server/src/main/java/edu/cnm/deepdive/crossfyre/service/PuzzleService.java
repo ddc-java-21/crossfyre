@@ -32,7 +32,7 @@ public class PuzzleService implements AbstractPuzzleService {
   private final PuzzleRepository puzzleRepository;
   private final PuzzleWordRepository puzzleWordRepository;
 
-  private final GeneratorService generatorService;
+  private final AbstractGeneratorService generatorService;
 
   private static final String API_KEY = "2fc887ac-578a-442a-b371-970eae934dfe";
   private static final String BASE_URL = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/";
@@ -43,7 +43,7 @@ public class PuzzleService implements AbstractPuzzleService {
 
   @Autowired
   PuzzleService(PuzzleRepository puzzleRepository, PuzzleWordRepository puzzleWordRepository,
-      GeneratorService generatorService) {
+      AbstractGeneratorService generatorService) {
     this.puzzleRepository = puzzleRepository;
     this.puzzleWordRepository = puzzleWordRepository;
     this.generatorService = generatorService;
@@ -79,7 +79,6 @@ public class PuzzleService implements AbstractPuzzleService {
     puzzle.setCreated(Instant.now());
 
     // Save puzzle first so it gets an ID
-    puzzle = puzzleRepository.save(puzzle);
 
     // Fetch puzzle words
     // Untested try catch but crossword generator does work by itself in its class
@@ -94,8 +93,11 @@ public class PuzzleService implements AbstractPuzzleService {
     for (PuzzleWord word : puzzleWords) {
       word.setPuzzle(puzzle);
       word.setClue(definitions.get(word.getWordName()));
+      puzzle.getPuzzleWords().add(word);
     }
-    puzzleWordRepository.saveAll(puzzleWords);
+    //puzzleWordRepository.saveAll(puzzleWords);
+//    puzzle.getPuzzleWords().addAll(puzzleWords); // need to pass in a Collection, not an Iterable
+    puzzle = puzzleRepository.save(puzzle);
   }
 
 
