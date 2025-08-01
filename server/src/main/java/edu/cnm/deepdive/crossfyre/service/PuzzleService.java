@@ -32,6 +32,8 @@ public class PuzzleService implements AbstractPuzzleService {
   private final PuzzleRepository puzzleRepository;
   private final PuzzleWordRepository puzzleWordRepository;
 
+  private final GeneratorService generatorService;
+
   private static final String API_KEY = "2fc887ac-578a-442a-b371-970eae934dfe";
   private static final String BASE_URL = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/";
 
@@ -40,9 +42,11 @@ public class PuzzleService implements AbstractPuzzleService {
 
 
   @Autowired
-  PuzzleService(PuzzleRepository puzzleRepository, PuzzleWordRepository puzzleWordRepository) {
+  PuzzleService(PuzzleRepository puzzleRepository, PuzzleWordRepository puzzleWordRepository,
+      GeneratorService generatorService) {
     this.puzzleRepository = puzzleRepository;
     this.puzzleWordRepository = puzzleWordRepository;
+    this.generatorService = generatorService;
   }
 
 
@@ -50,7 +54,7 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
-  @Scheduled(cron = "0 30 9 * * *") // Runs every day at midnight
+  @Scheduled(cron = "0 39 21 * * *") // Runs every day at midnight
   public void createPuzzle() {
 
     // Create date for today and get value of the currentDay
@@ -62,7 +66,7 @@ public class PuzzleService implements AbstractPuzzleService {
 
     Board[] boards = Board.values();
 //    Board todaysBoard = boards[boardIndex];
-    Board todaysBoard = Board.FAKEDAY;
+    Board todaysBoard = Board.MONDAY;
     int boardSize = (int) Math.round(Math.sqrt(todaysBoard.toString().length()));
 
     Instant date = today.atStartOfDay(ZoneOffset.UTC).toInstant();
@@ -79,12 +83,12 @@ public class PuzzleService implements AbstractPuzzleService {
 
     // Fetch puzzle words
     // Untested try catch but crossword generator does work by itself in its class
-    Iterable<PuzzleWord> puzzleWords;
-    try {
-      puzzleWords = CrosswordGenerator.generate(todaysBoard.toString(), puzzle.getSize());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+//    try {
+//      puzzleWords = CrosswordGenerator.generate(todaysBoard.toString(), puzzle.getSize());
+//    } catch (IOException e) {
+//      throw new RuntimeException(e);
+//    }
+    Iterable<PuzzleWord> puzzleWords = generatorService.generatePuzzleWords(todaysBoard);
     Map<String, String> definitions = new HashMap<>();
     fetchDefinitions(puzzleWords, definitions);
     for (PuzzleWord word : puzzleWords) {

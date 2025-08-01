@@ -72,34 +72,7 @@ public class Preloader implements CommandLineRunner {
         puzzleWords.add(puzzleWord);
       }
 
-      // Merriam Webster Call
-//      RestTemplate template = new RestTemplate();
-//      ResponseEntity<Definition> response = template.getForEntity(ZEN_QUOTE_URL, Definition.class);
-//      ZenQuote[] quotes;
-//      if (
-//          response.getStatusCode().is2xxSuccessful()
-//              && (quotes = response.getBody()) != null
-//              && quotes.length > 0
-//      ) {
-//        ZenQuote quote = quotes[0];
-//      }
-
       puzzleWordRepository.saveAll(puzzleWords);
-
-//      repository.save(puzzle);
-
-//      PuzzleWord[] puzzleWords = mapper.readValue(input2, PuzzleWord[].class);
-//      System.out.println("Preloaded puzzleWords: ");
-//      Arrays.stream(puzzleWords).forEach((puzzleWord) -> {
-//        System.out.println(puzzleWord.getExternalKey());
-//        System.out.println(puzzleWord.getWordName());
-//        System.out.println(puzzleWord.getClue());
-//        System.out.println(puzzleWord.getExternalKey());
-//      });
-//      for (PuzzleWord puzzleWord : puzzleWords) {
-//        puzzleWord.setPuzzle(puzzle);
-//      }
-//      puzzleWordRepository.saveAll(Arrays.asList(puzzleWords));
     }
   }
 
