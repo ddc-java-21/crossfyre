@@ -1,74 +1,73 @@
 package edu.cnm.deepdive.crossfyre.view.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.annotation.Nullable;
 import dagger.hilt.android.qualifiers.ActivityContext;
 import dagger.hilt.android.scopes.FragmentScoped;
+import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.ItemSquareBinding;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import javax.inject.Inject;
 
 @FragmentScoped
-public class SquareAdapter extends RecyclerView.Adapter<SquareAdapter.Holder> {
-
+public class SquareAdapter extends ArrayAdapter<Character> {
 
   private final LayoutInflater inflater;
-  private final List<String> squares = new ArrayList<>();
+  @ColorInt
+  private final int wallColor;
+  // TODO: 8/1/2025 Define a field for puzzleWord|wordStart 
 
   @Inject
   SquareAdapter(@ActivityContext Context context) {
+    super(context, R.layout.item_square);
     inflater = LayoutInflater.from(context);
+    wallColor = getAttributeColor(R.attr.wallColor);
   }
 
-  public void setMask(String mask, int gridSize) {
-    squares.clear();
-    for (int i = 0; i < mask.length(); i++) {
-      char c = mask.charAt(i);
-      squares.add((c == '0') ? null : ""); // null for black cell, "" for empty
-    }
+  public SquareAdapter setBoard(Character[][] board) {
+    clear();
+    Arrays.stream(board)
+        .flatMap(Arrays::stream)
+        .forEach(this::add);
     notifyDataSetChanged();
+    return this;
   }
 
   @NonNull
   @Override
-  public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    ItemSquareBinding binding = ItemSquareBinding.inflate(inflater, parent, false);
-    return new Holder(binding);
-  }
-
-  @Override
-  public void onBindViewHolder(@NonNull Holder holder, int position) {
-    holder.bind(squares.get(position));
-  }
-
-  @Override
-  public int getItemCount() {
-    return squares.size();
-  }
-
-    static class Holder extends RecyclerView.ViewHolder {
-
-      private final ItemSquareBinding binding;
-
-      public Holder(@NonNull ItemSquareBinding binding) {
-        super(binding.getRoot());
-        this.binding = binding;
+  public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    char c = getItem(position);
+    ItemSquareBinding binding = (convertView != null)
+        ? ItemSquareBinding.bind(convertView)
+        : ItemSquareBinding.inflate(inflater, parent, false);
+    switch (c) {
+      case '_' -> {
+        binding.square.setText("");
       }
-
-      public void bind(String content) {
-        if (content == null) {
-          // Black (dead) square
-          binding.getRoot().setBackgroundColor(Color.BLACK);
-          binding.square.setText("");
-        } else {
-          binding.getRoot().setBackgroundColor(Color.WHITE);
-          binding.square.setText(content);
-        }
+      case '\u0000' -> {
+        binding.square.setText("");
+        binding.getRoot().setBackgroundColor(wallColor);
+      }
+      default -> {
+        binding.square.setText(String.valueOf(c));
       }
     }
+    // TODO: 8/1/2025 If pos represents word start, update corresponding textView 
+    return binding.getRoot();
+  }
+
+  @ColorInt
+  private int getAttributeColor (int colorAttrId) {
+    TypedValue typedValue = new TypedValue();
+    getContext().getTheme().resolveAttribute(colorAttrId, typedValue, true);
+    return typedValue.data;
+  }
+
 }

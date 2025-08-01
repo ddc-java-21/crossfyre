@@ -5,6 +5,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -24,10 +26,8 @@ public class PuzzleFragment extends Fragment {
 
   private FragmentPuzzleBinding binding;
   private PuzzleViewModel viewModel;
-  private SquareAdapter adapter;
-
   @Inject
-  public SquareAdapter squareAdapter; // Injected via Hilt
+  SquareAdapter adapter;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +41,17 @@ public class PuzzleFragment extends Fragment {
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentPuzzleBinding.inflate(inflater, container, false);
+    binding.puzzleGrid.setOnItemSelectedListener(new OnItemSelectedListener() {
+      @Override
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // TODO: 8/1/2025 Use position to determine which row and column were clicked; use to update viewModel 
+      }
+
+      @Override
+      public void onNothingSelected(AdapterView<?> parent) {
+        // Do nothing
+      }
+    });
     return binding.getRoot();
   }
 
@@ -61,44 +72,10 @@ public class PuzzleFragment extends Fragment {
     });
 
     viewModel.getWords().observe(getViewLifecycleOwner(), words -> {
-      populateGrid(words);
+      // TODO: 8/1/2025 Pass PuzzleWords to adapter of clues 
     });
+    // TODO: 8/1/2025 Observe LiveData containing board. Use the board to set number of columns in 
+    //  GridView, pass board to adapter.setBoard()
   }
-
-  private void populateGrid(List<PuzzleWord> words) {
-    GridLayout grid = binding.puzzleGrid;
-    grid.removeAllViews();
-    grid.setRowCount(15);
-    grid.setColumnCount(15);
-
-    for (PuzzleWord word : words) {
-      PuzzleWord.WordPosition pos = word.wordPosition;
-      for (int i = 0; i < pos.getWordLength(); i++) {
-        int row = word.getWordDirection() == PuzzleWord.Direction.ACROSS ? pos.getWordRow() : pos.getWordRow() + i;
-        int col = word.getWordDirection() == PuzzleWord.Direction.ACROSS ? pos.getWordColumn() + i : pos.getWordColumn();
-
-        TextView cell = new TextView(requireContext());
-        cell.setText(" ");
-        cell.setPadding(8, 8, 8, 8);
-        cell.setGravity(Gravity.CENTER);
-
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams(
-            GridLayout.spec(row), GridLayout.spec(col));
-        params.width = 0;
-        params.height = 0;
-        params.columnSpec = GridLayout.spec(col, 1f);
-        params.rowSpec = GridLayout.spec(row, 1f);
-        cell.setLayoutParams(params);
-
-        cell.setOnClickListener(v -> viewModel.selectWord(word));
-
-        cell.setOnLongClickListener(v -> {
-          viewModel.toggleDirection();
-          return true;
-        });
-
-        grid.addView(cell);
-      }
-    }
-  }
+  
 }
