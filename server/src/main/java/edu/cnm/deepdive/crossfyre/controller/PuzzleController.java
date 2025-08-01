@@ -2,9 +2,11 @@ package edu.cnm.deepdive.crossfyre.controller;
 
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle.Board;
+import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.service.AbstractGeneratorService;
 import edu.cnm.deepdive.crossfyre.service.AbstractPuzzleService;
 import java.time.Instant;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,9 +37,9 @@ public class PuzzleController {
     return service.get(date);
   }
 
-  @GetMapping(path = "generate", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Puzzle generate(Puzzle.Board frame) {
-    return (Puzzle) generator.generatePuzzleWords(frame);
+  @GetMapping(path = "/generate", produces = MediaType.APPLICATION_JSON_VALUE)
+  public List<PuzzleWord> generate() {
+    return generator.generatePuzzleWords(Board.MONDAY);
   }
 
 }

@@ -15,7 +15,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -53,9 +52,8 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
-  @Scheduled(cron = "0 30 9 * * *") // Runs every day at midnight
+  @Scheduled(cron = "0 40 7 * * *") // Runs every day at midnight
   public void createPuzzle() {
-
     // Create date for today and get value of the currentDay
     LocalDate today = LocalDate.now();
     int currentDayValue = today.getDayOfWeek().getValue(); // 1 = Monday ... 7 = Sunday
@@ -65,7 +63,7 @@ public class PuzzleService implements AbstractPuzzleService {
 
     Board[] boards = Board.values();
 //    Board todaysBoard = boards[boardIndex];
-    Board todaysBoard = Board.FAKEDAY;
+    Board todaysBoard = Board.MONDAY;
     int boardSize = (int) Math.round(Math.sqrt(todaysBoard.toString().length()));
 
     Instant date = today.atStartOfDay(ZoneOffset.UTC).toInstant();
@@ -83,7 +81,7 @@ public class PuzzleService implements AbstractPuzzleService {
     // Fetch puzzle words
     // Untested try catch but crossword generator does work by itself in its class
     Iterable<PuzzleWord> puzzleWords;
-    puzzleWords = generatorService.generatePuzzleWords(puzzle.getBoard());
+    puzzleWords = generatorService.generatePuzzleWords(Board.MONDAY);
     Map<String, String> definitions = new HashMap<>();
     fetchDefinitions(puzzleWords, definitions);
     for (PuzzleWord word : puzzleWords) {
