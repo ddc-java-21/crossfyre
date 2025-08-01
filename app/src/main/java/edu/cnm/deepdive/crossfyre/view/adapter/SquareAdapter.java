@@ -59,7 +59,7 @@ public class SquareAdapter extends ArrayAdapter<Character> {
         binding.square.setText(String.valueOf(c));
       }
     }
-    // TODO: 8/1/2025 If pos represents word start, update corresponding textView 
+    // TODO: 8/1/2025 If pos represents word start, update corresponding textViews 
     return binding.getRoot();
   }
 
