@@ -37,12 +37,15 @@ public class PuzzleService implements AbstractPuzzleService {
 
   private final OkHttpClient client = new OkHttpClient();
   private final Gson gson = new Gson();
+  private final GeneratorService generatorService;
 
 
   @Autowired
-  PuzzleService(PuzzleRepository puzzleRepository, PuzzleWordRepository puzzleWordRepository) {
+  PuzzleService(PuzzleRepository puzzleRepository, PuzzleWordRepository puzzleWordRepository,
+      GeneratorService generatorService) {
     this.puzzleRepository = puzzleRepository;
     this.puzzleWordRepository = puzzleWordRepository;
+    this.generatorService = generatorService;
   }
 
 
@@ -80,11 +83,7 @@ public class PuzzleService implements AbstractPuzzleService {
     // Fetch puzzle words
     // Untested try catch but crossword generator does work by itself in its class
     Iterable<PuzzleWord> puzzleWords;
-    try {
-      puzzleWords = CrosswordGenerator.generate(todaysBoard.toString(), puzzle.getSize());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    puzzleWords = generatorService.generatePuzzleWords(puzzle.getBoard());
     Map<String, String> definitions = new HashMap<>();
     fetchDefinitions(puzzleWords, definitions);
     for (PuzzleWord word : puzzleWords) {

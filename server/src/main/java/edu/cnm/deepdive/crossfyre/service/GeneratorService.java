@@ -1,6 +1,8 @@
-package edu.cnm.deepdive.crossfyre.util;
+package edu.cnm.deepdive.crossfyre.service;
 
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle.Board;
+import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
+import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord.WordPosition;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,7 +20,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -26,13 +27,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("generate")
-public class StandaloneGenerator implements CommandLineRunner {
+public class GeneratorService implements AbstractGeneratorService {
 
   private static final String WORDS_FILE = "crossword/englishWords.txt";
   //private final List<String> words;
   private final Map<Integer, List<String>> wordListsMap;
 
-  public StandaloneGenerator() throws IOException {
+  public GeneratorService() throws IOException {
     Resource resource = new ClassPathResource(WORDS_FILE);
     try (Stream<String> lines = Files.lines(Paths.get(resource.getURI()))) {
       wordListsMap = lines
@@ -49,7 +50,7 @@ public class StandaloneGenerator implements CommandLineRunner {
   }
 
   @Override
-  public void run(String... args) throws Exception {
+  public List<PuzzleWord> generatePuzzleWords(Board frame) {
     String pattern = Board.MONDAY.day;
     int size = (int) Math.round(Math.sqrt(pattern.length()));
 //    List<String> candidates = getCandidates(size);
@@ -69,10 +70,6 @@ public class StandaloneGenerator implements CommandLineRunner {
       Collections.shuffle(entry.getValue());
     }
 
-    //
-
-
-
     char[][] board = buildBoard(size, pattern);
 
     List<WordStart> starts = findStarts(size, board);
@@ -81,6 +78,29 @@ public class StandaloneGenerator implements CommandLineRunner {
     boolean success = generate(board, starts, candidatesMap, new HashSet<>(), placements);
     System.out.println(success ? "Success" : "Failed");
     System.out.println(placements);
+
+    // Convert placements to List<PuzzleWords>
+    List<PuzzleWord> puzzleWords = new ArrayList<>();
+    for(Map.Entry<WordStart, String> entry : placements.entrySet()) {
+      WordStart wordStart = entry.getKey();
+      String word = entry.getValue();
+
+      PuzzleWord puzzleWord = new PuzzleWord();
+      Direction direction = wordStart.direction;
+
+      WordPosition position = new WordPosition(
+          wordStart.row(),
+          wordStart.column(),
+          wordStart.length());
+
+      puzzleWord.setWordPosition(position);
+      puzzleWord.setWordDirection(puzzleWord.getWordDirection());
+      puzzleWord.setWordName(word);
+
+      puzzleWords.add(puzzleWord);
+
+    }
+    return puzzleWords;
   }
 
   private static List<WordStart> findStarts(int size, char[][] board) {
