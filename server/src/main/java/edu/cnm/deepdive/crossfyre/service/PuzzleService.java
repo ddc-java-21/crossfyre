@@ -1,9 +1,11 @@
 package edu.cnm.deepdive.crossfyre.service;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.annotations.SerializedName;
 import com.nimbusds.jose.shaded.gson.Gson;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle.Board;
@@ -54,7 +56,7 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
-  @Scheduled(cron = "0 12 2 * * *") // Runs every day at midnight
+  @Scheduled(cron = "0 05 12 * * *") // Runs every day at midnight
   public void createPuzzle() {
 
     // Create date for today and get value of the currentDay
@@ -87,17 +89,39 @@ public class PuzzleService implements AbstractPuzzleService {
 //    } catch (IOException e) {
 //      throw new RuntimeException(e);
 //    }
-    Iterable<PuzzleWord> puzzleWords = generatorService.generatePuzzleWords(todaysBoard);
-    Map<String, String> definitions = new HashMap<>();
-    fetchDefinitions(puzzleWords, definitions);
-    for (PuzzleWord word : puzzleWords) {
-      word.setPuzzle(puzzle);
-      word.setClue(definitions.get(word.getWordName()));
-      puzzle.getPuzzleWords().add(word);
-    }
-    //puzzleWordRepository.saveAll(puzzleWords);
-//    puzzle.getPuzzleWords().addAll(puzzleWords); // need to pass in a Collection, not an Iterable
-    puzzleRepository.save(puzzle);
+    boolean valid = true;
+    do {
+      valid = true;
+      Iterable<PuzzleWord> puzzleWords = generatorService.generatePuzzleWords(todaysBoard);
+      Map<String, String> definitions = new HashMap<>();
+      fetchDefinitions(puzzleWords, definitions);
+      for (PuzzleWord puzzleWord : puzzleWords) {
+        if ((definitions.get(puzzleWord.getWordName()).equals("(No short definition or cross reference found)")
+        || (definitions.get(puzzleWord.getWordName()).equals("(No valid entry found)")))) {
+          valid = false;
+          break;
+        }
+      }
+      if (valid) {
+        for (PuzzleWord word : puzzleWords) {
+          word.setPuzzle(puzzle);
+          word.setClue(definitions.get(word.getWordName()));
+          puzzle.getPuzzleWords().add(word);
+        }
+        puzzleRepository.save(puzzle);
+      }
+
+    } while (!valid);
+
+//    for (PuzzleWord word : puzzleWords) {
+//      word.setPuzzle(puzzle);
+//      word.setClue(definitions.get(word.getWordName()));
+//      puzzle.getPuzzleWords().add(word);
+//    }
+//
+//    //puzzleWordRepository.saveAll(puzzleWords);
+////    puzzle.getPuzzleWords().addAll(puzzleWords); // need to pass in a Collection, not an Iterable
+//    puzzleRepository.save(puzzle);
   }
 
 
@@ -112,7 +136,7 @@ public class PuzzleService implements AbstractPuzzleService {
 
     for (PuzzleWord pw : puzzleWords) {
       try {
-        String url = BASE_URL + pw + "?key=" + API_KEY;
+        String url = BASE_URL + pw.getWordName() + "?key=" + API_KEY;
         Request request = new Request.Builder().url(url).build();
         try (Response response = client.newCall(request).execute()) {
 
@@ -122,13 +146,40 @@ public class PuzzleService implements AbstractPuzzleService {
 
             if (!array.isEmpty() && array.get(0).isJsonObject()) {
               JsonObject entry = array.get(0).getAsJsonObject();
-              JsonArray shortDefs = entry.getAsJsonArray("shortdef");
 
+//              @JsonProperty(value = "shortdef") have to create a DTO class
+              JsonArray shortDefs = entry.getAsJsonArray("shortdef"); // Get rid of JsonArray
+              JsonArray crossRefs = entry.getAsJsonArray("cxl");
+
+              String definition;
               if (shortDefs != null && !shortDefs.isEmpty()) {
-                String definition = shortDefs.get(0).getAsString();
+                definition = shortDefs.get(0).getAsString();
+//
+//                if (definition.length() > 254) {
+//                  for(int i = 0; i < shortDefs.size(); i++) {
+//                    definition = shortDefs.get(i).getAsString();
+//
+//                  }
+//                }
+//
+//                if(definition.length() > 255) {
+//                  definition = shortDefs.get(1).getAsString();
+//                }
+//
+//                if(definition.length() > 255  ) {
+//                  definition = shortDefs.get(2).getAsString();
+//                }
+
+
                 definitions.put(pw.getWordName(), definition);
               } else {
-                definitions.put(pw.getWordName(), "(No short definition found)");
+                if (crossRefs != null && !crossRefs.isEmpty()) {
+                  definition = crossRefs.get(0).getAsString();
+                  definitions.put(pw.getWordName(), definition);
+                }
+                else {
+                  definitions.put(pw.getWordName(), "(No short definition or cross reference found)");
+                }
               }
             } else {
               definitions.put(pw.getWordName(), "(No valid entry found)");

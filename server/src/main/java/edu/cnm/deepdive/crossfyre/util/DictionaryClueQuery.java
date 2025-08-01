@@ -23,7 +23,7 @@ public class DictionaryClueQuery {
   private final OkHttpClient client = new OkHttpClient();
   private final Gson gson = new Gson();
 
-  public Map<String, String> fetchDefinitions(List<String> words) {
+  public void fetchDefinitions(List<String> words) {
     Map<String, String> definitions = new HashMap<>();
 
     for (String word : words) {
@@ -56,18 +56,16 @@ public class DictionaryClueQuery {
         definitions.put(word, "(Error: " + e.getMessage() + ")");
       }
     }
-
-    return definitions;
   }
 
   // For testing/demo purposes
-  public static void main(String[] args) {
-    DictionaryClueQuery fetcher = new DictionaryClueQuery();
-    List<String> words = Arrays.asList("voluminous", "ephemeral", "resilient");
-
-    Map<String, String> results = fetcher.fetchDefinitions(words);
-    results.forEach((word, definition) -> {
-      System.out.println(word + ": " + definition);
-    });
-  }
+//  public static void main(String[] args) {
+//    DictionaryClueQuery fetcher = new DictionaryClueQuery();
+//    List<String> words = Arrays.asList("voluminous", "ephemeral", "resilient");
+//
+//    Map<String, String> results = fetcher.fetchDefinitions(words);
+//    results.forEach((word, definition) -> {
+//      System.out.println(word + ": " + definition);
+//    });
+//  }
 }

@@ -142,12 +142,14 @@ public class Puzzle {
 
   public enum Board {
     SUNDAY    ("0__________________0____0"/*, 5*/),   //   \u0000 OR \000
-    MONDAY    ("0___00___0_______________"),
-    TUESDAY   ("00_____________________00"),
-    WEDNESDAY ("___00_______________00___"),
+    MONDAY    ("0___00___0_______________"), // 6 seconds completion time
+    TUESDAY   ("00_____________________00"), // 4 seconds completion time
+    WEDNESDAY ("___00_______________00___"), // 28 seconds completion time
     THURSDAY  ("0___0_______________0___0"),
     FRIDAY    ("____0____0_____0____0____"),
-    SATURDAY  ("___00____0_____0____00___");
+
+    SATURDAY ("000__0____0___0____0__000");
+//    SATURDAY  ("___00____0_____0____00___"); // working 2:30 completion time
 
 
     public final String day; // private

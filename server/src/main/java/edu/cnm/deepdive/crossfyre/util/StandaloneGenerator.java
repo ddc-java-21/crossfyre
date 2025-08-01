@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 @Profile("generate")
 public class StandaloneGenerator implements CommandLineRunner {
 
-  private static final String WORDS_FILE = "crossword/englishWords.txt";
+  private static final String WORDS_FILE = "crossword/common-english-words.txt";
+
   private final AbstractGeneratorService generatorService;
 
   public StandaloneGenerator(AbstractGeneratorService generatorService) throws IOException {
@@ -36,8 +37,8 @@ public class StandaloneGenerator implements CommandLineRunner {
   @Override
   public void run(String... args) throws Exception {
 
-    System.out.println(generatorService.generatePuzzleWords(Board.MONDAY));
-
+    System.out.println(generatorService.generatePuzzleWords(Board.TUESDAY));
   }
+
 
 }
