@@ -97,7 +97,7 @@ public class PuzzleService implements AbstractPuzzleService {
     }
     //puzzleWordRepository.saveAll(puzzleWords);
 //    puzzle.getPuzzleWords().addAll(puzzleWords); // need to pass in a Collection, not an Iterable
-    puzzle = puzzleRepository.save(puzzle);
+    puzzleRepository.save(puzzle);
   }
 
 
