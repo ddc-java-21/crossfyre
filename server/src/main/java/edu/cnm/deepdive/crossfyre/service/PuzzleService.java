@@ -56,7 +56,7 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
-  @Scheduled(cron = "0 05 12 * * *") // Runs every day at midnight
+  @Scheduled(cron = "0 47 12 * * *") // Runs every day at midnight
   public void createPuzzle() {
 
     // Create date for today and get value of the currentDay
@@ -68,7 +68,7 @@ public class PuzzleService implements AbstractPuzzleService {
 
     Board[] boards = Board.values();
 //    Board todaysBoard = boards[boardIndex];
-    Board todaysBoard = Board.MONDAY;
+    Board todaysBoard = Board.TUESDAY;
     int boardSize = (int) Math.round(Math.sqrt(todaysBoard.toString().length()));
 
     Instant date = today.atStartOfDay(ZoneOffset.UTC).toInstant();
@@ -105,6 +105,11 @@ public class PuzzleService implements AbstractPuzzleService {
       if (valid) {
         for (PuzzleWord word : puzzleWords) {
           word.setPuzzle(puzzle);
+          // String clue = definitions.get(word.getWordName())
+          // if(definitions.get(word.getWordName()).length() > 254) {
+          // clue = clue.substring(0,254);
+          // }
+          // word.setClue(clue);
           word.setClue(definitions.get(word.getWordName()));
           puzzle.getPuzzleWords().add(word);
         }
@@ -155,22 +160,12 @@ public class PuzzleService implements AbstractPuzzleService {
               if (shortDefs != null && !shortDefs.isEmpty()) {
                 definition = shortDefs.get(0).getAsString();
 //
-//                if (definition.length() > 254) {
-//                  for(int i = 0; i < shortDefs.size(); i++) {
+//                do {
+//                  for (int i = 0; i < shortDefs.size(); i++) {
 //                    definition = shortDefs.get(i).getAsString();
-//
 //                  }
-//                }
+//                } while (definition.length() > 254);
 //
-//                if(definition.length() > 255) {
-//                  definition = shortDefs.get(1).getAsString();
-//                }
-//
-//                if(definition.length() > 255  ) {
-//                  definition = shortDefs.get(2).getAsString();
-//                }
-
-
                 definitions.put(pw.getWordName(), definition);
               } else {
                 if (crossRefs != null && !crossRefs.isEmpty()) {

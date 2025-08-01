@@ -21,6 +21,7 @@
     <item name="toolbarElevation">@dimen/toolbar_elevation</item>
     <item name="toolbarStyle">@style/Widget.Toolbar</item>
     <item name="appBarLayoutStyle">@style/Widget.AppBarLayout</item>
+    <item name="wallColor">@color/wallColor</item>
   </style>
 
   <style name="Widget.Toolbar" parent="Widget.Material3.Toolbar">
