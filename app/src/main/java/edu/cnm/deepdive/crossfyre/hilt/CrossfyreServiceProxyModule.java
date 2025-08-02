@@ -9,9 +9,7 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
-import edu.cnm.deepdive.chat.R;
-import edu.cnm.deepdive.chat.service.ChatServiceLongPollingProxy;
-import edu.cnm.deepdive.chat.service.ChatServiceProxy;
+import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.service.CrossfyreServiceProxy;
 import edu.cnm.deepdive.crossfyre.view.serialization.InstantDeserializer;
 import java.time.Duration;
@@ -58,7 +56,7 @@ public class CrossfyreServiceProxyModule {
         .client(client)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-        .baseUrl(context.getString(R.string.base_url))
+        .baseUrl(context.getString(R.string.base_Url))
         .build()
         .create(CrossfyreServiceProxy.class);
   }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,7 +14,6 @@ import dagger.hilt.android.qualifiers.ActivityContext;
 import dagger.hilt.android.scopes.FragmentScoped;
 import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.ItemSquareBinding;
-import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +23,7 @@ import javax.inject.Inject;
 public class SquareAdapter extends ArrayAdapter<Character> {
 
   private final LayoutInflater inflater;
-
+  private List<Integer> highlightedPositions = new ArrayList<>();
   @ColorInt
   private final int wallColor;
 
@@ -37,7 +37,7 @@ public class SquareAdapter extends ArrayAdapter<Character> {
 //    puzzleWord = new ArrayList<>();
     wallColor = getAttributeColor(R.attr.wallColor);
   }
-
+// write method in viewmodel that would take big object adn get teh piece of the object we want to use and use transformations.map
   public SquareAdapter setBoard(Character[][] board) {
     clear();
     // Using a stream to help us do a complex iteration
@@ -59,6 +59,18 @@ public class SquareAdapter extends ArrayAdapter<Character> {
     ? ItemSquareBinding.bind(convertView)
         // if were not inflating for an entire activity layout then we always use the three parameter form of inflate
         : ItemSquareBinding.inflate(inflater, parent, false);
+
+    binding.getRoot().setLayoutParams(new GridView.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+    ));
+
+    binding.getRoot().setBackgroundResource(0);
+
+    if (highlightedPositions.contains(position)) {
+      binding.getRoot().setBackgroundColor(getAttributeColor(R.attr.wallColor));
+    }
+
     switch (c) {
       // represent what can be filled in
       case '_' -> {
@@ -86,4 +98,12 @@ public class SquareAdapter extends ArrayAdapter<Character> {
     return typedValue.data;
   }
 
+  public List<Integer> getHighlightedPositions() {
+    return highlightedPositions;
+  }
+
+  public void setHighlightedPositions(
+      List<Integer> highlightedPositions) {
+    this.highlightedPositions = highlightedPositions;
+  }
 }

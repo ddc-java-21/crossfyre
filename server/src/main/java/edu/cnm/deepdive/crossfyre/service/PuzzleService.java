@@ -1,9 +1,11 @@
 package edu.cnm.deepdive.crossfyre.service;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.annotations.SerializedName;
 import com.nimbusds.jose.shaded.gson.Gson;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle.Board;
@@ -54,7 +56,7 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
-  @Scheduled(cron = "0 12 2 * * *") // Runs every day at midnight
+  @Scheduled(cron = "0 44 3 * * *") // Runs every day at midnight
   public void createPuzzle() {
 
     // Create date for today and get value of the currentDay
@@ -66,7 +68,7 @@ public class PuzzleService implements AbstractPuzzleService {
 
     Board[] boards = Board.values();
 //    Board todaysBoard = boards[boardIndex];
-    Board todaysBoard = Board.MONDAY;
+    Board todaysBoard = Board.TUESDAY;
     int boardSize = (int) Math.round(Math.sqrt(todaysBoard.toString().length()));
 
     Instant date = today.atStartOfDay(ZoneOffset.UTC).toInstant();
@@ -94,9 +96,8 @@ public class PuzzleService implements AbstractPuzzleService {
       Map<String, String> definitions = new HashMap<>();
       fetchDefinitions(puzzleWords, definitions);
       for (PuzzleWord puzzleWord : puzzleWords) {
-        if (definitions.get(puzzleWord.getWordName()).equals("(No short definition or cross reference found)")
-            || definitions.get(puzzleWord.getWordName()).equals("(No valid entry found)")
-            || definitions.get(puzzleWord.getWordName()).equals("(Failed to fetch)")) {
+        if ((definitions.get(puzzleWord.getWordName()).equals("(No short definition or cross reference found)")
+        || (definitions.get(puzzleWord.getWordName()).equals("(No valid entry found)")))) {
           valid = false;
           break;
         }
@@ -104,19 +105,27 @@ public class PuzzleService implements AbstractPuzzleService {
       if (valid) {
         for (PuzzleWord word : puzzleWords) {
           word.setPuzzle(puzzle);
-          String clue = definitions.get(word.getWordName());   // TODO: 8/1/25 Do we want to truncate this or throw out puzzle/ swap in new shortdefs?
-          if (clue.length() > 254) {
-            clue = clue.substring(0, 254);
-          }
-          word.setClue(clue);
+          // String clue = definitions.get(word.getWordName())
+          // if(definitions.get(word.getWordName()).length() > 254) {
+          // clue = clue.substring(0,254);
+          // }
+          // word.setClue(clue);
+          word.setClue(definitions.get(word.getWordName()));
           puzzle.getPuzzleWords().add(word);
         }
-        //puzzleWordRepository.saveAll(puzzleWords);
-//      puzzle.getPuzzleWords().addAll(puzzleWords); // need to pass in a Collection, not an Iterable
         puzzleRepository.save(puzzle);
       }
     } while (!valid);
 
+//    for (PuzzleWord word : puzzleWords) {
+//      word.setPuzzle(puzzle);
+//      word.setClue(definitions.get(word.getWordName()));
+//      puzzle.getPuzzleWords().add(word);
+//    }
+//
+//    //puzzleWordRepository.saveAll(puzzleWords);
+////    puzzle.getPuzzleWords().addAll(puzzleWords); // need to pass in a Collection, not an Iterable
+//    puzzleRepository.save(puzzle);
   }
 
 
@@ -179,6 +188,7 @@ public class PuzzleService implements AbstractPuzzleService {
     }
 
   }
+
 //  @Override
 //  public Puzzle getOrAddPuzzle(Puzzle puzzle) {
 //    return puzzleRepository

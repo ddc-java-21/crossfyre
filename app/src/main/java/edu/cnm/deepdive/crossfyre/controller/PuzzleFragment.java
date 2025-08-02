@@ -40,10 +40,6 @@ public class PuzzleFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     binding = FragmentPuzzleBinding.inflate(getLayoutInflater());
-//    initializeTextFields();
-
-    // TODO: 7/30/25 Finish adding on create
-//    binding.clueDirection.listen
   }
 
   @Override
@@ -57,6 +53,7 @@ public class PuzzleFragment extends Fragment {
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // TODO: 8/1/25 Use position to determine which row and column are clicked and use that to update the viewmodel
+
       }
 
       // Usually do nothing in this method
@@ -71,15 +68,15 @@ public class PuzzleFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-//    FragmentActivity activity = requireActivity();
-//    ViewModelProvider provider = new ViewModelProvider(activity);
-//    LifecycleOwner owner = getViewLifecycleOwner();
-//    viewModel = provider.get(PuzzleViewModel.class);
-//    viewModel
-//        .getWords()
-//        .observe(owner, );
 
     viewModel = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
+
+    binding.puzzleGrid.setAdapter(squareAdapter);
+
+    // Set click listener for grid items
+    binding.puzzleGrid.setOnItemClickListener((parent, view1, position, id) -> {
+      viewModel.selectSquare(position);
+    });
 
     // Observe ViewModel state
     viewModel.getSelectedWord().observe(getViewLifecycleOwner(), word -> {
@@ -89,6 +86,7 @@ public class PuzzleFragment extends Fragment {
         // Added binding to get the clue for the word in the lambda
        binding.clueDirection.setText(word.getDirection().toString());
       }
+
     });
 
     // this is where were updating the livedata

@@ -7,7 +7,7 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
-import edu.cnm.deepdive.chat.R;
+import edu.cnm.deepdive.crossfyre.R;
 import javax.inject.Singleton;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
 
