@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GeneratorService implements AbstractGeneratorService {
 
-  private static final String WORDS_FILE = "crossword/englishWords.txt";
+  private static final String WORDS_FILE = "crossword/englishWordsWithTwoLetterWords.txt";
   //private final List<String> words;
   private final Map<Integer, List<String>> wordListsMap;
 

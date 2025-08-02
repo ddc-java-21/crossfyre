@@ -2,7 +2,7 @@ package edu.cnm.deepdive.crossfyre.model.dto;
 
 import com.google.gson.annotations.Expose;
 
-public class Guess {
+public class GuessDto {
 
   @Expose(serialize = false)
   private Character guess;

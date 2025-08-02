@@ -136,6 +136,9 @@ dependencies {
     // OkHttp logging dependency
     implementation(libs.logging.interceptor)
 
+    // Picasso library
+    implementation(libs.picasso)
+
     // Libraries for JVM-based testing.
     testImplementation(libs.junit.api)
     testImplementation(libs.junit.params)
