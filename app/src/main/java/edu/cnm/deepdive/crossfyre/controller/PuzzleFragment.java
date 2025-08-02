@@ -87,7 +87,7 @@ public class PuzzleFragment extends Fragment {
         binding.clueText.setText(word.getClue());
 
         // Added binding to get the clue for the word in the lambda
-        binding.clueText.setText(word.getClue());
+       binding.clueDirection.setText(word.getDirection().toString());
       }
     });
 
