@@ -85,22 +85,21 @@ public class PuzzleFragment extends Fragment {
     viewModel.getSelectedWord().observe(getViewLifecycleOwner(), word -> {
       if (word != null) {
         binding.clueText.setText(word.getClue());
-      }
-    });
 
-    viewModel.getSelectedDirection().observe(getViewLifecycleOwner(), dir -> {
-      binding.clueDirection.setText(dir.name());
+        // Added binding to get the clue for the word in the lambda
+       binding.clueDirection.setText(word.getDirection().toString());
+      }
     });
 
     // this is where were updating the livedata
     viewModel.getWords().observe(getViewLifecycleOwner(), words -> {
       // TODO: 8/1/25 Pass words to the adapter of the clues which is another sub adapter of ArrayAdapter
-      // Need an ArrayAdapter of puzzleword so that you can get the clue but split the Across and Downs into different lists and that will go into a ListViews
+      // TODO: Need an ArrayAdapter of puzzleword so that you can get the clue but split the Across and Downs into different lists and that will go into a ListViews
       // Viewmodel should know which clue to put in live data by knowing what the user clicked and if the user clicked on
       // the same grid twice it should update livedata and display the correct clue accordingly
       // Could use a snackbar, could be more simple since it doesn't have to be part of the layout
     });
-    // TODO: 8/1/25 Observer LiveData containing the board
+    // TODO: 8/1/25 Observe LiveData containing the board
     // TODO: 8/1/25 Use the board to set the number of columns in the gridview which tells teh gridview how to flow horizontally and when wrap
     // TODO: 8/1/25 Pass board to adapter.setBoard()
   }
