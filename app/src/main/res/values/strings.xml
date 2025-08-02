@@ -10,4 +10,6 @@
   <string name="todays_puzzle_title">Today\'s Puzzle</string>
   <string name="play_button_text">Play</string>
   <string name="crossfyre_icon">Crossfyre Icon</string>
+  <string name="puzzle_word_direction">Across</string>
+  <string name="puzzle_word_clue_text">A clue would go here</string>
 </resources>

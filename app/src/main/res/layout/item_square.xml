@@ -21,7 +21,7 @@
     android:text="A"
     />
 
-<!--  TODO add small textview for puzzleWord number-->
+<!--  TODO add small textview for puzzleword number that goes on the start letter cell of a puzzle word-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
