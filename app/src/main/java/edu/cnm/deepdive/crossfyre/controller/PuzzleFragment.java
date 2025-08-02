@@ -67,9 +67,9 @@ public class PuzzleFragment extends Fragment {
       }
     });
 
-    viewModel.getSelectedDirection().observe(getViewLifecycleOwner(), dir -> {
-      binding.clueDirection.setText(dir.name());
-    });
+//    viewModel.getSelectedDirection().observe(getViewLifecycleOwner(), dir -> {
+//      binding.clueDirection.setText(dir.name());
+//    });
 
     viewModel.getWords().observe(getViewLifecycleOwner(), words -> {
       // TODO: 8/1/2025 Pass PuzzleWords to adapter of clues 
