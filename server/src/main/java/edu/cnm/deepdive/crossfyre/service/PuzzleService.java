@@ -56,6 +56,7 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
+  @Profile("cronjob")
   @Scheduled(cron = "0 44 3 * * *") // Runs every day at midnight
   public void createPuzzle() {
 

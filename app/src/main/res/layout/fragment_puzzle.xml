@@ -60,6 +60,7 @@
     app:layout_constraintBottom_toTopOf="@id/clue_text"
     app:layout_constraintEnd_toStartOf="@id/clue_direction"
     android:textSize="10pt"
+    android:textStyle="bold"
     android:text="1"
 
     />

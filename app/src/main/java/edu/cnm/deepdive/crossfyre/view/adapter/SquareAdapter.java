@@ -16,7 +16,9 @@ import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.ItemSquareBinding;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 
 @FragmentScoped
@@ -24,6 +26,7 @@ public class SquareAdapter extends ArrayAdapter<Character> {
 
   private final LayoutInflater inflater;
   private List<Integer> highlightedPositions = new ArrayList<>();
+  private Map<Integer, Integer> wordStartMap = new HashMap<>();
   @ColorInt
   private final int wallColor;
 
@@ -86,10 +89,19 @@ public class SquareAdapter extends ArrayAdapter<Character> {
       }
     }
     // TODO: 8/1/25 If this position represents a wordStart then update the corresponding textView
+    // TODO: Assign clue number if this is a word start
+    if (wordStartMap.containsKey(position)) { // You'll have to pass in this map
+      binding.cellWordStartNumber.setText(String.valueOf(wordStartMap.get(position)));
+      binding.cellWordStartNumber.setVisibility(View.VISIBLE);
+    } else {
+      binding.cellWordStartNumber.setVisibility(View.INVISIBLE);
+    }
 
     //once we've inflated the binding or bound it to an existing view item we return it and it will be displayed
     return binding.getRoot();
   }
+
+
 
   @ColorInt
   private int getAttributeColor(int colorAttrID) {
@@ -106,4 +118,10 @@ public class SquareAdapter extends ArrayAdapter<Character> {
       List<Integer> highlightedPositions) {
     this.highlightedPositions = highlightedPositions;
   }
+
+  public void setWordStartMap(Map<Integer, Integer> wordStarts) {
+    this.wordStartMap = wordStarts;
+    notifyDataSetChanged();
+  }
+
 }

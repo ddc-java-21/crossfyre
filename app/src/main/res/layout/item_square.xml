@@ -31,6 +31,9 @@
     android:layout_height="wrap_content"
     android:gravity="start|top"
     android:textStyle="bold"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    android:padding="@dimen/half_dynamic_spacing"
     android:text="1"
     android:textSize="50sp"
 

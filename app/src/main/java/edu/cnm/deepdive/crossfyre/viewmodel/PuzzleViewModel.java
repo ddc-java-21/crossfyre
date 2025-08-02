@@ -17,11 +17,14 @@ public class PuzzleViewModel extends ViewModel {
   private final MutableLiveData<List<PuzzleWord>> words = new MutableLiveData<>(new ArrayList<>());
   private final MutableLiveData<Direction> selectedDirection = new MutableLiveData<>(Direction.ACROSS);
   private final MutableLiveData<Puzzle.PuzzleWord> selectedWord = new MutableLiveData<>();
+  private final MutableLiveData<Character[][]> board = new MutableLiveData<>();
   // TODO: 8/1/25 Define field to hold reference to current Puzzle
   private final MutableLiveData<Puzzle> currentPuzzle = new MutableLiveData<>();
   // Position of user clicked field
   private final MutableLiveData<PuzzleWord> position = new MutableLiveData<>();
   private final MutableLiveData<List<Integer>> selectedCellPosition = new MutableLiveData<>();
+  private final MutableLiveData<Map<Integer, Integer>> wordStartMap = new MutableLiveData<>();
+
 
   private Integer lastClickedRow = null;
   private Integer lastClickedCol = null;
@@ -157,6 +160,18 @@ public class PuzzleViewModel extends ViewModel {
     selectedCellPosition.setValue(matchedPositions);
   }
 
+  private void updateWordStartMap(Puzzle puzzle) {
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < puzzle.getPuzzleWords().size(); i++) {
+      Puzzle.PuzzleWord word = puzzle.getPuzzleWords().get(i);
+      int startRow = word.getWordPosition().getRow();
+      int startCol = word.getWordPosition().getColumn();
+      int positionIndex = startRow * puzzle.getSize() + startCol;
+      map.put(positionIndex, i + 1); // 1-based numbering
+    }
+    wordStartMap.setValue(map);
+  }
+
   private static @NotNull CurrentWordPosition getCurrentWordPosition(Puzzle.PuzzleWord word) {
     int wordRow = word.getWordPosition().getRow();
     int wordCol = word.getWordPosition().getColumn();
@@ -164,8 +179,24 @@ public class PuzzleViewModel extends ViewModel {
     return new CurrentWordPosition(wordRow, wordCol, length);
   }
 
-  private record CurrentWordPosition(int wordRow, int wordCol, int length) {
+  public MutableLiveData<Character[][]> getBoard() {
+    return board;
+  }
 
+  public void loadBoard(Character[][] newBoard) {
+    board.setValue(newBoard);
+  }
+
+  public MutableLiveData<Map<Integer, Integer>> getWordStartMap() {
+    return wordStartMap;
+  }
+
+  private record CurrentWordPosition(int wordRow, int wordCol, int length) {}
+
+  // Call this when setting the current puzzle
+  public void setCurrentPuzzle(Puzzle puzzle) {
+    currentPuzzle.setValue(puzzle);
+    updateWordStartMap(puzzle);
   }
 
 //  public void toggleDirection() {
