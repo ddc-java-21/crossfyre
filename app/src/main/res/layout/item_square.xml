@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
@@ -23,7 +24,7 @@
     android:textSize="70sp"
     />
 
-<!--  TODO add small textview for puzzleword number that goes on the start letter cell of a puzzle word-->
+<!--  DONE add small textview for puzzleword number that goes on the start letter cell of a puzzle word-->
   <TextView
     android:id="@+id/cell_word_start_number"
     android:layout_width="wrap_content"

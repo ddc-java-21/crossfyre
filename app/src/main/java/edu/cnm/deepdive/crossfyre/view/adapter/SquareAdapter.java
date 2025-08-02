@@ -13,10 +13,10 @@ import dagger.hilt.android.qualifiers.ActivityContext;
 import dagger.hilt.android.scopes.FragmentScoped;
 import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.ItemSquareBinding;
+import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 @FragmentScoped
@@ -28,11 +28,13 @@ public class SquareAdapter extends ArrayAdapter<Character> {
   private final int wallColor;
 
   // TODO: 8/1/25 create field for puzzleWords or at least wordStarts for the numbering of the cells
+//  private final List<PuzzleWord> puzzleWord;
 
   @Inject
   SquareAdapter(@ActivityContext Context context) {
     super(context, R.layout.item_square);
     inflater = LayoutInflater.from(context);
+//    puzzleWord = new ArrayList<>();
     wallColor = getAttributeColor(R.attr.wallColor);
   }
 
@@ -53,9 +55,9 @@ public class SquareAdapter extends ArrayAdapter<Character> {
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
     char c = getItem(position);
     ItemSquareBinding binding = (convertView != null)
-    // if not nyll we want to bind whats already been inflated to our binding
+    // if not null we want to bind whats already been inflated to our binding
     ? ItemSquareBinding.bind(convertView)
-        // if were not inflatng for an entire activity layout then we always use the three paramater form of inflate
+        // if were not inflating for an entire activity layout then we always use the three parameter form of inflate
         : ItemSquareBinding.inflate(inflater, parent, false);
     switch (c) {
       // represent what can be filled in
@@ -83,4 +85,5 @@ public class SquareAdapter extends ArrayAdapter<Character> {
     getContext().getTheme().resolveAttribute(colorAttrID, typedValue, true);
     return typedValue.data;
   }
+
 }
