@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 
-// Change to extends ArrayAdapter<Character>
 @FragmentScoped
 public class SquareAdapter extends ArrayAdapter<Character> {
 
@@ -73,6 +72,7 @@ public class SquareAdapter extends ArrayAdapter<Character> {
       }
     }
     // TODO: 8/1/25 If this position represents a wordStart then update the corresponding textView
+
     //once we've inflated the binding or bound it to an existing view item we return it and it will be displayed
     return binding.getRoot();
   }
