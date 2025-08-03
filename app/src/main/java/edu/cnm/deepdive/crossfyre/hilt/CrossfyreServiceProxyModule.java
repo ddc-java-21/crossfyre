@@ -12,6 +12,7 @@ import dagger.hilt.components.SingletonComponent;
 import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.service.CrossfyreServiceProxy;
 import edu.cnm.deepdive.crossfyre.view.serialization.InstantDeserializer;
+import edu.cnm.deepdive.crossfyre.view.serialization.InstantSerializer;
 import java.time.Instant;
 import javax.inject.Singleton;
 import okhttp3.Interceptor;
@@ -29,11 +30,12 @@ public class CrossfyreServiceProxyModule {
 
   @Provides
   @Singleton
-  Gson provideGson(JsonDeserializer<Instant> deserializer, InstantDeserializer instantDeserializer ) {
+  Gson provideGson(/*JsonDeserializer<Instant> deserializer*/ InstantDeserializer instantDeserializer, InstantSerializer instantSerializer) {
     return new GsonBuilder()
         .excludeFieldsWithoutExposeAnnotation()
-        .registerTypeAdapter(Instant.class, deserializer)
+//        .registerTypeAdapter(Instant.class, deserializer)
         .registerTypeAdapter(Instant.class, instantDeserializer)
+        .registerTypeAdapter(Instant.class, instantSerializer)
         .create();
   }
 
@@ -55,7 +57,7 @@ public class CrossfyreServiceProxyModule {
         .client(client)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-        .baseUrl(context.getString(R.string.base_Url))
+        .baseUrl(context.getString(R.string.base_url))
         .build()
         .create(CrossfyreServiceProxy.class);
   }

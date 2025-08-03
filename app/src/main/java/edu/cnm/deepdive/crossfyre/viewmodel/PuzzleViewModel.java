@@ -1,145 +1,198 @@
 package edu.cnm.deepdive.crossfyre.viewmodel;
 
+import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import edu.cnm.deepdive.crossfyre.model.dto.GuessDto;
 import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
+import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord.Direction;
+import edu.cnm.deepdive.crossfyre.model.dto.User;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzle.Guess.Puzzle;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto;
+import edu.cnm.deepdive.crossfyre.service.CrossfyreService;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import javax.inject.Inject;
 
-public class PuzzleViewModel extends ViewModel {
+@HiltViewModel
+public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserver {
 
-  private final MutableLiveData<Puzzle> currentPuzzle = new MutableLiveData<>();
+  private static final String TAG = PuzzleViewModel.class.getSimpleName();
+  private final CrossfyreService crossfyreService;
+  private final MutableLiveData<User> currentUser;
+
+  private final MutableLiveData<List<PuzzleWord>> words = new MutableLiveData<>(new ArrayList<>());
+  private final MutableLiveData<Direction> selectedDirection = new MutableLiveData<>(Direction.ACROSS);
   private final MutableLiveData<Puzzle.PuzzleWord> selectedWord = new MutableLiveData<>();
-  private final MutableLiveData<List<Integer>> selectedCellPosition = new MutableLiveData<>();
 
-  private Integer lastClickedRow = null;
-  private Integer lastClickedCol = null;
-  private Puzzle.PuzzleWord.Direction lastDirection = null;
 
-  // LiveData for board (grid of characters)
-  private final LiveData<Character[][]> board = Transformations.map(currentPuzzle, puzzle -> {
-    if (puzzle == null) return null;
-    int size = puzzle.getSize();
-    Character[][] grid = new Character[size][size];
-    String layout = puzzle.getBoard().day;
-    if (layout.length() != size * size) {
-      throw new IllegalStateException("Board layout does not match size × size.");
-    }
-    int index = 0;
-    for (int row = 0; row < size; row++) {
-      for (int col = 0; col < size; col++) {
-        grid[row][col] = layout.charAt(index++);
-      }
-    }
-    return grid;
-  });
+  private final MutableLiveData<List<GuessDto>> guesses;
+  private final MutableLiveData<UserPuzzleDto> userPuzzle;
+  private final MutableLiveData<GuessDto> selectedSquare;
 
-  // LiveData for mapping position → clue number
-  private final LiveData<Map<Integer, Integer>> wordStartMap =
-      Transformations.map(currentPuzzle, puzzle -> {
-        Map<Integer, Integer> map = new HashMap<>();
-        if (puzzle == null || puzzle.getPuzzleWords() == null) {
-          return map;
-        }
-        int size = puzzle.getSize();
-        int clueNumber = 1;
-        for (Puzzle.PuzzleWord word : puzzle.getPuzzleWords()) {
-          int row = word.getWordPosition().getRow();
-          int col = word.getWordPosition().getColumn();
-          int flatIndex = row * size + col;
-          // Share the same number if across & down start at same cell
-          if (!map.containsKey(flatIndex)) {
-            map.put(flatIndex, clueNumber++);
-          }
-        }
-        return map;
-      });
+  private final MutableLiveData<Throwable> throwable;
+  private final CompositeDisposable pending;
 
-  public LiveData<Character[][]> getBoard() {
-    return board;
+  private Disposable description;
+
+
+  // TODO: 8/1/25 Define field to hold reference to current Puzzle
+  private final MutableLiveData<Puzzle> currentPuzzle = new MutableLiveData<>();
+
+  // Position of user clicked field
+  private final MutableLiveData<PuzzleWord> position = new MutableLiveData<>();
+
+
+
+  public MutableLiveData<List<GuessDto>> getGuesses() {
+    return guesses;
   }
 
-  public LiveData<Map<Integer, Integer>> getWordStartMap() {
-    return wordStartMap;
+  public MutableLiveData<UserPuzzleDto> getUserPuzzle() {
+    return userPuzzle;
   }
 
+  public MutableLiveData<GuessDto> getSelectedSquare() {
+    return selectedSquare;
+  }
+
+  @Inject
+  public PuzzleViewModel(CrossfyreService crossfyreService) {
+    this.crossfyreService = crossfyreService;
+    currentUser = new MutableLiveData<>();
+    guesses = new MutableLiveData<>(new ArrayList<>());
+    userPuzzle = new MutableLiveData<>();
+    selectedSquare = new MutableLiveData<>();
+    throwable = new MutableLiveData<>();
+    pending = new CompositeDisposable();
+    fetchCurrentUser();
+    fetchUserPuzzle();
+  }
+
+  private void fetchCurrentUser() {
+    throwable.setValue(null);
+    crossfyreService
+        .getMyProfile()
+        .subscribe(
+            currentUser::postValue,
+            this::postThrowable,
+            pending
+        );
+  }
+
+  public LiveData<List<PuzzleWord>> getWords() {
+    return words;
+  }
+
+//  public LiveData<PuzzleWord.Direction> getSelectedDirection() {
+//    return selectedDirection;
+//  }
+
+  // Will let you know the direction anyway
   public LiveData<Puzzle.PuzzleWord> getSelectedWord() {
     return selectedWord;
   }
+  // UI logic will never set the words
 
-  public LiveData<List<Integer>> getSelectedCellPosition() {
-    return selectedCellPosition;
-  }
+//  public void setWords(List<PuzzleWord> newWords) {
+//    words.setValue(newWords);
+//  }
 
-  public void setPuzzle(Puzzle puzzle) {
-    currentPuzzle.setValue(puzzle);
-  }
+//  public void selectWord(PuzzleWord word) {
+//    selectedWord.setValue(word);
+//  }
 
-  public void selectSquare(int position) {
-    Puzzle puzzle = currentPuzzle.getValue();
-    if (puzzle == null) return;
+  // Should have entire puzzle object because list of words doesn't tell you puzzle size which we need here
+  public void selectSquare(int position){
+    Puzzle puzzle = new Puzzle();
 
     int row = position / puzzle.getSize();
-    int col = position % puzzle.getSize();
+     int col = position % puzzle.getSize();
 
-    boolean sameCellClicked =
-        lastClickedRow != null && lastClickedCol != null &&
-            lastClickedRow == row && lastClickedCol == col;
-
-    Puzzle.PuzzleWord.Direction desiredDirection;
-    if (sameCellClicked) {
-      desiredDirection = (lastDirection == Puzzle.PuzzleWord.Direction.ACROSS)
-          ? Puzzle.PuzzleWord.Direction.DOWN
-          : Puzzle.PuzzleWord.Direction.ACROSS;
-    } else {
-      desiredDirection = Puzzle.PuzzleWord.Direction.ACROSS;
-    }
-
+    // TODO: 8/1/25 Figure out which puzzleword that the row and col above is and update the live
+    //  data accordingly like the clue displayed etc..
     Puzzle.PuzzleWord matchedWord = null;
-    for (Puzzle.PuzzleWord word : puzzle.getPuzzleWords()) {
-      int startRow = word.getWordPosition().getRow();
-      int startCol = word.getWordPosition().getColumn();
+    for(Puzzle.PuzzleWord word : puzzle.getPuzzleWords()) {
+      int wordRow = word.getWordPosition().getRow();
+      int wordCol = word.getWordPosition().getColumn();
       int length = word.getWordPosition().getLength();
 
-      if (word.getDirection() == Puzzle.PuzzleWord.Direction.ACROSS) {
-        if (row == startRow && col >= startCol && col < startCol + length) {
+      if(word.getDirection() == Puzzle.PuzzleWord.Direction.ACROSS) {
+        if(row == wordRow && col >= wordCol && col < wordCol + length) {
           matchedWord = word;
           break;
         }
       } else if (word.getDirection() == Puzzle.PuzzleWord.Direction.DOWN) {
-        if (col == startCol && row >= startRow && row < startRow + length) {
+        if (col == wordCol && row >= wordRow && row < wordRow + length) {
           matchedWord = word;
           break;
         }
       }
     }
-
-    if (matchedWord != null) {
+    if(matchedWord != null) {
       selectedWord.setValue(matchedWord);
-      lastClickedRow = row;
-      lastClickedCol = col;
-      lastDirection = matchedWord.getDirection();
-
-      List<Integer> matchedPositions = new ArrayList<>();
-      int startRow = matchedWord.getWordPosition().getRow();
-      int startCol = matchedWord.getWordPosition().getColumn();
-      int length = matchedWord.getWordPosition().getLength();
-
-      if (matchedWord.getDirection() == Puzzle.PuzzleWord.Direction.ACROSS) {
-        for (int offset = 0; offset < length; offset++) {
-          matchedPositions.add(startRow * puzzle.getSize() + (startCol + offset));
-        }
-      } else {
-        for (int offset = 0; offset < length; offset++) {
-          matchedPositions.add((startRow + offset) * puzzle.getSize() + startCol);
-        }
-      }
-      selectedCellPosition.setValue(matchedPositions);
     }
+    // might want to save the position in a field so it can be invoked in logic when the user clicks the same position it can change orientation
   }
+
+  public void toggleDirection() {
+    Direction current = selectedDirection.getValue();
+    selectedDirection.setValue(current == Direction.ACROSS
+        ? Direction.DOWN
+        : Direction.ACROSS);
+  }
+
+  // Need methods that the UI controller can invoke when the user clicks so that it knows which
+  // puzzleword the user is looking at by new word or orientation switch
+
+
+  private void fetchUserPuzzle() {
+    throwable.setValue(null);
+    crossfyreService
+        .getUserPuzzle(Instant.now().truncatedTo(ChronoUnit.DAYS))
+        .subscribe(
+            value -> {
+              userPuzzle.postValue(value);
+            },
+            this::postThrowable,
+            pending
+        );
+  }
+
+  public void sendGuess(GuessDto guess) {
+    throwable.setValue(null);
+    //noinspection DataFlowIssue
+    crossfyreService
+        .sendGuess(userPuzzle.getValue().getPuzzle().getDate(), selectedSquare.getValue())
+        .subscribe(
+            guesses::postValue,
+            // TODO: 8/2/25  here, you need to do a GET to check the state of the puzzle
+            this::postThrowable,
+            pending
+        );
+  }
+
+  @Override
+  public void onStop(@NonNull LifecycleOwner owner) {
+    pending.clear();
+    DefaultLifecycleObserver.super.onStop(owner);
+  }
+
+  private void postThrowable(Throwable throwable) {
+    Log.e(TAG, throwable.getMessage(), throwable);
+    this.throwable.postValue(throwable);
+  }
+
+
+
 }
