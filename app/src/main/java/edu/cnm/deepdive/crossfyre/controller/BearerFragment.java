@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import edu.cnm.deepdive.crossfyre.databinding.FragmentBearerBinding;
 import edu.cnm.deepdive.crossfyre.databinding.FragmentMainBinding;
+import edu.cnm.deepdive.crossfyre.model.dto.GuessDto;
+import edu.cnm.deepdive.crossfyre.model.dto.GuessDto.GuessPosition;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto;
 import edu.cnm.deepdive.crossfyre.viewmodel.LoginViewModel;
 import edu.cnm.deepdive.crossfyre.viewmodel.PuzzleViewModel;
@@ -39,19 +41,44 @@ public class BearerFragment extends Fragment {
     viewModel = new ViewModelProvider(activity).get(LoginViewModel.class);
     GoogleSignInAccount account = viewModel.getAccount().getValue();
     LifecycleOwner owner = getViewLifecycleOwner();
+//    viewModel
+//        .getAccount()
+//        .observe(owner, this::handleAccount);
+//    binding.bearerToken.setText(account.getIdToken());
     viewModel
         .getAccount()
-        .observe(owner, this::handleAccount);
-    binding.bearerToken.setText(account.getIdToken());
+        .observe(owner, (ac) -> binding.bearerToken.setText(ac.getIdToken()));
 
-//    puzzleViewModel = new ViewModelProvider(activity).get(PuzzleViewModel.class);
-//    UserPuzzleDto userPuzzle = puzzleViewModel.getUserPuzzle().getValue();
-//    binding.bearerToken.setText(userPuzzle != null ? userPuzzle.getPuzzle().getPuzzleWords().get(0).getClue() : "");
+    puzzleViewModel = new ViewModelProvider(activity).get(PuzzleViewModel.class);
+    puzzleViewModel
+        .getCurrentUserPuzzle()
+        .observe(owner, (userPuzzle) -> binding.bearerToken.setText(userPuzzle != null
+            ? userPuzzle.getPuzzle().getPuzzleWords().get(0).getClue()
+            : ""
+        ));
+
+
+    // TEST GUESS CODE (INCOMPLETE)
+//    GuessDto guess = new GuessDto();
+//    GuessDto.GuessPosition guessPosition = new GuessPosition();
+//    guess.setGuess('z');
+//    guessPosition.setRow(2);
+//    guessPosition.setColumn(2);
+//    guess.setGuessPosition(guessPosition);
+//    puzzleViewModel.sendGuess(guess);
+//    puzzleViewModel
+//        .getCurrentUserPuzzle()
+//        .observe(owner, (userPuzzle) -> binding.bearerToken.setText(userPuzzle != null
+//            ? userPuzzle.getGuesses().get(userPuzzle.getGuesses().size() - 1).getGuess().toString()
+//            : ""
+//        ));
   }
 
-  private void handleAccount (GoogleSignInAccount account) {
-
-
-  }
+//  private void handleAccount (GoogleSignInAccount account) {
+//  }
+//
+//  private void handleUserPuzzle (UserPuzzleDto userPuzzle) {
+//
+//  }
 }
 

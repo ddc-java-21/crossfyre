@@ -30,7 +30,7 @@ public interface CrossfyreServiceProxy {
       @Header("Authorization") String bearerToken, @Path("date") Instant date);
 
   @POST("userpuzzles/{date}/guesses")
-  Single<List<GuessDto>> sendGuess(@Header("Authorization") String bearerToken,
+  Single<UserPuzzleDto> sendGuess(@Header("Authorization") String bearerToken,
       @Path("date") Instant date, @Body GuessDto guess);
 
 }

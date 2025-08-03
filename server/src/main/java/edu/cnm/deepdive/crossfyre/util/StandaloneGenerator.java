@@ -2,6 +2,7 @@ package edu.cnm.deepdive.crossfyre.util;
 
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle.Board;
 import edu.cnm.deepdive.crossfyre.service.AbstractGeneratorService;
+import edu.cnm.deepdive.crossfyre.service.PuzzleService;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -28,16 +29,18 @@ public class StandaloneGenerator implements CommandLineRunner {
 
   private static final String WORDS_FILE = "crossword/englishWords.txt";
   private final AbstractGeneratorService generatorService;
+  private final PuzzleService puzzleService;
 
-  public StandaloneGenerator(AbstractGeneratorService generatorService) throws IOException {
+  public StandaloneGenerator(AbstractGeneratorService generatorService, PuzzleService puzzleService) throws IOException {
     this.generatorService = generatorService;
+    this.puzzleService = puzzleService;
   }
 
   @Override
   public void run(String... args) throws Exception {
 
-    System.out.println(generatorService.generatePuzzleWords(Board.TUESDAY));
-
+//    System.out.println(generatorService.generatePuzzleWords(Board.SUNDAY));
+    puzzleService.createPuzzle();
   }
 
 }

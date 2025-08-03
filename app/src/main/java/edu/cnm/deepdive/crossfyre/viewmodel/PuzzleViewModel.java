@@ -37,8 +37,9 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
 
 
   private final MutableLiveData<List<GuessDto>> guesses;
-  private final MutableLiveData<UserPuzzleDto> userPuzzle;
+  private final MutableLiveData<UserPuzzleDto> currentUserPuzzle;
   private final MutableLiveData<GuessDto> selectedSquare;
+  private final MutableLiveData<Boolean> solved;
 
   private final MutableLiveData<Throwable> throwable;
   private final CompositeDisposable pending;
@@ -58,8 +59,8 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     return guesses;
   }
 
-  public MutableLiveData<UserPuzzleDto> getUserPuzzle() {
-    return userPuzzle;
+  public MutableLiveData<UserPuzzleDto> getCurrentUserPuzzle() {
+    return currentUserPuzzle;
   }
 
   public MutableLiveData<GuessDto> getSelectedSquare() {
@@ -71,12 +72,13 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     this.crossfyreService = crossfyreService;
     currentUser = new MutableLiveData<>();
     guesses = new MutableLiveData<>(new ArrayList<>());
-    userPuzzle = new MutableLiveData<>();
+    currentUserPuzzle = new MutableLiveData<>();
     selectedSquare = new MutableLiveData<>();
+    solved = new MutableLiveData<>();
     throwable = new MutableLiveData<>();
     pending = new CompositeDisposable();
     fetchCurrentUser();
-    fetchUserPuzzle();
+    fetchCurrentUserPuzzle();
   }
 
   private void fetchCurrentUser() {
@@ -156,13 +158,13 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   // puzzleword the user is looking at by new word or orientation switch
 
 
-  private void fetchUserPuzzle() {
+  private void fetchCurrentUserPuzzle() {
     throwable.setValue(null);
     crossfyreService
         .getUserPuzzle(Instant.now().truncatedTo(ChronoUnit.DAYS))
         .subscribe(
             value -> {
-              userPuzzle.postValue(value);
+              currentUserPuzzle.postValue(value);
             },
             this::postThrowable,
             pending
@@ -173,9 +175,9 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     throwable.setValue(null);
     //noinspection DataFlowIssue
     crossfyreService
-        .sendGuess(userPuzzle.getValue().getPuzzle().getDate(), selectedSquare.getValue())
+        .sendGuess(currentUserPuzzle.getValue().getPuzzle().getDate(), selectedSquare.getValue())
         .subscribe(
-            guesses::postValue,
+            currentUserPuzzle::postValue,
             // TODO: 8/2/25  here, you need to do a GET to check the state of the puzzle
             this::postThrowable,
             pending
