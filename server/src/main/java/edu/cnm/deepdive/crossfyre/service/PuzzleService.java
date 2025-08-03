@@ -42,6 +42,13 @@ public class PuzzleService implements AbstractPuzzleService {
   private final OkHttpClient client = new OkHttpClient();
   private final Gson gson = new Gson();
 
+  @JsonProperty("shortdef")
+  private List<String> shortDefs;
+
+  @JsonProperty("cxl")
+  private List<String> crossRefs;
+
+
 
   @Autowired
   PuzzleService(PuzzleRepository puzzleRepository, PuzzleWordRepository puzzleWordRepository,
@@ -150,16 +157,14 @@ public class PuzzleService implements AbstractPuzzleService {
             JsonArray array = JsonParser.parseString(json).getAsJsonArray();
 
             if (!array.isEmpty() && array.get(0).isJsonObject()) {
-              JsonArray shortDefs = entry.getAsJsonArray("shortdef"); //
-              JsonArray crossRefs = entry.getAsJsonArray("cxl");
 
               String definition;
               if (shortDefs != null && !shortDefs.isEmpty()) {
-                definition = shortDefs.get(0).getAsString();
+                definition = shortDefs.getFirst();
                 definitions.put(pw.getWordName(), definition);
               } else {
                 if (crossRefs != null && !crossRefs.isEmpty()) {
-                  definition = crossRefs.get(0).getAsString();
+                  definition = crossRefs.getFirst();
                   definitions.put(pw.getWordName(), definition);
                 }
                 else {

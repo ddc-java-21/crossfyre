@@ -1,6 +1,7 @@
 package edu.cnm.deepdive.crossfyre.model.dto;
 
 import com.google.gson.annotations.Expose;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzle.Guess.Puzzle.Board;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +24,9 @@ public class UserPuzzle {
   @Expose
   private List<Guess> guesses;
 
+  public int getSize() {
+    return ((int) (Math.sqrt(Board.values().length)));
+  }
 
   public UUID getUserExternalKey() {
     return userExternalKey;

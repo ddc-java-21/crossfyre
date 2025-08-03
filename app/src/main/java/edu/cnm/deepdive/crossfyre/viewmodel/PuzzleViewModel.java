@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord.Direction;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzle;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzle.Guess.Puzzle;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Puzzle.Board;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,39 +18,52 @@ public class PuzzleViewModel extends ViewModel {
   private final MutableLiveData<Puzzle.PuzzleWord> selectedWord = new MutableLiveData<>();
 
   // TODO: 8/1/25 Define field to hold reference to current Puzzle
-  private final MutableLiveData<Puzzle> currentPuzzle = new MutableLiveData<>();
+  private final MutableLiveData<UserPuzzle> currentPuzzle = new MutableLiveData<>();
+  private final MutableLiveData<Character[][]> board = new MutableLiveData<>();
 
   // Position of user clicked field
   private final MutableLiveData<PuzzleWord> position = new MutableLiveData<>();
+
+  private Character[][] toBoard(Board boardEnum) {
+    String flat = boardEnum.day;
+    int size = currentPuzzle.getValue().getSize();
+    Character[][] board = new Character[size][size];
+    for (int i = 0; i < flat.length(); i++) {
+      board[i / size][i % size] = flat.charAt(i);
+    }
+    return board;
+  }
+
+  public LiveData<Character[][]> getBoard() {
+    return board;
+  }
+
+  public void setBoardFromPuzzle(Board boardEnum) {
+    board.setValue(toBoard(boardEnum));
+  }
+
+  LiveData<UserPuzzle> getCurrentPuzzle() {
+    return currentPuzzle;
+  }
 
   public LiveData<List<PuzzleWord>> getWords() {
     return words;
   }
 
-//  public LiveData<PuzzleWord.Direction> getSelectedDirection() {
-//    return selectedDirection;
-//  }
+  public LiveData<PuzzleWord.Direction> getSelectedDirection() {
+    return selectedDirection;
+  }
 
   // Will let you know the direction anyway
   public LiveData<Puzzle.PuzzleWord> getSelectedWord() {
     return selectedWord;
   }
-  // UI logic will never set the words
 
-//  public void setWords(List<PuzzleWord> newWords) {
-//    words.setValue(newWords);
-//  }
-
-//  public void selectWord(PuzzleWord word) {
-//    selectedWord.setValue(word);
-//  }
-
-  // Should have entire puzzle object because list of words doesn't tell you puzzle size which we need here
   public void selectSquare(int position){
     Puzzle puzzle = new Puzzle();
 
     int row = position / puzzle.getSize();
-     int col = position % puzzle.getSize();
+    int col = position % puzzle.getSize();
 
     // TODO: 8/1/25 Figure out which puzzleword that the row and col above is and update the live
     //  data accordingly like the clue displayed etc..
