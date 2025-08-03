@@ -1,25 +1,94 @@
 package edu.cnm.deepdive.crossfyre.viewmodel;
 
+import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import edu.cnm.deepdive.crossfyre.model.dto.GuessDto;
 import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord.Direction;
+import edu.cnm.deepdive.crossfyre.model.dto.User;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzle.Guess.Puzzle;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto;
+import edu.cnm.deepdive.crossfyre.service.CrossfyreService;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
 
-public class PuzzleViewModel extends ViewModel {
+@HiltViewModel
+public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserver {
+
+  private static final String TAG = PuzzleViewModel.class.getSimpleName();
+  private final CrossfyreService crossfyreService;
+  private final MutableLiveData<User> currentUser;
 
   private final MutableLiveData<List<PuzzleWord>> words = new MutableLiveData<>(new ArrayList<>());
   private final MutableLiveData<Direction> selectedDirection = new MutableLiveData<>(Direction.ACROSS);
   private final MutableLiveData<Puzzle.PuzzleWord> selectedWord = new MutableLiveData<>();
+
+
+  private final MutableLiveData<List<GuessDto>> guesses;
+  private final MutableLiveData<UserPuzzleDto> userPuzzle;
+  private final MutableLiveData<GuessDto> selectedSquare;
+
+  private final MutableLiveData<Throwable> throwable;
+  private final CompositeDisposable pending;
+
+  private Disposable description;
+
 
   // TODO: 8/1/25 Define field to hold reference to current Puzzle
   private final MutableLiveData<Puzzle> currentPuzzle = new MutableLiveData<>();
 
   // Position of user clicked field
   private final MutableLiveData<PuzzleWord> position = new MutableLiveData<>();
+
+
+
+  public MutableLiveData<List<GuessDto>> getGuesses() {
+    return guesses;
+  }
+
+  public MutableLiveData<UserPuzzleDto> getUserPuzzle() {
+    return userPuzzle;
+  }
+
+  public MutableLiveData<GuessDto> getSelectedSquare() {
+    return selectedSquare;
+  }
+
+  @Inject
+  public PuzzleViewModel(CrossfyreService crossfyreService) {
+    this.crossfyreService = crossfyreService;
+    currentUser = new MutableLiveData<>();
+    guesses = new MutableLiveData<>(new ArrayList<>());
+    userPuzzle = new MutableLiveData<>();
+    selectedSquare = new MutableLiveData<>();
+    throwable = new MutableLiveData<>();
+    pending = new CompositeDisposable();
+    fetchCurrentUser();
+    fetchUserPuzzle();
+  }
+
+  private void fetchCurrentUser() {
+    throwable.setValue(null);
+    crossfyreService
+        .getMyProfile()
+        .subscribe(
+            currentUser::postValue,
+            this::postThrowable,
+            pending
+        );
+  }
 
   public LiveData<List<PuzzleWord>> getWords() {
     return words;
@@ -85,6 +154,44 @@ public class PuzzleViewModel extends ViewModel {
 
   // Need methods that the UI controller can invoke when the user clicks so that it knows which
   // puzzleword the user is looking at by new word or orientation switch
+
+
+  private void fetchUserPuzzle() {
+    throwable.setValue(null);
+    crossfyreService
+        .getUserPuzzle(Instant.now().truncatedTo(ChronoUnit.DAYS))
+        .subscribe(
+            value -> {
+              userPuzzle.postValue(value);
+            },
+            this::postThrowable,
+            pending
+        );
+  }
+
+  public void sendGuess(GuessDto guess) {
+    throwable.setValue(null);
+    //noinspection DataFlowIssue
+    crossfyreService
+        .sendGuess(userPuzzle.getValue().getPuzzle().getDate(), selectedSquare.getValue())
+        .subscribe(
+            guesses::postValue,
+            // TODO: 8/2/25  here, you need to do a GET to check the state of the puzzle
+            this::postThrowable,
+            pending
+        );
+  }
+
+  @Override
+  public void onStop(@NonNull LifecycleOwner owner) {
+    pending.clear();
+    DefaultLifecycleObserver.super.onStop(owner);
+  }
+
+  private void postThrowable(Throwable throwable) {
+    Log.e(TAG, throwable.getMessage(), throwable);
+    this.throwable.postValue(throwable);
+  }
 
 
 

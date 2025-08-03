@@ -55,8 +55,10 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
-  @Scheduled(cron = "0 36 12 * * *") // Runs every day at midnight
+  @Scheduled(cron = "0 11 15 * * *") // Runs every day at midnight
   public void createPuzzle() {
+
+    System.out.println("Entering createPuzzle:");
 
     // Create date for today and get value of the currentDay
     LocalDate today = LocalDate.now();
@@ -68,7 +70,7 @@ public class PuzzleService implements AbstractPuzzleService {
     Board[] boards = Board.values();
 //    Board todaysBoard = boards[boardIndex];
     Board todaysBoard = Board.TUESDAY;
-    int boardSize = (int) Math.round(Math.sqrt(todaysBoard.toString().length()));
+    int boardSize = (int) Math.round(Math.sqrt(todaysBoard.day.length()));
 
     Instant date = today.atStartOfDay(ZoneOffset.UTC).toInstant();
 

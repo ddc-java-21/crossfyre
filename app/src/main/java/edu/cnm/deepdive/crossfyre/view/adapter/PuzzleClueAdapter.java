@@ -19,7 +19,7 @@ public class PuzzleClueAdapter extends ArrayAdapter<PuzzleWord> {
   }
 
   public PuzzleWord splitClues() {
-
+    return null;
   }
 
 }

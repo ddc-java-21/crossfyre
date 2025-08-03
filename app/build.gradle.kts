@@ -45,7 +45,7 @@ android {
 
         resValue("string", "app_name", project.property("appName") as String)
         resValue("string", "client_id", getLocalProperty("clientId"))
-        resValue("string", "base_Url", getLocalProperty("baseUrl"))
+        resValue("string", "base_url", getLocalProperty("baseUrl"))
         resValue("string", "log_level", getLocalProperty("logLevel"))
 
         javaCompileOptions {

@@ -64,18 +64,18 @@ public class GuessController {
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Iterable<Guess>> post(@PathVariable Instant date, @Valid @RequestBody GuessEndpointDto guessEndpointDto) {
+  public UserPuzzle post(@PathVariable Instant date, @Valid @RequestBody GuessEndpointDto guessEndpointDto) {
     Guess guess = new Guess();
     guess.setGuessChar(guessEndpointDto.getGuess().charAt(0));
     guess.setGuessPosition(new GuessPosition(
         guessEndpointDto.getGuessPosition().getRow(),
         guessEndpointDto.getGuessPosition().getColumn()
     ));
-    Guess created = guessService.add(userService.getCurrentUser(), date, guess);
+    return guessService.add(userService.getCurrentUser(), date, guess);
     // Do we need to update UserPuzzle from here? messageService.add() in chat implies no, but...
 //    UserPuzzle currentUserPuzzle = userPuzzleService.get(currentUser, date); // should get last saved version of game
 //    List<Guess> guesses = new ArrayList<>();
-    Iterable<Guess> guessesIt = guessService.getAllInUserPuzzle(userService.getCurrentUser(), date);
+    //Iterable<Guess> guessesIt = guessService.getAllInUserPuzzle(userService.getCurrentUser(), date);
 //    for (Guess g : guessesIt) {
 //      guesses.add(g);
 //    }
@@ -84,12 +84,13 @@ public class GuessController {
 //    delta.setPuzzle(puzzle);
 //    delta.setGuesses(guesses);
 //    userPuzzleService.updateUserPuzzle(currentUserPuzzle, delta);
-    URI location = WebMvcLinkBuilder.linkTo(
-      WebMvcLinkBuilder.methodOn(getClass())
-          .get(date)
-    )
-        .toUri();
-    return ResponseEntity.created(location).body(guessesIt);
+
+//    URI location = WebMvcLinkBuilder.linkTo(
+//      WebMvcLinkBuilder.methodOn(getClass())
+//          .get(date)
+//    )
+//        .toUri();
+//    return ResponseEntity.created(location).body(created);
   }
 
 }

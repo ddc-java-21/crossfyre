@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Profile("service")
@@ -59,15 +60,28 @@ public class GuessService implements AbstractGuessService {
   }
 
   @Override
-  public Guess add(User requestor, Instant puzzleDate, Guess guess) {
+  @Transactional
+  public UserPuzzle add(User requestor, Instant puzzleDate, Guess guess) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
-        .map((userPuzzle) -> {
+        .flatMap((userPuzzle) -> {
           guess.setUserPuzzle(userPuzzle);
-          return guessRepository.save(guess);
+          guessRepository.save(guess);
+          return userPuzzleRepository.findById(userPuzzle.getId());
         })
         .orElseThrow(); // custom exception goes here
   }
+
+//  @Override
+//  public Guess add(User requestor, Instant puzzleDate, Guess guess) {
+//    return userPuzzleRepository
+//        .findByUserAndPuzzleDate(requestor, puzzleDate)
+//        .map((userPuzzle) -> {
+//          guess.setUserPuzzle(userPuzzle);
+//          return guessRepository.save(guess);
+//        })
+//        .orElseThrow(); // custom exception goes here
+//  }
 
 
 }
