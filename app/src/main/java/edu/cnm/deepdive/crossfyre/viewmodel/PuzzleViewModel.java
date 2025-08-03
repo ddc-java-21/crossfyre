@@ -175,7 +175,7 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     throwable.setValue(null);
     //noinspection DataFlowIssue
     crossfyreService
-        .sendGuess(currentUserPuzzle.getValue().getPuzzle().getDate(), selectedSquare.getValue())
+        .sendGuess(currentUserPuzzle.getValue().getPuzzle().getDate(), /*selectedSquare.getValue()*/ guess)
         .subscribe(
             currentUserPuzzle::postValue,
             // TODO: 8/2/25  here, you need to do a GET to check the state of the puzzle
