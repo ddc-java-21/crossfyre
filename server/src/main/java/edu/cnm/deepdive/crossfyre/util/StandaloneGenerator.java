@@ -23,7 +23,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"generate", "cronjob"})
+@Profile("generate")
 public class StandaloneGenerator implements CommandLineRunner {
 
   private static final String WORDS_FILE = "crossword/common-english-words.txt";

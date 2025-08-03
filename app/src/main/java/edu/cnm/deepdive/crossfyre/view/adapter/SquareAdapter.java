@@ -123,5 +123,5 @@ public class SquareAdapter extends ArrayAdapter<Character> {
     this.wordStartMap = wordStarts;
     notifyDataSetChanged();
   }
-
+  
 }

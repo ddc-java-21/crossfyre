@@ -40,6 +40,10 @@ public class PuzzleFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     binding = FragmentPuzzleBinding.inflate(getLayoutInflater());
+//    initializeTextFields();
+
+    // TODO: 7/30/25 Finish adding on create
+//    binding.clueDirection.listen
   }
 
   @Override
@@ -53,7 +57,6 @@ public class PuzzleFragment extends Fragment {
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // TODO: 8/1/25 Use position to determine which row and column are clicked and use that to update the viewmodel
-
       }
 
       // Usually do nothing in this method
@@ -70,29 +73,40 @@ public class PuzzleFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     viewModel = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
+
     binding.puzzleGrid.setAdapter(squareAdapter);
 
-    // Observe board (Character[][]) from ViewModel
-    viewModel.getBoard().observe(getViewLifecycleOwner(), (board) -> {
+    // Observe board data from ViewModel
+    viewModel.getBoard().observe(getViewLifecycleOwner(), board -> {
       if (board != null) {
         squareAdapter.setBoard(board);
       }
     });
 
-    // Observe word start map from ViewModel
-    viewModel.getWordStartMap().observe(getViewLifecycleOwner(), (map) -> {
+    // Observe clue numbering map from ViewModel
+    viewModel.getWordStartMap().observe(getViewLifecycleOwner(), map -> {
       if (map != null) {
         squareAdapter.setWordStartMap(map);
       }
     });
 
-    binding.puzzleGrid.setOnItemClickListener((parent, view1, position, id) ->
-        viewModel.selectSquare(position)
-    );
+    // Observe highlighted positions
+    viewModel.getSelectedCellPosition().observe(getViewLifecycleOwner(), positions -> {
+      if (positions != null) {
+        squareAdapter.setHighlightedPositions(positions);
+        squareAdapter.notifyDataSetChanged();
+      }
+    });
 
-    viewModel.getSelectedWord().observe(getViewLifecycleOwner(), (word) -> {
+    // Click handling for grid cells
+    binding.puzzleGrid.setOnItemClickListener((parent, view1, position, id) -> {
+      viewModel.selectSquare(position);
+    });
+
+    // Observe selected word details
+    viewModel.getSelectedWord().observe(getViewLifecycleOwner(), word -> {
       if (word != null) {
-        binding.clueText.setText(word.getClue());
+        binding.clueFullDescriptionText.setText(word.getClue());
         binding.clueDirection.setText(word.getDirection().toString());
       }
     });
