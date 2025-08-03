@@ -19,6 +19,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -66,7 +67,7 @@ public class Puzzle {
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY,
       cascade = CascadeType.ALL,orphanRemoval = true)
   @JsonProperty(value = "puzzleWords", access = Access.READ_ONLY)
-  private final List<PuzzleWord> puzzleWords = new LinkedList<>(); // TN 2025-07-07 added puzzleWords list
+  private final List<PuzzleWord> puzzleWords = new ArrayList<>(); // TN 2025-07-07 added puzzleWords list
 
 
   public long getId() {

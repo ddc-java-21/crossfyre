@@ -37,11 +37,11 @@ public class PuzzleFragment extends Fragment {
   @Inject
   SquareAdapter squareAdapter;
 
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     binding = FragmentPuzzleBinding.inflate(getLayoutInflater());
+//    initializeTextFields();
 
     // TODO: 7/30/25 Finish adding on create
 //    binding.clueDirection.listen
@@ -72,21 +72,45 @@ public class PuzzleFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-//    FragmentActivity activity = requireActivity();
-//    ViewModelProvider provider = new ViewModelProvider(activity);
-//    LifecycleOwner owner = getViewLifecycleOwner();
-//    viewModel = provider.get(PuzzleViewModel.class);
-//    viewModel
-//        .getWords()
-//        .observe(owner, );
 
     viewModel = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
 
-    // Observe ViewModel state
+    binding.puzzleGrid.setAdapter(squareAdapter);
+
+    // Observe board data from ViewModel
+    viewModel.getBoard().observe(getViewLifecycleOwner(), board -> {
+      if (board != null) {
+        squareAdapter.setBoard(board);
+      }
+    });
+
+    // Observe clue numbering map from ViewModel
+    viewModel.getWordStartMap().observe(getViewLifecycleOwner(), map -> {
+      if (map != null) {
+        squareAdapter.setWordStartMap(map);
+      }
+    });
+
+    // Observe highlighted positions
+    viewModel.getSelectedCellPosition().observe(getViewLifecycleOwner(), positions -> {
+      if (positions != null) {
+        squareAdapter.setHighlightedPositions(positions);
+        squareAdapter.notifyDataSetChanged();
+      }
+    });
+
+    // Click handling for grid cells
+    binding.puzzleGrid.setOnItemClickListener((parent, view1, position, id) -> {
+      viewModel.selectSquare(position);
+    });
+
+    // Observe selected word details
     viewModel.getSelectedWord().observe(getViewLifecycleOwner(), word -> {
       if (word != null) {
         binding.clueText.setText(word.getClue());
         // Added binding to get the clue for the word in the lambda
+        binding.clueDirection.setText(word.getDirection().toString());
+        binding.clueFullDescriptionText.setText(word.getClue());
         binding.clueDirection.setText(word.getDirection().toString());
       }
     });
@@ -132,4 +156,9 @@ public class PuzzleFragment extends Fragment {
     // TODO: 8/1/25 Use the board to set the number of columns in the gridview which tells teh gridview how to flow horizontally and when wrap
     // TODO: 8/1/25 Pass board to adapter.setBoard()
   }
+
+//  private void initializeTextFields() {
+//    binding.clueDirection.setText();
+//  }
+
 }

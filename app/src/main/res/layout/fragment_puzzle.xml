@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   xmlns:app="http://schemas.android.com/apk/res-auto">
-
-<!--  <LinearLayout-->
-<!--    android:id="@+id/top_bar"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="64dp"-->
-<!--    android:background="#88CCCCCC"-->
-<!--    android:orientation="horizontal"-->
-<!--    app:layout_constraintTop_toTopOf="parent"-->
-<!--    app:layout_constraintStart_toStartOf="parent"-->
-<!--    app:layout_constraintEnd_toEndOf="parent">-->
 
   <GridView
     android:id="@+id/puzzle_grid"
@@ -21,6 +12,12 @@
     android:numColumns="5"
     android:layout_margin="@dimen/double_full_dynamic_spacing"
     android:background="#CCCCCC"
+    android:columnWidth="0dp"
+    android:gravity="center"
+    android:horizontalSpacing="0dp"
+    android:numColumns="5"
+    android:stretchMode="columnWidth"
+    android:verticalSpacing="0dp"
     app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -39,7 +36,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    app:layout_constraintGuide_percent=".15"
+    app:layout_constraintGuide_percent=".10"
     />
 
   <TextView
@@ -47,24 +44,51 @@
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal"
-    app:layout_constraintStart_toEndOf="@id/guideline_vertical"
+    app:layout_constraintStart_toEndOf="@id/cell_word_start_number"
     app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintBottom_toTopOf="@id/clue_full_description_text"
     android:text="NONE"
     android:textStyle="bold"
     android:textSize="10pt"
-    android:layout_margin="@dimen/full_dynamic_spacing"
+    android:layout_margin="@dimen/full_dynamic_spacing"/>
+
+  <TextView
+    android:id="@+id/cell_word_start_number"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="@id/guideline_vertical"
+    app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+    app:layout_constraintBottom_toTopOf="@id/clue_full_description_text"
+    app:layout_constraintEnd_toStartOf="@id/clue_direction"
+    android:textSize="10pt"
+    android:textStyle="bold"
+    android:text="1"
     />
 
   <TextView
-    android:id="@+id/clue_text"
+    android:id="@+id/default_clue_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="@id/guideline_vertical"
+    app:layout_constraintEnd_toStartOf="@id/clue_full_description_text"
+    app:layout_constraintTop_toBottomOf="@id/cell_word_start_number"
+    android:text="@string/default_clue_text"
+    android:textStyle="bold"
+    android:layout_marginTop="@dimen/full_dynamic_spacing"/>
+
+
+
+
+  <TextView
+    android:id="@+id/clue_full_description_text"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     app:layout_constraintTop_toBottomOf="@+id/clue_direction"
-    app:layout_constraintStart_toEndOf="@id/guideline_vertical"
+    app:layout_constraintStart_toEndOf="@id/default_clue_text"
     app:layout_constraintEnd_toEndOf="parent"
     android:text="NONE"
     android:textStyle="bold"
-    android:layout_margin="@dimen/full_dynamic_spacing"
+    android:layout_marginTop="@dimen/full_dynamic_spacing"
     />
 
 

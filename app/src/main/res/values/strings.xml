@@ -12,4 +12,5 @@
   <string name="crossfyre_icon">Crossfyre Icon</string>
   <string name="puzzle_word_direction">Across</string>
   <string name="puzzle_word_clue_text">A clue would go here</string>
+  <string name="default_clue_text">Clue:  </string>
 </resources>

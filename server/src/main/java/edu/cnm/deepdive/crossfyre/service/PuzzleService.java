@@ -63,7 +63,8 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
-  @Scheduled(cron = "0 47 12 * * *") // Runs every day at midnight
+  @Profile("cronjob")
+  @Scheduled(cron = "0 44 3 * * *") // Runs every day at midnight
   public void createPuzzle() {
 
     // Create date for today and get value of the currentDay
@@ -122,7 +123,6 @@ public class PuzzleService implements AbstractPuzzleService {
         }
         puzzleRepository.save(puzzle);
       }
-
     } while (!valid);
 
 //    for (PuzzleWord word : puzzleWords) {

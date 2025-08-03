@@ -13,15 +13,18 @@
     app:layout_constraintDimensionRatio="1:1"
     android:gravity="center"
     android:textStyle="bold"
-    android:background="@android:color/transparent"
+    android:background="@null"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
     android:maxLines="1"
     android:maxLength="1"
+    android:imeOptions="actionNext"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:text="A"
-    android:textSize="70sp"
+    android:textSize="140sp"
     />
 
 <!--  DONE add small textview for puzzleword number that goes on the start letter cell of a puzzle word-->
@@ -31,10 +34,11 @@
     android:layout_height="wrap_content"
     android:gravity="start|top"
     android:textStyle="bold"
+    app:layout_constraintStart_toStartOf="@id/square"
+    app:layout_constraintTop_toTopOf="@id/square"
+    android:padding="@dimen/half_dynamic_spacing"
     android:text="1"
-    android:textSize="30sp"
-
-
-    tools:ignore="MissingConstraints"/>
+    android:textSize="50sp"
+    android:visibility="invisible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
