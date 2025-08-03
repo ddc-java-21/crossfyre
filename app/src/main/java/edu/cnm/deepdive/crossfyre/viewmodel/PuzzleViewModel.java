@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModel;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import edu.cnm.deepdive.crossfyre.model.dto.GuessDto;
 import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
+import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord.Direction;
+import edu.cnm.deepdive.crossfyre.model.dto.User;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzle.Guess.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto;
 import edu.cnm.deepdive.crossfyre.service.CrossfyreService;
@@ -22,6 +24,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
 
 @HiltViewModel
 public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserver {

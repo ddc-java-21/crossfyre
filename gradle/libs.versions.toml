@@ -44,7 +44,7 @@ dagger = "2.56.2"
 modularity = "1.8.15"
 badass-jlink = "3.1.1"
 shadow = "8.3.6"
-picasso = "2.8"
+#picasso = "2.8"
 schema-parser = "1.0.0"
 commons-rng-simple = "1.6"
 
@@ -114,7 +114,7 @@ okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhtt
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 
 # Picasso image retrieval library
-picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso"}
+#picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso"}
 
 # Dagger/Hilt dependency-injection library and annotation processor
 hilt-android-core = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }

@@ -57,7 +57,7 @@ public class CrossfyreServiceProxyModule {
         .client(client)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-        .baseUrl(context.getString(R.string.base_Url))
+        .baseUrl(context.getString(R.string.base_url))
         .build()
         .create(CrossfyreServiceProxy.class);
   }
