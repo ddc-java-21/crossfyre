@@ -1,6 +1,7 @@
 package edu.cnm.deepdive.crossfyre.controller;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +71,7 @@ public class PuzzleFragment extends Fragment {
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    Log.d("PuzzleFragment", "onViewCreated");
     super.onViewCreated(view, savedInstanceState);
 
     viewModel = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
@@ -77,21 +79,22 @@ public class PuzzleFragment extends Fragment {
     binding.puzzleGrid.setAdapter(squareAdapter);
 
     // Observe board data from ViewModel
-    viewModel.getBoard().observe(getViewLifecycleOwner(), board -> {
+    viewModel.getBoard().observe(getViewLifecycleOwner(), (board) -> {
+      Character[][] currentBoard = board;
       if (board != null) {
         squareAdapter.setBoard(board);
       }
     });
 
     // Observe clue numbering map from ViewModel
-    viewModel.getWordStartMap().observe(getViewLifecycleOwner(), map -> {
+    viewModel.getWordStartMap().observe(getViewLifecycleOwner(), (map) -> {
       if (map != null) {
         squareAdapter.setWordStartMap(map);
       }
     });
 
     // Observe highlighted positions
-    viewModel.getSelectedCellPosition().observe(getViewLifecycleOwner(), positions -> {
+    viewModel.getSelectedCellPosition().observe(getViewLifecycleOwner(), (positions) -> {
       if (positions != null) {
         squareAdapter.setHighlightedPositions(positions);
         squareAdapter.notifyDataSetChanged();
@@ -104,7 +107,7 @@ public class PuzzleFragment extends Fragment {
     });
 
     // Observe selected word details
-    viewModel.getSelectedWord().observe(getViewLifecycleOwner(), word -> {
+    viewModel.getSelectedWord().observe(getViewLifecycleOwner(), (word) -> {
       if (word != null) {
         binding.clueFullDescriptionText.setText(word.getClue());
         binding.clueDirection.setText(word.getDirection().toString());

@@ -38,10 +38,11 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   private final MutableLiveData<Puzzle.PuzzleWord> selectedWord = new MutableLiveData<>();
   private final MutableLiveData<List<Integer>> selectedCellPosition = new MutableLiveData<>();
   private final MutableLiveData<List<PuzzleWord>> words = new MutableLiveData<>(new ArrayList<>());
-  private final MutableLiveData<Direction> selectedDirection = new MutableLiveData<>(Direction.ACROSS);
+  private final MutableLiveData<UserPuzzleDto> userPuzzle = new MutableLiveData<>();
+  private final MutableLiveData<Direction> selectedDirection = new MutableLiveData<>(
+      Direction.ACROSS);
 
   private final MutableLiveData<List<GuessDto>> guesses;
-  private final MutableLiveData<UserPuzzleDto> userPuzzle;
   private final MutableLiveData<GuessDto> selectedSquare;
 
   private final MutableLiveData<Throwable> throwable;
@@ -50,17 +51,18 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   private Disposable description;
 
 
-
   private Integer lastClickedRow = null;
   private Integer lastClickedCol = null;
   private Puzzle.PuzzleWord.Direction lastDirection = null;
 
   // LiveData for board (grid of characters)
-  private final LiveData<Character[][]> board = Transformations.map(currentPuzzle, puzzle -> {
-    if (puzzle == null) return null;
-    int size = puzzle.getSize();
+  private final LiveData<Character[][]> board = Transformations.map(userPuzzle, up -> {
+    if (up == null || up.getPuzzle() == null) {
+      return null;
+    }
+    int size = up.getPuzzle().getSize();
     Character[][] grid = new Character[size][size];
-    String layout = puzzle.getBoard().day;
+    String layout = up.getPuzzle().getBoard().day;
     if (layout.length() != size * size) {
       throw new IllegalStateException("Board layout does not match size × size.");
     }
@@ -75,14 +77,14 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
 
   // LiveData for mapping position → clue number
   private final LiveData<Map<Integer, Integer>> wordStartMap =
-      Transformations.map(currentPuzzle, puzzle -> {
+      Transformations.map(userPuzzle, up -> {
         Map<Integer, Integer> map = new HashMap<>();
-        if (puzzle == null || puzzle.getPuzzleWords() == null) {
+        if (up == null || up.getPuzzle().getPuzzleWords() == null) {
           return map;
         }
-        int size = puzzle.getSize();
+        int size = up.getPuzzle().getSize();
         int clueNumber = 1;
-        for (Puzzle.PuzzleWord word : puzzle.getPuzzleWords()) {
+        for (UserPuzzleDto.Puzzle.PuzzleWord word : up.getPuzzle().getPuzzleWords()) {
           int row = word.getWordPosition().getRow();
           int col = word.getWordPosition().getColumn();
           int flatIndex = row * size + col;
@@ -97,7 +99,6 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   public LiveData<Character[][]> getBoard() {
     return board;
   }
-
 
 
   public MutableLiveData<List<GuessDto>> getGuesses() {
@@ -117,7 +118,6 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     this.crossfyreService = crossfyreService;
     currentUser = new MutableLiveData<>();
     guesses = new MutableLiveData<>(new ArrayList<>());
-    userPuzzle = new MutableLiveData<>();
     selectedSquare = new MutableLiveData<>();
     throwable = new MutableLiveData<>();
     pending = new CompositeDisposable();
@@ -136,31 +136,11 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
         );
   }
 
-  public LiveData<List<PuzzleWord>> getWords() {
-    return words;
-  }
-
-  public LiveData<Map<Integer, Integer>> getWordStartMap() {
-    return wordStartMap;
-  }
-
-  // Will let you know the direction anyway
-  public LiveData<Puzzle.PuzzleWord> getSelectedWord() {
-    return selectedWord;
-  }
-  // UI logic will never set the words
-
-  public LiveData<List<Integer>> getSelectedCellPosition() {
-    return selectedCellPosition;
-  }
-
-  public void setPuzzle(Puzzle puzzle) {
-    currentPuzzle.setValue(puzzle);
-  }
-
   public void selectSquare(int position) {
     Puzzle puzzle = currentPuzzle.getValue();
-    if (puzzle == null) return;
+    if (puzzle == null) {
+      return;
+    }
 
     int row = position / puzzle.getSize();
     int col = position % puzzle.getSize();
@@ -224,15 +204,12 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   // Need methods that the UI controller can invoke when the user clicks so that it knows which
   // puzzleword the user is looking at by new word or orientation switch
 
-
   private void fetchUserPuzzle() {
     throwable.setValue(null);
     crossfyreService
         .getUserPuzzle(Instant.now().truncatedTo(ChronoUnit.DAYS))
         .subscribe(
-            value -> {
-              userPuzzle.postValue(value);
-            },
+            userPuzzle::postValue,
             this::postThrowable,
             pending
         );
@@ -262,6 +239,28 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     this.throwable.postValue(throwable);
   }
 
+
+  public LiveData<List<PuzzleWord>> getWords() {
+    return words;
+  }
+
+  public LiveData<Map<Integer, Integer>> getWordStartMap() {
+    return wordStartMap;
+  }
+
+  // Will let you know the direction anyway
+  public LiveData<Puzzle.PuzzleWord> getSelectedWord() {
+    return selectedWord;
+  }
+  // UI logic will never set the words
+
+  public LiveData<List<Integer>> getSelectedCellPosition() {
+    return selectedCellPosition;
+  }
+
+  public void setPuzzle(Puzzle puzzle) {
+    currentPuzzle.setValue(puzzle);
+  }
 
 
 }
