@@ -73,24 +73,19 @@ public class GuessController {
     ));
     return guessService.add(userService.getCurrentUser(), date, guess);
     // Do we need to update UserPuzzle from here? messageService.add() in chat implies no, but...
-//    UserPuzzle currentUserPuzzle = userPuzzleService.get(currentUser, date); // should get last saved version of game
+    //UserPuzzle currentUserPuzzle = userPuzzleService.get(userService.getCurrentUser(), date); // should get last saved version of game
 //    List<Guess> guesses = new ArrayList<>();
     //Iterable<Guess> guessesIt = guessService.getAllInUserPuzzle(userService.getCurrentUser(), date);
 //    for (Guess g : guessesIt) {
 //      guesses.add(g);
 //    }
-//    UserPuzzle delta = new UserPuzzle();
-//    delta.setUser(currentUser);
-//    delta.setPuzzle(puzzle);
-//    delta.setGuesses(guesses);
-//    userPuzzleService.updateUserPuzzle(currentUserPuzzle, delta);
 
 //    URI location = WebMvcLinkBuilder.linkTo(
-//      WebMvcLinkBuilder.methodOn(getClass())
+//      WebMvcLinkBuilder.methodOn(UserPuzzleController.class)
 //          .get(date)
 //    )
 //        .toUri();
-//    return ResponseEntity.created(location).body(created);
+//    return ResponseEntity.created(location).body(updated);
   }
 
 }

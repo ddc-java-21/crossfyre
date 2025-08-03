@@ -61,13 +61,13 @@ public class GuessService implements AbstractGuessService {
 
   @Override
   @Transactional
-  public UserPuzzle add(User requestor, Instant puzzleDate, Guess guess) {
+  public synchronized UserPuzzle add(User requestor, Instant puzzleDate, Guess guess) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
         .flatMap((userPuzzle) -> {
           guess.setUserPuzzle(userPuzzle);
           guessRepository.save(guess);
-          return userPuzzleRepository.findById(userPuzzle.getId());
+          return userPuzzleRepository.findByUserAndPuzzleDate(requestor, puzzleDate);
         })
         .orElseThrow(); // custom exception goes here
   }
