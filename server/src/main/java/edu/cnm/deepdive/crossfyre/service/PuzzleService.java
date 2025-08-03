@@ -27,7 +27,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("service")
+@Profile({"service", "generate"})
 public class PuzzleService implements AbstractPuzzleService {
 
   private final PuzzleRepository puzzleRepository;
@@ -128,6 +128,11 @@ public class PuzzleService implements AbstractPuzzleService {
     return puzzleRepository
         .findByDate(date)
         .orElseThrow();
+  }
+
+  @Override
+  public Puzzle save(Puzzle puzzle) {
+    return null;
   }
 
   public void fetchDefinitions(Iterable<PuzzleWord> puzzleWords, Map<String, String> definitions) {
