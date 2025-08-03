@@ -14,6 +14,7 @@ import dagger.hilt.android.qualifiers.ActivityContext;
 import dagger.hilt.android.scopes.FragmentScoped;
 import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.ItemSquareBinding;
+import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -123,5 +124,5 @@ public class SquareAdapter extends ArrayAdapter<Character> {
     this.wordStartMap = wordStarts;
     notifyDataSetChanged();
   }
-  
+
 }

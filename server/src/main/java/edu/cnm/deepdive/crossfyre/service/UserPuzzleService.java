@@ -202,9 +202,9 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
     boolean bSolved = true;
     for (int i = 0; i < boardLength; i++) {
       for (int j = 0; j < boardLength; j++) {
-        System.out.printf("UserBoard at %d,%d: %c%n", i, j, userBoard[i][j]);
-        System.out.printf("SoluBoard at %d,%d: %c%n", i, j, solutionBoard[i][j]);
-        System.out.println("Equal? " + (userBoard[i][j] == solutionBoard[i][j]));
+//        System.out.printf("UserBoard at %d,%d: %c%n", i, j, userBoard[i][j]);
+//        System.out.printf("SoluBoard at %d,%d: %c%n", i, j, solutionBoard[i][j]);
+//        System.out.println("Equal? " + (userBoard[i][j] == solutionBoard[i][j]));
         if (userBoard[i][j] != solutionBoard[i][j]) {
           bSolved = false;
         }

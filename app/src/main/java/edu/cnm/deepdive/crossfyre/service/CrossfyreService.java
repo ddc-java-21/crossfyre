@@ -50,7 +50,7 @@ public class CrossfyreService {
         .flatMap((token) -> proxy.getUserPuzzle(token, date));
   }
 
-  public Single<List<GuessDto>> sendMessage(Instant date, GuessDto guess) {
+  public Single<List<GuessDto>> sendGuess(Instant date, GuessDto guess) {
     return getBearerToken()
         .flatMap((token) -> proxy.sendGuess(token, date, guess));
   }

@@ -15,6 +15,6 @@ public interface AbstractGuessService {
 
   public Guess add(User requestor, Puzzle puzzle, Guess guess);
 
-  public Guess add(User requestor, Instant puzzleDate, Guess guess);
+  public UserPuzzle add(User requestor, Instant puzzleDate, Guess guess);
 
   }
