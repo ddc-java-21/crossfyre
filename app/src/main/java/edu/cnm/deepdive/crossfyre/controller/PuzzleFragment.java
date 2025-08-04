@@ -1,6 +1,7 @@
 package edu.cnm.deepdive.crossfyre.controller;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,6 @@ import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.FragmentPuzzleBinding;
 import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzle.Guess.Puzzle;
-import edu.cnm.deepdive.crossfyre.view.adapter.PuzzleClueAdapter;
 import edu.cnm.deepdive.crossfyre.view.adapter.SquareAdapter;
 import edu.cnm.deepdive.crossfyre.viewmodel.PuzzleViewModel;
 import java.util.List;
@@ -32,7 +32,7 @@ public class PuzzleFragment extends Fragment {
   private FragmentPuzzleBinding binding;
   private PuzzleViewModel viewModel;
 
-  //When an instance of the puzzle fragment gets created, right after it gets initialized and constructor is done
+  //When an instance of the puzzle fragemnt gets created, right after it gets initialized and constructor is done
   // Hilt will inject an adapter
   @Inject
   SquareAdapter squareAdapter;
@@ -57,7 +57,7 @@ public class PuzzleFragment extends Fragment {
       // tells you which position in the gridview like 1,2,3,...25, the view is a gridview
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        viewModel.selectSquare(position);
+        // TODO: 8/1/25 Use position to determine which row and column are clicked and use that to update the viewmodel
       }
 
       // Usually do nothing in this method
@@ -71,28 +71,33 @@ public class PuzzleFragment extends Fragment {
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    Log.d("PuzzleFragment", "onViewCreated");
     super.onViewCreated(view, savedInstanceState);
 
     viewModel = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
 
     binding.puzzleGrid.setAdapter(squareAdapter);
+    binding.puzzleGrid.setNumColumns(5);
 
     // Observe board data from ViewModel
-    viewModel.getBoard().observe(getViewLifecycleOwner(), board -> {
+    viewModel.getBoard().observe(getViewLifecycleOwner(), (board) -> {
+      Character[][] currentBoard = board;
       if (board != null) {
         squareAdapter.setBoard(board);
+        squareAdapter.notifyDataSetChanged();
       }
     });
 
-    // Observe clue numbering map from ViewModel
-    viewModel.getWordStartMap().observe(getViewLifecycleOwner(), map -> {
-      if (map != null) {
-        squareAdapter.setWordStartMap(map);
+    // Observe word start positions for clue numbering
+    viewModel.getWordStartMap().observe(getViewLifecycleOwner(), (wordStartMap) -> {
+      if (wordStartMap != null) {
+        squareAdapter.setWordStartMap(wordStartMap);
+        squareAdapter.notifyDataSetChanged();
       }
     });
 
     // Observe highlighted positions
-    viewModel.getSelectedCellPosition().observe(getViewLifecycleOwner(), positions -> {
+    viewModel.getSelectedCellPositions().observe(getViewLifecycleOwner(), (positions) -> {
       if (positions != null) {
         squareAdapter.setHighlightedPositions(positions);
         squareAdapter.notifyDataSetChanged();
@@ -105,56 +110,13 @@ public class PuzzleFragment extends Fragment {
     });
 
     // Observe selected word details
-    viewModel.getSelectedWord().observe(getViewLifecycleOwner(), word -> {
+    viewModel.getSelectedWord().observe(getViewLifecycleOwner(), (word) -> {
       if (word != null) {
-        binding.clueText.setText(word.getClue());
-        // Added binding to get the clue for the word in the lambda
-        binding.clueDirection.setText(word.getDirection().toString());
         binding.clueFullDescriptionText.setText(word.getClue());
         binding.clueDirection.setText(word.getDirection().toString());
+//        squareAdapter.notifyDataSetCh
       }
     });
-
-    PuzzleClueAdapter clueAdapter = new PuzzleClueAdapter(requireContext());
-
-    // this is where were updating the livedata
-    viewModel.getWords().observe(getViewLifecycleOwner(), words -> {
-      // TODO: 8/1/25 Pass words to the adapter of the clues which is another sub adapter of ArrayAdapter
-      // TODO: Need an ArrayAdapter of puzzleword so that you can get the clue but split the Across and Downs
-      //  into different lists and that will go into a ListViews
-      if (words != null && !words.isEmpty()) {
-        clueAdapter.setPuzzleWords(words);
-
-        List<PuzzleWord> acrossClues = clueAdapter.getAcrossClues().getValue();
-        List<PuzzleWord> downClues = clueAdapter.getDownClues().getValue();
-
-        PuzzleWord firstClue = (acrossClues != null && !acrossClues.isEmpty())
-            ? acrossClues.get(0)
-            : (downClues != null && !downClues.isEmpty() ? downClues.get(0) : null);
-
-        if (firstClue != null) {
-          binding.clueText.setText(firstClue.getClue());
-        }
-        else {
-          binding.clueText.setText("");
-        }
-      }
-    });
-//      viewModel = new ViewModelProvider(requireActivity()).get(ChatViewModel.class);
-//      viewModel.setSelectedChannel(channel);
-//      viewModel.getMessages().observe(getViewLifecycleOwner(), (messages) -> {
-//        adapter.setMessages(messages);
-//        binding.messages.scrollToPosition(messages.size() - 1);
-//      });
-//    }
-    viewModel.getBoard().observe(getViewLifecycleOwner(), (board) -> {
-      squareAdapter.setBoard(board);
-      binding.puzzleGrid.setNumColumns(board[0].length); // informs GridView's layout
-    });
-
-
-    // TODO: 8/1/25 Use the board to set the number of columns in the gridview which tells teh gridview how to flow horizontally and when wrap
-    // TODO: 8/1/25 Pass board to adapter.setBoard()
   }
 
 //  private void initializeTextFields() {

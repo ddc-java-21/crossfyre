@@ -60,7 +60,7 @@ public class GuessService implements AbstractGuessService {
   }
 
   @Override
-  @Transactional
+//  @Transactional
   public synchronized UserPuzzle add(User requestor, Instant puzzleDate, Guess guess) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)

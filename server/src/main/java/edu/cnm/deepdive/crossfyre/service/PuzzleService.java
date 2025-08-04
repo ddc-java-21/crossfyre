@@ -55,7 +55,8 @@ public class PuzzleService implements AbstractPuzzleService {
   // We need to get a new instance of the Puzzle object.
   // We need to get the size of the puzzle, assign the correct board layout for the puzzle day,
   //assign the correct date to the puzzle, and get the List<PuzzleWords> for that puzzle.
-  @Scheduled(cron = "0 11 15 * * *") // Runs every day at midnight
+  @Profile("cronjob")
+  @Scheduled(cron = "0 42 7 * * *") // Runs every day at midnight
   public void createPuzzle() {
 
     System.out.println("Entering createPuzzle:");
@@ -128,11 +129,6 @@ public class PuzzleService implements AbstractPuzzleService {
     return puzzleRepository
         .findByDate(date)
         .orElseThrow();
-  }
-
-  @Override
-  public Puzzle save(Puzzle puzzle) {
-    return null;
   }
 
   public void fetchDefinitions(Iterable<PuzzleWord> puzzleWords, Map<String, String> definitions) {

@@ -137,7 +137,7 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     // Picasso library
-    implementation(libs.picasso)
+//    implementation(libs.picasso)
 
     // Libraries for JVM-based testing.
     testImplementation(libs.junit.api)
