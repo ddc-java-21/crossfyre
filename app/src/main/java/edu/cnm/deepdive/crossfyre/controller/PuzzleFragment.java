@@ -77,24 +77,27 @@ public class PuzzleFragment extends Fragment {
     viewModel = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
 
     binding.puzzleGrid.setAdapter(squareAdapter);
+    binding.puzzleGrid.setNumColumns(5);
 
     // Observe board data from ViewModel
     viewModel.getBoard().observe(getViewLifecycleOwner(), (board) -> {
       Character[][] currentBoard = board;
       if (board != null) {
         squareAdapter.setBoard(board);
+        squareAdapter.notifyDataSetChanged();
       }
     });
 
-    // Observe clue numbering map from ViewModel
-    viewModel.getWordStartMap().observe(getViewLifecycleOwner(), (map) -> {
-      if (map != null) {
-        squareAdapter.setWordStartMap(map);
+    // Observe word start positions for clue numbering
+    viewModel.getWordStartMap().observe(getViewLifecycleOwner(), (wordStartMap) -> {
+      if (wordStartMap != null) {
+        squareAdapter.setWordStartMap(wordStartMap);
+        squareAdapter.notifyDataSetChanged();
       }
     });
 
     // Observe highlighted positions
-    viewModel.getSelectedCellPosition().observe(getViewLifecycleOwner(), (positions) -> {
+    viewModel.getSelectedCellPositions().observe(getViewLifecycleOwner(), (positions) -> {
       if (positions != null) {
         squareAdapter.setHighlightedPositions(positions);
         squareAdapter.notifyDataSetChanged();
@@ -111,6 +114,7 @@ public class PuzzleFragment extends Fragment {
       if (word != null) {
         binding.clueFullDescriptionText.setText(word.getClue());
         binding.clueDirection.setText(word.getDirection().toString());
+//        squareAdapter.notifyDataSetCh
       }
     });
   }
