@@ -41,7 +41,7 @@ public class SquareAdapter extends ArrayAdapter<Character> {
 //    puzzleWord = new ArrayList<>();
     wallColor = getAttributeColor(R.attr.wallColor);
   }
-// write method in viewmodel that would take big object adn get teh piece of the object we want to use and use transformations.map
+  // write method in viewmodel that would take big object adn get teh piece of the object we want to use and use transformations.map
   public SquareAdapter setBoard(Character[][] board) {
     clear();
     // Using a stream to help us do a complex iteration
@@ -59,8 +59,8 @@ public class SquareAdapter extends ArrayAdapter<Character> {
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
     char c = getItem(position);
     ItemSquareBinding binding = (convertView != null)
-    // if not null we want to bind whats already been inflated to our binding
-    ? ItemSquareBinding.bind(convertView)
+        // if not null we want to bind whats already been inflated to our binding
+        ? ItemSquareBinding.bind(convertView)
         // if were not inflating for an entire activity layout then we always use the three parameter form of inflate
         : ItemSquareBinding.inflate(inflater, parent, false);
 
