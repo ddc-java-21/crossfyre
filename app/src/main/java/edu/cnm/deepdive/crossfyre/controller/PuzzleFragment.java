@@ -80,13 +80,13 @@ public class PuzzleFragment extends Fragment {
     viewModel = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
 
     binding.puzzleGrid.setAdapter(squareAdapter);
-    binding.puzzleGrid.setNumColumns(5);
 
     // Observe board data from ViewModel
     viewModel.getBoard().observe(getViewLifecycleOwner(), (board) -> {
 //      Character[][] currentBoard = board;
       if (board != null) {
         squareAdapter.setBoard(board);
+        binding.puzzleGrid.setNumColumns(board.length);
         squareAdapter.notifyDataSetChanged();
       }
     });

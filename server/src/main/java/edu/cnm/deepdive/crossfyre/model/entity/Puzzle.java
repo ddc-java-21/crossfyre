@@ -60,7 +60,7 @@ public class Puzzle {
   @JsonProperty(value = "date", access = Access.READ_WRITE)
   private Instant date;
 
-  @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
+  @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
   @JsonIgnore
   private List<UserPuzzle> userPuzzles = new LinkedList<>();
 

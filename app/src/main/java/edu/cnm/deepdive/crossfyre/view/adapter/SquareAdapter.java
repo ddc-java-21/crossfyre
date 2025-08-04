@@ -1,6 +1,7 @@
 package edu.cnm.deepdive.crossfyre.view.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,14 +80,19 @@ public class SquareAdapter extends ArrayAdapter<Character> {
       // represent what can be filled in
       case '_' -> {
         binding.square.setText("");
+        binding.square.setVisibility(View.VISIBLE);
+        binding.getRoot().setBackgroundColor(Color.GREEN);
       }
       // if unicode then '\u0000'
       case '0' -> { // represent what can't be filled in
         binding.square.setText("");
-        binding.getRoot().setBackgroundColor(wallColor);
+        binding.square.setVisibility(View.INVISIBLE);
+        binding.getRoot().setBackgroundColor(Color.RED);
       }
       default -> { // represent what we are going to put in the edit text for the guess
         binding.square.setText(String.valueOf(c));
+        binding.square.setVisibility(View.VISIBLE);
+        binding.getRoot().setBackgroundColor(Color.GREEN);
       }
     }
     // TODO: 8/1/25 If this position represents a wordStart then update the corresponding textView
