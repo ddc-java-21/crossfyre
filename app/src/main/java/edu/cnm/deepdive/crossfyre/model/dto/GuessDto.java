@@ -4,11 +4,9 @@ import com.google.gson.annotations.Expose;
 
 public class GuessDto {
 
-  @Expose(serialize = false)
-  private Character guess;
+  @Expose private Character guess;
 
-  @Expose(serialize = false)
-  private GuessPosition guessPosition;
+  @Expose private GuessPosition guessPosition;
 
 
   public Character getGuess() {
@@ -30,11 +28,9 @@ public class GuessDto {
 
   public static class GuessPosition {
 
-    @Expose(serialize = false)
-    int row;
+    @Expose private int row;
 
-    @Expose(serialize = false)
-    int column;
+    @Expose private int column;
 
 
     public int getRow() {

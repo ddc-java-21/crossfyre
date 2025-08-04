@@ -72,7 +72,7 @@ public class SquareAdapter extends ArrayAdapter<Character> {
     binding.getRoot().setBackgroundResource(0);
 
     if (highlightedPositions.contains(position)) {
-      binding.getRoot().setBackgroundColor(getAttributeColor(R.attr.wallColor));
+      binding.getRoot().setBackgroundColor(getAttributeColor(R.color.highlightedColor));
     }
 
     switch (c) {

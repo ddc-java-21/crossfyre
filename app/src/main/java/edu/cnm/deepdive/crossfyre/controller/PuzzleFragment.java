@@ -57,7 +57,9 @@ public class PuzzleFragment extends Fragment {
       // tells you which position in the gridview like 1,2,3,...25, the view is a gridview
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        // TODO: 8/1/25 Use position to determine which row and column are clicked and use that to update the viewmodel
+        viewModel.selectSquare(position);
+
+        // TODO: 8/1/25 Use position to determine which row and column are clicked and use that to update the viewmodel, done?
       }
 
       // Usually do nothing in this method
@@ -66,6 +68,7 @@ public class PuzzleFragment extends Fragment {
         // do nothing
       }
     });
+
     return binding.getRoot();
   }
 
@@ -81,7 +84,7 @@ public class PuzzleFragment extends Fragment {
 
     // Observe board data from ViewModel
     viewModel.getBoard().observe(getViewLifecycleOwner(), (board) -> {
-      Character[][] currentBoard = board;
+//      Character[][] currentBoard = board;
       if (board != null) {
         squareAdapter.setBoard(board);
         squareAdapter.notifyDataSetChanged();
@@ -104,11 +107,6 @@ public class PuzzleFragment extends Fragment {
       }
     });
 
-    // Click handling for grid cells
-    binding.puzzleGrid.setOnItemClickListener((parent, view1, position, id) -> {
-      viewModel.selectSquare(position);
-    });
-
     // Observe selected word details
     viewModel.getSelectedWord().observe(getViewLifecycleOwner(), (word) -> {
       if (word != null) {
@@ -119,8 +117,9 @@ public class PuzzleFragment extends Fragment {
     });
   }
 
-//  private void initializeTextFields() {
-//    binding.clueDirection.setText();
-//  }
-
+  @Override
+  public void onDestroyView() {
+    binding = null;
+    super.onDestroyView();
+  }
 }

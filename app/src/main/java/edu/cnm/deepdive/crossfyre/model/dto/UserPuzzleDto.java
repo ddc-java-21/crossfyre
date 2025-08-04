@@ -110,28 +110,10 @@ public class UserPuzzleDto {
     @Expose private Integer size;
     @Expose private Board board;
 
-    public enum Board {
-      SUNDAY("0__________________0____0"),
-      MONDAY("0___00___0_______________"),
-      TUESDAY("00_____________________00"),
-      WEDNESDAY("___00_______________00___"),
-      THURSDAY("0___0_______________0___0"),
-      FRIDAY("____0____0_____0____0____"),
-      SATURDAY("___00____0_____0____00___");
-
-      @Expose
-      public final String day;
-
-      Board(String day) {
-        this.day = day;
-      }
-
-    }
-
     @Expose private Instant created;
+
     @Expose private Instant date;
     @Expose private List<PuzzleWord> puzzleWords;
-
 
     public UUID getKey() {
       return key;
@@ -182,14 +164,48 @@ public class UserPuzzleDto {
       this.puzzleWords = puzzleWords;
     }
 
+    public enum Board {
+      SUNDAY("0__________________0____0"),
+      MONDAY("0___00___0_______________"),
+      TUESDAY("00_____________________00"),
+      WEDNESDAY("___00_______________00___"),
+      THURSDAY("0___0_______________0___0"),
+      FRIDAY("____0____0_____0____0____"),
+      SATURDAY("___00____0_____0____00___");
+
+      @Expose
+      public final String day;
+
+      Board(String day) {
+        this.day = day;
+      }
+
+    }
+
     public static class PuzzleWord {
 
       @Expose private String clue;
       @Expose private Direction direction;
 
       public enum Direction {
-        ACROSS,
-        DOWN
+        ACROSS(0,1),
+        DOWN(1,0);
+
+        private final int rowOffset;
+        private final int columnOffset;
+
+        Direction(int rowOffset, int columnOffset) {
+          this.rowOffset = rowOffset;
+          this.columnOffset = columnOffset;
+        }
+
+        public int rowOffset() {
+          return rowOffset;
+        }
+
+        public int columnOffset() {
+          return columnOffset;
+        }
       }
 
       @Expose private WordPosition wordPosition;
