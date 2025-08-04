@@ -188,8 +188,24 @@ public class UserPuzzleDto {
       @Expose private Direction direction;
 
       public enum Direction {
-        ACROSS,
-        DOWN
+        ACROSS(0,1),
+        DOWN(1,0);
+
+        private final int rowOffset;
+        private final int columnOffset;
+
+        Direction(int rowOffset, int columnOffset) {
+          this.rowOffset = rowOffset;
+          this.columnOffset = columnOffset;
+        }
+
+        public int rowOffset() {
+          return rowOffset;
+        }
+
+        public int columnOffset() {
+          return columnOffset;
+        }
       }
 
       @Expose private WordPosition wordPosition;

@@ -25,7 +25,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.inject.Inject;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @HiltViewModel
 public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserver {
@@ -41,16 +45,19 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   private final MutableLiveData<List<Integer>> selectedCellPositions;
   private final LiveData<UserPuzzleDto.Puzzle.PuzzleWord.Direction> selectedDirection;
   private final LiveData<List<UserPuzzleDto.Guess>> guesses;
-  private final MutableLiveData<GuessDto> selectedSquare = new MutableLiveData<>();
-  private final MutableLiveData<Throwable> throwable = new MutableLiveData<>();
-  private final CompositeDisposable pending = new CompositeDisposable();
+  private final MutableLiveData<GuessDto> selectedSquare;
+  private final LiveData<Map<Integer, Integer>> wordStartMap;
+  private final LiveData<Character[][]> board;
+  private final MutableLiveData<Throwable> throwable;
+  private final CompositeDisposable pending;
 
   private Integer lastClickedRow = null;
   private Integer lastClickedCol = null;
   private UserPuzzleDto.Puzzle.PuzzleWord.Direction lastDirection = null;
 
-  // LiveData for board (grid of characters)
-  private final LiveData<Character[][]> board = Transformations.map(userPuzzle, up -> {
+  // Stretch goal boolean[][] false = wall, true = space because grid below is just getting board
+
+  private static Character[][] buildBoard(UserPuzzleDto up) {
     if (up == null || up.getPuzzle() == null) {
       return null;
     }
@@ -67,9 +74,9 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
       }
     }
     return grid;
-  });
-
+  }
   // LiveData for mapping position → clue number
+
   @Inject
   public PuzzleViewModel(CrossfyreService crossfyreService) {
     this.crossfyreService = crossfyreService;
@@ -78,57 +85,64 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     words = Transformations.map(currentPuzzle, (cp) -> (cp != null) ? cp.getPuzzleWords() : null);
     selectedWord = new MutableLiveData<>();
     selectedCellPositions = new MutableLiveData<>();
-    selectedDirection = Transformations.map(selectedWord, (sw) -> (sw != null) ? sw.getDirection() : null);
-    guesses = Transformations.map(userPuzzle, (up)  -> (up != null) ? up.getGuesses() : null);
+    selectedDirection = Transformations.map(selectedWord,
+        (sw) -> (sw != null) ? sw.getDirection() : null);
+    guesses = Transformations.map(userPuzzle, (up) -> (up != null) ? up.getGuesses() : null);
+    selectedSquare = new MutableLiveData<>();
+    pending = new CompositeDisposable();
+    throwable = new MutableLiveData<>();
+    board = Transformations.map(userPuzzle, PuzzleViewModel::buildBoard);
+    wordStartMap = Transformations.map(userPuzzle, PuzzleViewModel::buildWordStartMap);
     fetchCurrentUser();
     fetchUserPuzzle();
   }
 
-  private final LiveData<Map<Integer, Integer>> wordStartMap = Transformations.map(userPuzzle,
-      up -> {
-        Map<Integer, Integer> map = new HashMap<>();
-        if (up == null || up.getPuzzle() == null || up.getPuzzle().getPuzzleWords() == null) {
-          return map;
-        }
-        int size = up.getPuzzle().getSize();
-        int clueNumber = 1;
-        for (UserPuzzleDto.Puzzle.PuzzleWord word : up.getPuzzle().getPuzzleWords()) {
-          int row = word.getWordPosition().getRow();
-          int col = word.getWordPosition().getColumn();
-          int flatIndex = row * size + col;
-          if (!map.containsKey(flatIndex)) {
-            map.put(flatIndex, clueNumber++);
-          }
-        }
-        return map;
-      });
+  private static @NotNull Map<Integer, Integer> buildWordStartMap(UserPuzzleDto up) {
+    Map<Integer, Integer> map = new HashMap<>();
+    if (up == null || up.getPuzzle() == null || up.getPuzzle().getPuzzleWords() == null) {
+      return map;
+    }
+    int size = up.getPuzzle().getSize();
+    int clueNumber = 1;
+    for (UserPuzzleDto.Puzzle.PuzzleWord word : up.getPuzzle().getPuzzleWords()) {
+      int row = word.getWordPosition().getRow();
+      int col = word.getWordPosition().getColumn();
+      int flatIndex = row * size + col;
+      if (!map.containsKey(flatIndex)) {
+        map.put(flatIndex, clueNumber++);
+      }
+    }
+    return map;
+  }
 
+  // Server side check to use Schedules single threaded pool method instead of Schedules.io()
   private void fetchCurrentUser() {
     throwable.setValue(null);
-    pending.add(
-        crossfyreService.getMyProfile()
-            .subscribe(
-                currentUser::postValue,
-                this::postThrowable
-            )
-    );
+    crossfyreService.getMyProfile()
+        .subscribe(
+            currentUser::postValue,
+            this::postThrowable,
+            pending
+        );
+
   }
 
   private void fetchUserPuzzle() {
     throwable.setValue(null);
-    pending.add(
-        crossfyreService.getUserPuzzle(Instant.now().truncatedTo(ChronoUnit.DAYS))
-            .subscribe(
-                dto -> {
-                  if (dto != null) {
-                    Log.d(TAG, "Board layout: " + dto.getPuzzle().getBoard().day);
-                    Log.d(TAG, "Puzzle words count: " + dto.getPuzzle().getPuzzleWords().size());
-                    userPuzzle.postValue(dto);
-                  }
-                },
-                this::postThrowable
-            )
-    );
+    crossfyreService.getUserPuzzle(Instant.now().truncatedTo(ChronoUnit.DAYS))
+        .subscribe(
+            this::handleUserPuzzle,
+            this::postThrowable,
+            pending
+        );
+  }
+
+  private void handleUserPuzzle(UserPuzzleDto dto) {
+    if (dto != null) {
+      Log.d(TAG, "Board layout: " + dto.getPuzzle().getBoard().day);
+      Log.d(TAG, "Puzzle words count: " + dto.getPuzzle().getPuzzleWords().size());
+      userPuzzle.postValue(dto);
+    }
   }
 
   public void selectSquare(int position) {
@@ -145,15 +159,17 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
       return;
     }
 
-    boolean sameCellClicked = lastClickedRow != null && lastClickedCol != null &&
-        lastClickedRow == row && lastClickedCol == col;
+    boolean sameCellClicked = lastClickedRow == row && lastClickedCol == col;
 
     UserPuzzleDto.Puzzle.PuzzleWord.Direction desiredDirection = sameCellClicked
-        ? (lastDirection == UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS
-        ? UserPuzzleDto.Puzzle.PuzzleWord.Direction.DOWN
-        : UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS)
+        ? (
+        lastDirection == UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS
+            ? UserPuzzleDto.Puzzle.PuzzleWord.Direction.DOWN
+            : UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS
+    )
         : UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS;
 
+    // Look to use an instream here like you did in line 206 and collect to list or map(direction, word)
     UserPuzzleDto.Puzzle.PuzzleWord matchedWord = null;
     for (UserPuzzleDto.Puzzle.PuzzleWord word : puzzle.getPuzzleWords()) {
       if (word.getDirection() == desiredDirection) {
@@ -182,41 +198,36 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
       lastClickedCol = col;
       lastDirection = matchedWord.getDirection();
 
-      List<Integer> matchedPositions = new ArrayList<>();
       int startRow = matchedWord.getWordPosition().getRow();
       int startCol = matchedWord.getWordPosition().getColumn();
-      int length = matchedWord.getWordPosition().getLength();
+      int size = puzzle.getSize();
+      int rowOffset = matchedWord.getDirection().rowOffset();
+      int colOffset = matchedWord.getDirection().columnOffset();
+      List<Integer> selectedPositions = IntStream
+          .range(0, matchedWord.getWordPosition().getLength())
+          .map((sp) -> {
+            int selectionRow = startRow + sp * rowOffset;
+            int selectionCol = startCol + sp * colOffset;
+            return selectionRow * size + selectionCol;
+          })
+          .boxed()
+          .collect(Collectors.toList());
 
-      if (matchedWord.getDirection() == UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS) {
-        for (int offset = 0; offset < length; offset++) {
-          matchedPositions.add(startRow * puzzle.getSize() + (startCol + offset));
-        }
-      } else {
-        for (int offset = 0; offset < length; offset++) {
-          matchedPositions.add((startRow + offset) * puzzle.getSize() + startCol);
-        }
-      }
-      selectedCellPositions.postValue(matchedPositions);
+      selectedCellPositions.postValue(selectedPositions);
     }
   }
 
   public void sendGuess(GuessDto guess) {
     throwable.setValue(null);
-    pending.add(
-        crossfyreService.sendGuess(
-                userPuzzle.getValue().getPuzzle().getDate(),
-                guess
-            )
-            .subscribe(
-                // Convert GuessDto list to UserPuzzleDto.Guess list
-                guessDtos -> {
-                  List<UserPuzzleDto.Guess> convertedGuesses = convertGuessDto(guessDtos);
-                  guesses.postValue(convertedGuesses);
-                  fetchUserPuzzle(); // Refresh puzzle state
-                },
-                this::postThrowable
-            )
-    );
+    crossfyreService.sendGuess(
+            userPuzzle.getValue().getPuzzle().getDate(),
+            guess
+        )
+        .subscribe(
+            userPuzzle::postValue,
+            this::postThrowable,
+            pending
+        );
   }
 
   // Helper method to convert GuessDto to UserPuzzleDto.Guess
