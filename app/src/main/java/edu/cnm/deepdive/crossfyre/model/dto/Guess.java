@@ -4,10 +4,10 @@ import com.google.gson.annotations.Expose;
 
 public class Guess {
 
-  @Expose(serialize = false)
+  @Expose
   private Character guess;
 
-  @Expose(serialize = false)
+  @Expose
   private GuessPosition guessPosition;
 
 
