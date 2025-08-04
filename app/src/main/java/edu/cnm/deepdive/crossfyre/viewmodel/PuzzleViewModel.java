@@ -29,17 +29,18 @@ import javax.inject.Inject;
 
 @HiltViewModel
 public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserver {
+
   private static final String TAG = PuzzleViewModel.class.getSimpleName();
 
   private final CrossfyreService crossfyreService;
   private final MutableLiveData<User> currentUser = new MutableLiveData<>();
-  private final MutableLiveData<UserPuzzleDto> userPuzzle = new MutableLiveData<>();
-  private final MutableLiveData<UserPuzzleDto.Puzzle> currentPuzzle = new MutableLiveData<>();
-  private final MutableLiveData<List<UserPuzzleDto.Puzzle.PuzzleWord>> words = new MutableLiveData<>();
-  private final MutableLiveData<UserPuzzleDto.Puzzle.PuzzleWord> selectedWord = new MutableLiveData<>();
-  private final MutableLiveData<List<Integer>> selectedCellPositions = new MutableLiveData<>();
-  private final MutableLiveData<UserPuzzleDto.Puzzle.PuzzleWord.Direction> selectedDirection = new MutableLiveData<>(UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS);
-  private final MutableLiveData<List<UserPuzzleDto.Guess>> guesses = new MutableLiveData<>();
+  private final MutableLiveData<UserPuzzleDto> userPuzzle;
+  private final LiveData<UserPuzzleDto.Puzzle> currentPuzzle;
+  private final LiveData<List<UserPuzzleDto.Puzzle.PuzzleWord>> words;
+  private final MutableLiveData<UserPuzzleDto.Puzzle.PuzzleWord> selectedWord;
+  private final MutableLiveData<List<Integer>> selectedCellPositions;
+  private final LiveData<UserPuzzleDto.Puzzle.PuzzleWord.Direction> selectedDirection;
+  private final LiveData<List<UserPuzzleDto.Guess>> guesses;
   private final MutableLiveData<GuessDto> selectedSquare = new MutableLiveData<>();
   private final MutableLiveData<Throwable> throwable = new MutableLiveData<>();
   private final CompositeDisposable pending = new CompositeDisposable();
@@ -69,30 +70,38 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   });
 
   // LiveData for mapping position → clue number
-  private final LiveData<Map<Integer, Integer>> wordStartMap = Transformations.map(userPuzzle, up -> {
-    Map<Integer, Integer> map = new HashMap<>();
-    if (up == null || up.getPuzzle() == null || up.getPuzzle().getPuzzleWords() == null) {
-      return map;
-    }
-    int size = up.getPuzzle().getSize();
-    int clueNumber = 1;
-    for (UserPuzzleDto.Puzzle.PuzzleWord word : up.getPuzzle().getPuzzleWords()) {
-      int row = word.getWordPosition().getRow();
-      int col = word.getWordPosition().getColumn();
-      int flatIndex = row * size + col;
-      if (!map.containsKey(flatIndex)) {
-        map.put(flatIndex, clueNumber++);
-      }
-    }
-    return map;
-  });
-
   @Inject
   public PuzzleViewModel(CrossfyreService crossfyreService) {
     this.crossfyreService = crossfyreService;
+    userPuzzle = new MutableLiveData<>();
+    currentPuzzle = Transformations.map(userPuzzle, (up) -> (up != null) ? up.getPuzzle() : null);
+    words = Transformations.map(currentPuzzle, (cp) -> (cp != null) ? cp.getPuzzleWords() : null);
+    selectedWord = new MutableLiveData<>();
+    selectedCellPositions = new MutableLiveData<>();
+    selectedDirection = Transformations.map(selectedWord, (sw) -> (sw != null) ? sw.getDirection() : null);
+    guesses = Transformations.map(userPuzzle, (up)  -> (up != null) ? up.getGuesses() : null);
     fetchCurrentUser();
     fetchUserPuzzle();
   }
+
+  private final LiveData<Map<Integer, Integer>> wordStartMap = Transformations.map(userPuzzle,
+      up -> {
+        Map<Integer, Integer> map = new HashMap<>();
+        if (up == null || up.getPuzzle() == null || up.getPuzzle().getPuzzleWords() == null) {
+          return map;
+        }
+        int size = up.getPuzzle().getSize();
+        int clueNumber = 1;
+        for (UserPuzzleDto.Puzzle.PuzzleWord word : up.getPuzzle().getPuzzleWords()) {
+          int row = word.getWordPosition().getRow();
+          int col = word.getWordPosition().getColumn();
+          int flatIndex = row * size + col;
+          if (!map.containsKey(flatIndex)) {
+            map.put(flatIndex, clueNumber++);
+          }
+        }
+        return map;
+      });
 
   private void fetchCurrentUser() {
     throwable.setValue(null);
@@ -111,16 +120,10 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
         crossfyreService.getUserPuzzle(Instant.now().truncatedTo(ChronoUnit.DAYS))
             .subscribe(
                 dto -> {
-                  Log.d(TAG, "Puzzle received: " + (dto != null));
                   if (dto != null) {
                     Log.d(TAG, "Board layout: " + dto.getPuzzle().getBoard().day);
                     Log.d(TAG, "Puzzle words count: " + dto.getPuzzle().getPuzzleWords().size());
-                  }
-                  userPuzzle.postValue(dto);
-                  if (dto != null) {
-                    currentPuzzle.postValue(dto.getPuzzle());
-                    words.postValue(dto.getPuzzle().getPuzzleWords());
-                    guesses.postValue(dto.getGuesses());
+                    userPuzzle.postValue(dto);
                   }
                 },
                 this::postThrowable
@@ -138,13 +141,17 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     int col = position % puzzle.getSize();
     Character cellChar = board.getValue()[row][col];
 
-    if (cellChar == '0') return;
+    if (cellChar == '0') {
+      return;
+    }
 
     boolean sameCellClicked = lastClickedRow != null && lastClickedCol != null &&
         lastClickedRow == row && lastClickedCol == col;
 
     UserPuzzleDto.Puzzle.PuzzleWord.Direction desiredDirection = sameCellClicked
-        ? (lastDirection == UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS ? UserPuzzleDto.Puzzle.PuzzleWord.Direction.DOWN : UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS)
+        ? (lastDirection == UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS
+        ? UserPuzzleDto.Puzzle.PuzzleWord.Direction.DOWN
+        : UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS)
         : UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS;
 
     UserPuzzleDto.Puzzle.PuzzleWord matchedWord = null;
@@ -170,7 +177,7 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
 
     if (matchedWord != null) {
       selectedWord.postValue(matchedWord);
-      selectedDirection.postValue(matchedWord.getDirection());
+//      selectedDirection.postValue(matchedWord.getDirection());
       lastClickedRow = row;
       lastClickedCol = col;
       lastDirection = matchedWord.getDirection();
@@ -241,14 +248,43 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   }
 
   // LiveData Getters
-  public LiveData<Character[][]> getBoard() { return board; }
-  public LiveData<Map<Integer, Integer>> getWordStartMap() { return wordStartMap; }
-  public LiveData<UserPuzzleDto.Puzzle.PuzzleWord> getSelectedWord() { return selectedWord; }
-  public LiveData<List<Integer>> getSelectedCellPositions() { return selectedCellPositions; }
-  public LiveData<UserPuzzleDto.Puzzle.PuzzleWord.Direction> getSelectedDirection() { return selectedDirection; }
-  public LiveData<List<UserPuzzleDto.Guess>> getGuesses() { return guesses; }
-  public LiveData<GuessDto> getSelectedSquare() { return selectedSquare; }
-  public LiveData<Throwable> getThrowable() { return throwable; }
-  public LiveData<UserPuzzleDto> getUserPuzzle() { return userPuzzle; }
-  public LiveData<UserPuzzleDto.Puzzle> getCurrentPuzzle() { return currentPuzzle; }
+  public LiveData<Character[][]> getBoard() {
+    return board;
+  }
+
+  public LiveData<Map<Integer, Integer>> getWordStartMap() {
+    return wordStartMap;
+  }
+
+  public LiveData<UserPuzzleDto.Puzzle.PuzzleWord> getSelectedWord() {
+    return selectedWord;
+  }
+
+  public LiveData<List<Integer>> getSelectedCellPositions() {
+    return selectedCellPositions;
+  }
+
+  public LiveData<UserPuzzleDto.Puzzle.PuzzleWord.Direction> getSelectedDirection() {
+    return selectedDirection;
+  }
+
+  public LiveData<List<UserPuzzleDto.Guess>> getGuesses() {
+    return guesses;
+  }
+
+  public LiveData<GuessDto> getSelectedSquare() {
+    return selectedSquare;
+  }
+
+  public LiveData<Throwable> getThrowable() {
+    return throwable;
+  }
+
+  public LiveData<UserPuzzleDto> getUserPuzzle() {
+    return userPuzzle;
+  }
+
+  public LiveData<UserPuzzleDto.Puzzle> getCurrentPuzzle() {
+    return currentPuzzle;
+  }
 }

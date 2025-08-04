@@ -110,28 +110,10 @@ public class UserPuzzleDto {
     @Expose private Integer size;
     @Expose private Board board;
 
-    public enum Board {
-      SUNDAY("0__________________0____0"),
-      MONDAY("0___00___0_______________"),
-      TUESDAY("00_____________________00"),
-      WEDNESDAY("___00_______________00___"),
-      THURSDAY("0___0_______________0___0"),
-      FRIDAY("____0____0_____0____0____"),
-      SATURDAY("___00____0_____0____00___");
-
-      @Expose
-      public final String day;
-
-      Board(String day) {
-        this.day = day;
-      }
-
-    }
-
     @Expose private Instant created;
+
     @Expose private Instant date;
     @Expose private List<PuzzleWord> puzzleWords;
-
 
     public UUID getKey() {
       return key;
@@ -180,6 +162,24 @@ public class UserPuzzleDto {
     public void setPuzzleWords(
         List<PuzzleWord> puzzleWords) {
       this.puzzleWords = puzzleWords;
+    }
+
+    public enum Board {
+      SUNDAY("0__________________0____0"),
+      MONDAY("0___00___0_______________"),
+      TUESDAY("00_____________________00"),
+      WEDNESDAY("___00_______________00___"),
+      THURSDAY("0___0_______________0___0"),
+      FRIDAY("____0____0_____0____0____"),
+      SATURDAY("___00____0_____0____00___");
+
+      @Expose
+      public final String day;
+
+      Board(String day) {
+        this.day = day;
+      }
+
     }
 
     public static class PuzzleWord {
