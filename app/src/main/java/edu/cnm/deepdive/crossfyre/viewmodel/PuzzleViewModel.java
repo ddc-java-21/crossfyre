@@ -34,8 +34,8 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   private final CrossfyreService crossfyreService;
   private final MutableLiveData<User> currentUser = new MutableLiveData<>();
   private final MutableLiveData<UserPuzzleDto> userPuzzle = new MutableLiveData<>();
-  private final MutableLiveData<UserPuzzleDto.Puzzle> currentPuzzle = new MutableLiveData<>();
-  private final MutableLiveData<List<UserPuzzleDto.Puzzle.PuzzleWord>> words = new MutableLiveData<>();
+  private final MutableLiveData<UserPuzzleDto.Puzzle> currentPuzzle;
+  private final MutableLiveData<List<UserPuzzleDto.Puzzle.PuzzleWord>> words = new LiveData<>();
   private final MutableLiveData<UserPuzzleDto.Puzzle.PuzzleWord> selectedWord = new MutableLiveData<>();
   private final MutableLiveData<List<Integer>> selectedCellPositions = new MutableLiveData<>();
   private final MutableLiveData<UserPuzzleDto.Puzzle.PuzzleWord.Direction> selectedDirection = new MutableLiveData<>(UserPuzzleDto.Puzzle.PuzzleWord.Direction.ACROSS);
@@ -88,8 +88,10 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   });
 
   @Inject
-  public PuzzleViewModel(CrossfyreService crossfyreService) {
+  public PuzzleViewModel(CrossfyreService crossfyreService,
+      MutableLiveData<UserPuzzleDto.Puzzle> currentPuzzle) {
     this.crossfyreService = crossfyreService;
+    currentPuzzle = Transformations.map()
     fetchCurrentUser();
     fetchUserPuzzle();
   }
