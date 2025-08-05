@@ -65,7 +65,7 @@ public class Guess {
   private GuessPosition guessPosition;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "user_puzzle_id", nullable = false, updatable = false)
+  @JoinColumn(name = "user_puzzle_id", nullable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_WRITE)
   @JsonIgnore
   private UserPuzzle userPuzzle;

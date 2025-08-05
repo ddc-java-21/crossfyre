@@ -20,14 +20,11 @@ public class GuessService implements AbstractGuessService {
 
   private final GuessRepository guessRepository;
   private final UserPuzzleRepository userPuzzleRepository;
-  private final PuzzleRepository puzzleRepository;
 
   @Autowired
-  GuessService(GuessRepository guessRepository, UserPuzzleRepository userPuzzleRepository,
-      PuzzleRepository puzzleRepository) {
+  GuessService(GuessRepository guessRepository, UserPuzzleRepository userPuzzleRepository) {
     this.guessRepository = guessRepository;
     this.userPuzzleRepository = userPuzzleRepository;
-    this.puzzleRepository = puzzleRepository;
   }
 
   @Override
@@ -42,21 +39,8 @@ public class GuessService implements AbstractGuessService {
   public Iterable<Guess> getAllInUserPuzzle(User requestor, Instant puzzleDate) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
-        .map(userPuzzle -> {
-          return guessRepository.findByUserPuzzleOrderByIdAsc(userPuzzle);
-        })
+        .map(guessRepository::findByUserPuzzleOrderByIdAsc)
         .orElseThrow();
-  }
-
-  @Override
-  public Guess add(User requestor, Puzzle puzzle, Guess guess) {
-    return userPuzzleRepository
-        .findByUserAndPuzzle(requestor, puzzle)
-        .map((userPuzzle) -> {
-          guess.setUserPuzzle(userPuzzle);
-          return guessRepository.save(guess);
-        })
-        .orElseThrow(); // custom exception goes here
   }
 
   @Override
@@ -65,23 +49,17 @@ public class GuessService implements AbstractGuessService {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
         .flatMap((userPuzzle) -> {
-          guess.setUserPuzzle(userPuzzle);
-          guessRepository.save(guess);
+          for (Guess previousGuess : userPuzzle.getGuesses()) {
+            if (previousGuess.getGuessPosition().guessRow() == guess.getGuessPosition().guessRow()
+                && previousGuess.getGuessPosition().guessColumn() == guess.getGuessPosition().guessColumn()) {
+              guessRepository.delete(previousGuess);
+            }
+          }
+          //userPuzzle.getGuesses().add(guess);
+          userPuzzleRepository.save(userPuzzle);
           return userPuzzleRepository.findByUserAndPuzzleDate(requestor, puzzleDate);
         })
         .orElseThrow(); // custom exception goes here
   }
-
-//  @Override
-//  public Guess add(User requestor, Instant puzzleDate, Guess guess) {
-//    return userPuzzleRepository
-//        .findByUserAndPuzzleDate(requestor, puzzleDate)
-//        .map((userPuzzle) -> {
-//          guess.setUserPuzzle(userPuzzle);
-//          return guessRepository.save(guess);
-//        })
-//        .orElseThrow(); // custom exception goes here
-//  }
-
 
 }

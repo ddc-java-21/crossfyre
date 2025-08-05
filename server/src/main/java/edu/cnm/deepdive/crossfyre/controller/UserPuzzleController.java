@@ -38,9 +38,4 @@ public class UserPuzzleController {
     return userPuzzleService.getOrAddUserPuzzle(userService.getCurrentUser(), puzzleService.get(date));
   }
 
-//  @GetMapping(path = "/{userPuzzleKey}", produces = MediaType.APPLICATION_JSON_VALUE)
-//  public UserPuzzle get(@PathVariable UUID userPuzzleKey) {
-//    return userPuzzleService.get(userPuzzleKey);
-//  }
-
 }

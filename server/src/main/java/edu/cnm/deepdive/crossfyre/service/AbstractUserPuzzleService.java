@@ -1,5 +1,6 @@
 package edu.cnm.deepdive.crossfyre.service;
 
+import edu.cnm.deepdive.crossfyre.model.entity.Guess;
 import edu.cnm.deepdive.crossfyre.model.entity.Puzzle;
 import edu.cnm.deepdive.crossfyre.model.entity.User;
 import edu.cnm.deepdive.crossfyre.model.entity.UserPuzzle;
@@ -14,22 +15,14 @@ public interface AbstractUserPuzzleService {
 
   Iterable<UserPuzzle> getAllByUser(User user);
 
-//  UserPuzzle add(User user, Instant date, UserPuzzle userPuzzle);
-
-  //UserPuzzle getOrAddUserPuzzle(User user, Instant date, UserPuzzle userPuzzle);
-
-//  UserPuzzle getOrAddUserPuzzle(User user, Instant date);
 
   UserPuzzle getOrAddUserPuzzle(User user, Puzzle puzzle);
+
+  UserPuzzle add(User requestor, Instant puzzleDate, Guess guess);
 
   UserPuzzle get(User user, Instant date);
 
   UserPuzzle get(UUID externalKey);
 
-  //UserPuzzle get(Instant date, UUID userPuzzleKey);
-
-  //UserPuzzle updateUserPuzzle(User user, Instant date, UserPuzzle userPuzzle);
-
-  UserPuzzle updateUserPuzzle(UserPuzzle existing, UserPuzzle delta);
 
 }

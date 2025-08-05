@@ -13,8 +13,6 @@ public interface AbstractGuessService {
 
   public Iterable<Guess> getAllInUserPuzzle(User requestor, Instant puzzleDate);
 
-  public Guess add(User requestor, Puzzle puzzle, Guess guess);
-
   public UserPuzzle add(User requestor, Instant puzzleDate, Guess guess);
 
   }
