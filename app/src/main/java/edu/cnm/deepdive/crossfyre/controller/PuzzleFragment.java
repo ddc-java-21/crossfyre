@@ -10,9 +10,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import dagger.hilt.android.AndroidEntryPoint;
+import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.FragmentPuzzleBinding;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Guess;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Guess.GuessPosition;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Puzzle;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Puzzle.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.view.adapter.SquareAdapter;
 import edu.cnm.deepdive.crossfyre.viewmodel.PuzzleViewModel;
 import javax.inject.Inject;
@@ -22,6 +25,8 @@ public class PuzzleFragment extends Fragment {
 
   private FragmentPuzzleBinding binding;
   private PuzzleViewModel viewModel;
+  private PuzzleWord storedWord = null;
+  private Puzzle storedPuzzle = null;
 
   //When an instance of the puzzle fragemnt gets created, right after it gets initialized and constructor is done
   // Hilt will inject an adapter
@@ -87,8 +92,23 @@ public class PuzzleFragment extends Fragment {
     // Observe selected word details
     viewModel.getSelectedWord().observe(getViewLifecycleOwner(), (word) -> {
       if (word != null) {
-        binding.clueFullDescriptionText.setText(word.getClue());
+        storedWord = word;
+        binding.clueFullDescriptionText.setText(String.format(getString(R.string.clue_format_string), word.getClue()));
         binding.clueDirection.setText(word.getDirection().toString());
+        if (storedPuzzle != null) {
+          // method does here
+          setCellWordStartNumber(storedWord);
+        }
+      }
+    });
+
+    viewModel.getCurrentPuzzle().observe(getViewLifecycleOwner(), (puzzle) -> {
+      if (puzzle != null) {
+        storedPuzzle = puzzle;
+        if (storedWord != null) {
+          // method goes here
+          setCellWordStartNumber(storedWord);
+        }
       }
     });
 
@@ -103,6 +123,18 @@ public class PuzzleFragment extends Fragment {
         squareAdapter.setGuesses(guesses);
       }
     });
+  }
+
+  private void setCellWordStartNumber(PuzzleWord word) {
+    int position = word.getWordPosition().getRow() * storedPuzzle.getSize() + word.getWordPosition().getColumn();
+    int cellWordStartNumber = -1;
+    for (int i = 0; i < storedPuzzle.getWordStarts().length; i++) {
+      if (position == storedPuzzle.getWordStarts()[i]) {
+        cellWordStartNumber = i + 1;
+      }
+    }
+
+    binding.cellWordStartNumber.setText(String.valueOf(cellWordStartNumber));
   }
 
   @Override

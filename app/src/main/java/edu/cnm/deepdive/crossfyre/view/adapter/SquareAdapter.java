@@ -68,22 +68,8 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
   }
 
   // write method in viewmodel that would take big object adn get teh piece of the object we want to use and use transformations.map
-  public SquareAdapter setGrid(boolean[][] board) {
-    this.size = board.length;
-    clear();
-    // Using a stream to help us do a complex iteration
-    // This would be like a for loop iterating then the column
-    Arrays.stream(board)
-        .forEach((row) -> {
-          for (boolean open : row) {
-            add(open);
-          }
-        });
-    notifyDataSetChanged();
-    return this;
-  }
-
   //What the gridview will invoke to know how to display the item at the position
+
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -161,7 +147,6 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
     return binding.getRoot();
   }
 
-
   @ColorInt
   private int getAttributeColor(int colorAttrID) {
     TypedValue typedValue = new TypedValue();
@@ -188,6 +173,21 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
   public void setSelectedPosition(int selectedPosition) {
     this.selectedPosition = selectedPosition;
     notifyDataSetChanged();
+  }
+
+  public SquareAdapter setGrid(boolean[][] board) {
+    this.size = board.length;
+    clear();
+    // Using a stream to help us do a complex iteration
+    // This would be like a for loop iterating then the column
+    Arrays.stream(board)
+        .forEach((row) -> {
+          for (boolean open : row) {
+            add(open);
+          }
+        });
+    notifyDataSetChanged();
+    return this;
   }
 
   public void setGuesses(List<Guess> guesses) {

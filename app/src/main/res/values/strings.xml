@@ -14,4 +14,5 @@
   <string name="puzzle_word_clue_text">A clue would go here</string>
   <string name="default_clue_text">Clue:  </string>
   <string name="puzzle_fragment_label">Crossfyre</string>
+  <string name="clue_format_string">Clue: %s</string>
 </resources>
