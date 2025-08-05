@@ -17,11 +17,27 @@
     android:imeOptions="actionNext"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:textSize="140sp"
+    android:textSize="24sp"
     app:layout_constraintTop_toTopOf="parent"
+    android:background="@null"
+    android:textAlignment="center"
+    android:includeFontPadding="false"
     />
 
-<!--  DONE add small textview for puzzleword number that goes on the start letter cell of a puzzle word-->
+  <TextView
+    android:id="@+id/static_square"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    app:layout_constraintDimensionRatio="1:1"
+    android:textStyle="bold"
+    android:textSize="24sp"
+    app:layout_constraintTop_toTopOf="parent"
+    android:background="@null"
+    android:textAlignment="center"
+    android:includeFontPadding="false"
+    />
+
+  <!--  DONE add small textview for puzzleword number that goes on the start letter cell of a puzzle word-->
   <TextView
     android:id="@+id/cell_word_start_number"
     android:layout_width="12dp"

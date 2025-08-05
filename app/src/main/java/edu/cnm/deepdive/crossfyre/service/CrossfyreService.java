@@ -6,14 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import dagger.hilt.android.qualifiers.ApplicationContext;
-import edu.cnm.deepdive.crossfyre.model.dto.GuessDto;
 import edu.cnm.deepdive.crossfyre.model.dto.User;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Guess;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.time.Instant;
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -50,7 +49,7 @@ public class CrossfyreService {
         .flatMap((token) -> proxy.getUserPuzzle(token, date));
   }
 
-  public Single<UserPuzzleDto> sendGuess(Instant date, GuessDto guess) {
+  public Single<UserPuzzleDto> sendGuess(Instant date, Guess guess) {
     return getBearerToken()
         .flatMap((token) -> proxy.sendGuess(token, date, guess));
   }
