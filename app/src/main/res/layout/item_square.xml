@@ -35,6 +35,7 @@
     android:background="@null"
     android:textAlignment="center"
     android:includeFontPadding="false"
+    android:gravity="center"
     />
 
   <!--  DONE add small textview for puzzleword number that goes on the start letter cell of a puzzle word-->

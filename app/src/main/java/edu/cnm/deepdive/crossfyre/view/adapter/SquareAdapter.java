@@ -129,6 +129,8 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
       binding.getRoot().setBackgroundColor(wordHighlightColor);
     }
     if (position == selectedPosition) {
+      binding.square.requestFocus();
+      binding.square.selectAll();
       binding.getRoot().setBackgroundColor(selectionHighlightColor);
       Editable editable = binding.square.getText();
       OnFocusChangeListener listener = (view, hasFocus) -> {
