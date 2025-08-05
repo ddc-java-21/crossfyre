@@ -118,9 +118,19 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
             }
           }
           retrieved.getGuesses().removeAll(duplicates);
+
           guess.setUserPuzzle((retrieved));
           retrieved.getGuesses().add(guess);
 //          userPuzzleRepository.save(retrieved);
+
+          List<Guess> guesses = retrieved.getGuesses();
+          boolean isSolved = checkGuesses(guesses, retrieved.getPuzzle());
+          if (isSolved) {
+            retrieved.setSolved(Instant.now());
+            retrieved.setSolved(true);
+            return userPuzzleRepository.save(retrieved);
+          }
+
           return retrieved;
         })
         .orElseThrow(); // custom exception goes here
