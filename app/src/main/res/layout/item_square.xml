@@ -44,8 +44,8 @@
   <!--  DONE add small textview for puzzleword number that goes on the start letter cell of a puzzle word-->
   <TextView
     android:id="@+id/cell_word_start_number"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="12dp"
+    android:layout_height="12dp"
     android:layout_marginStart="2dp"
     android:layout_marginTop="2dp"
     android:textStyle="bold"
@@ -54,7 +54,6 @@
     android:clickable="false"
     android:focusable="false"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    />
+    app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

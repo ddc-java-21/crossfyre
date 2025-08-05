@@ -61,17 +61,16 @@ public class GuessService implements AbstractGuessService {
   }
 
   @Override
+  @Transactional
   public UserPuzzle add(User requestor, Instant puzzleDate, Guess guess) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
-        .map((userPuzzle) -> {
+        .flatMap((userPuzzle) -> {
           guess.setUserPuzzle(userPuzzle);
-          List<Guess> guesses = userPuzzle.getGuesses();
-          guesses.removeIf((g) -> g.getGuessPosition().equals(guess.getGuessPosition()));
-          guesses.add(guess);
-          return userPuzzleRepository.save(userPuzzle);
+          guessRepository.save(guess);
+          return userPuzzleRepository.findByUserAndPuzzleDate(requestor, puzzleDate);
         })
-        .orElseThrow();
+        .orElseThrow(); // custom exception goes here
   }
 
 //  @Override

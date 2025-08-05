@@ -42,8 +42,4 @@ public class PuzzleController {
     return generator.generatePuzzleWords(Board.TUESDAY);
   }
 
-//  @GetMapping(path = "/generate", produces = MediaType.APPLICATION_JSON_VALUE)
-//  public Puzzle generate() {
-//    return service.save(generator.generate());
-//  }
 }
