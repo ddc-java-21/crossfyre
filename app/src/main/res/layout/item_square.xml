@@ -9,8 +9,9 @@
   <EditText
     android:id="@+id/square"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
+    android:layout_height="0dp"
+    app:layout_constraintDimensionRatio="1:1"
+    app:layout_constraintTop_toTopOf="parent"
     android:textStyle="bold"
     android:background="@null"
     android:maxLines="1"
@@ -31,6 +32,7 @@
     android:textStyle="bold"
     android:visibility="invisible"
     android:textSize="11sp"
-    tools:ignore="MissingConstraints"/>
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

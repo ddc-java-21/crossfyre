@@ -69,7 +69,7 @@ public class PuzzleService implements AbstractPuzzleService {
 
     Board[] boards = Board.values();
 //    Board todaysBoard = boards[boardIndex];
-    Board todaysBoard = Board.SUNDAY;
+    Board todaysBoard = Board.TUESDAY;
     int boardSize = (int) Math.round(Math.sqrt(todaysBoard.day.length()));
 
     Instant date = today.atStartOfDay(ZoneOffset.UTC).toInstant();

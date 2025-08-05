@@ -11,8 +11,4 @@ public interface AbstractPuzzleService {
 
 //  Puzzle getOrAddPuzzle(Instant date);
 
-  Puzzle save(Puzzle puzzle);
-
-  void createPuzzle();
-
 }
