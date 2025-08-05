@@ -151,7 +151,7 @@ public class PuzzleFragment extends Fragment {
     viewModel.selectSquare(currentPosition); // Triggers observers
     return;
 
-    Log.d("PuzzleFragment", "No alternate direction word found.");
+//    Log.d("PuzzleFragment", "No alternate direction word found.");
   }
 
   private void setCellWordStartNumber(PuzzleWord word) {
