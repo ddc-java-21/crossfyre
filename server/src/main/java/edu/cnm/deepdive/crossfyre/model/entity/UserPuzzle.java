@@ -53,7 +53,7 @@ public class UserPuzzle {
   private Instant solved;
 
   @OneToMany(mappedBy =
-      "userPuzzle", fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
+      "userPuzzle", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Guess> guesses = new LinkedList<>();
 
   @ManyToOne(fetch = FetchType.EAGER, optional = false)

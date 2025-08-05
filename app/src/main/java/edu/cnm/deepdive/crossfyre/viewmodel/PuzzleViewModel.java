@@ -18,6 +18,7 @@ import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Puzzle.PuzzleWord.Dire
 import edu.cnm.deepdive.crossfyre.service.CrossfyreService;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,7 +106,7 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
 
   private void fetchUserPuzzle() {
     throwable.setValue(null);
-    crossfyreService.getUserPuzzle(Instant.now().truncatedTo(ChronoUnit.DAYS))
+    crossfyreService.getUserPuzzle(LocalDate.now())
         .subscribe(
             this::handleUserPuzzle,
             this::postThrowable,

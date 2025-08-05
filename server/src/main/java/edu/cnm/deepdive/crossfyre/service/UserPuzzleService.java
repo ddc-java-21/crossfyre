@@ -9,7 +9,10 @@ import edu.cnm.deepdive.crossfyre.service.dao.GuessRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +20,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Profile("service")
@@ -25,8 +29,10 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
   private final UserPuzzleRepository userPuzzleRepository;
   private final PuzzleRepository puzzleRepository;
   private final UserRepository userRepository;
-
   private final GuessRepository guessRepository;
+
+  @PersistenceContext
+  private EntityManager entityManager;
 
   @Autowired
   UserPuzzleService(UserPuzzleRepository userPuzzleRepository, PuzzleRepository puzzleRepository,
@@ -53,7 +59,7 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
   }
 
   @Override
-  public Iterable<UserPuzzle> getAllByPuzzleDate(Instant date) {
+  public Iterable<UserPuzzle> getAllByPuzzleDate(LocalDate date) {
     return puzzleRepository
         .findByDate(date)
         .map(userPuzzleRepository::findByPuzzleOrderByCreatedDesc)
@@ -69,14 +75,10 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
   }
 
   @Override
-  public synchronized UserPuzzle getOrAddUserPuzzle(User user, Puzzle puzzle) {
+  public UserPuzzle getOrAddUserPuzzle(User user, Puzzle puzzle) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, puzzle.getDate())
-        // update the user puzzle with
         .map((retrieved) -> {
-//          retrieved.setSolved(delta.isSolved());
-
-          // DONE: 7/20/25 Check if puzzle is solved
           List<Guess> guesses = retrieved.getGuesses();
           boolean isSolved = checkGuesses(guesses, retrieved.getPuzzle());
           if (isSolved) {
@@ -88,7 +90,6 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
           // if nothing has changed, return the unchanged user puzzle
           return retrieved;
         })
-        // TODO: 7/20/25 Check with Nick/Reed to make sure this construction works as intended
         .or(() -> {
           UserPuzzle userPuzzle = new UserPuzzle();
           userPuzzle.setUser(user);
@@ -101,88 +102,65 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
         .orElseThrow();
   }
 
-//  @Override
-//  public UserPuzzle getOrAddUserPuzzle(User user, Instant date) {
-//    return userPuzzleRepository
-//        .findByUserAndPuzzleDate(user, date)
-//        // TODO: 7/20/25 Check with Nick/Reed to make sure this construction works as intended
-//        .or(() -> Optional.of(
-//            puzzleRepository
-//                .findByDate(date)
-//                .map((puzzle) -> {
-//                  UserPuzzle userPuzzle = new UserPuzzle();
-//                  userPuzzle.setUser(user);
-//                  userPuzzle.setPuzzle(puzzle);
-//                  userPuzzle.setGuesses(new ArrayList<>());
-//                  return userPuzzleRepository.save(userPuzzle);
-//                })
-//                .orElseThrow()
-//        ))
-//        .orElseThrow();
-//  }
 
   @Override
-  public UserPuzzle get(User user, Instant date) {
+  @Transactional
+  public UserPuzzle add(User requestor, LocalDate puzzleDate, Guess guess) {
+    return userPuzzleRepository
+        .findByUserAndPuzzleDate(requestor, puzzleDate)
+        .map((retrieved) -> {
+          List<Guess> duplicates = new ArrayList<>();
+          for (Guess previousGuess : retrieved.getGuesses()) {
+            if (previousGuess.getGuessPosition().guessRow() == guess.getGuessPosition().guessRow()
+                && previousGuess.getGuessPosition().guessColumn() == guess.getGuessPosition().guessColumn()) {
+              previousGuess.setUserPuzzle(null);
+              duplicates.add(previousGuess);
+            }
+          }
+          retrieved.getGuesses().removeAll(duplicates);
+
+          guess.setUserPuzzle((retrieved));
+          retrieved.getGuesses().add(guess);
+//          userPuzzleRepository.save(retrieved);
+
+          List<Guess> guesses = retrieved.getGuesses();
+          boolean isSolved = checkGuesses(guesses, retrieved.getPuzzle());
+          if (isSolved) {
+            retrieved.setSolved(Instant.now());
+            retrieved.setSolved(true);
+            return userPuzzleRepository.save(retrieved);
+          }
+
+          return retrieved;
+        })
+        .orElseThrow(); // custom exception goes here
+  }
+
+
+  @Override
+  public UserPuzzle get(User user, LocalDate date) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, date)
         .orElseThrow();
   }
 
-
-  // TODO: 7/20/25 Add checking logic to determine solved state of both existing and delta (?)
-  @Override
-  public UserPuzzle updateUserPuzzle(UserPuzzle existing, UserPuzzle delta) {
-    // DONE: 7/20/25 Update the UserPuzzle state as such:
-    //  1. Bring in changes from delta (HTTP)
-    //    - client passes in a guess via HTTP Post
-    //    - guess is added to guess table
-    //    - need to access (retrieve) up-to-date list of guesses
-    //  2. Update guesses field (list of guesses) in current UserPuzzle (game state)
-    //  3. Run checking logic (comparison of two grids)
-    //  4. Update solved and finished (time) as necessary
-    return userPuzzleRepository
-        .findById(existing.getId())
-        .map((retrieved) -> {
-//          retrieved.setSolved(delta.isSolved());
-          if (delta.getGuesses() != null) {
-            retrieved.setGuesses(delta.getGuesses());
-          }
-
-          // DONE: 7/20/25 Check if puzzle is solved
-          List<Guess> guesses = retrieved.getGuesses();
-          boolean isSolved = checkGuesses(guesses, retrieved.getPuzzle());
-          if (isSolved) {
-            delta.setSolved(Instant.now());
-            delta.setSolved(true);
-            retrieved.setSolved(delta.getSolved());
-            retrieved.setSolved(delta.isSolved());
-          }
-          return userPuzzleRepository.save(retrieved);
-        })
-        .orElseThrow();
-  }
-
   private boolean checkGuesses(List<Guess> guesses, Puzzle solution) {
-
-    // 1. Get list of guesses, create 5x5 array, and load into array
-    //    - initialize board to zeros
-    //    - fill in guesses, one after another
+    // Create and initialize comparison grids
     int boardLength = solution.getSize();
     char[][] userBoard = new char[boardLength][boardLength];
     char[][] solutionBoard = new char[boardLength][boardLength];
+    boolean bSolved;
     for (int i = 0; i < boardLength; i++) {
       for (int j = 0; j < boardLength; j++) {
          userBoard[i][j] = '0';
          solutionBoard[i][j] = '0';
       }
     }
-
+    // Get a list of guesses, create 5x5 array, and load into an array
     for (Guess guess : guesses) {
       userBoard[guess.getGuessPosition().guessRow()][guess.getGuessPosition().guessColumn()] = guess.getGuessChar();
     }
-    // 2. Use puzzle's word list to generate solution array on the fly
-    //     - create empty char array --> char[][] solutionBoard = new char[5][5];
-    //     - initialize the board to '0' characters
+    // Use puzzle's word list to generate the solution array
     List<PuzzleWord> words = solution.getPuzzleWords();
     for (PuzzleWord word : words) {
       int row = word.getWordPosition().wordRow();
@@ -197,14 +175,10 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
         }
       }
     }
-    //     - now you have solution board
-    // 3. finally, iterate through both boards and compare letter by letter:
-    boolean bSolved = true;
+    // Finally, iterate through both boards and compare letter by letter
+    bSolved = true;
     for (int i = 0; i < boardLength; i++) {
       for (int j = 0; j < boardLength; j++) {
-//        System.out.printf("UserBoard at %d,%d: %c%n", i, j, userBoard[i][j]);
-//        System.out.printf("SoluBoard at %d,%d: %c%n", i, j, solutionBoard[i][j]);
-//        System.out.println("Equal? " + (userBoard[i][j] == solutionBoard[i][j]));
         if (userBoard[i][j] != solutionBoard[i][j]) {
           bSolved = false;
         }

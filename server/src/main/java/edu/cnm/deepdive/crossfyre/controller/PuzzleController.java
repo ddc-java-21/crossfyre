@@ -6,6 +6,7 @@ import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.service.AbstractGeneratorService;
 import edu.cnm.deepdive.crossfyre.service.AbstractPuzzleService;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -33,7 +34,7 @@ public class PuzzleController {
   }
 
   @GetMapping(path = "/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Puzzle get(@PathVariable Instant date) {
+  public Puzzle get(@PathVariable LocalDate date) {
     return service.get(date);
   }
 

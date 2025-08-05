@@ -3,6 +3,7 @@ package edu.cnm.deepdive.crossfyre.model.dto;
 import androidx.annotation.Nullable;
 import com.google.gson.annotations.Expose;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -75,7 +76,7 @@ public class UserPuzzleDto {
     private Instant created;
 
     @Expose
-    private Instant date;
+    private LocalDate date;
     @Expose
     private List<PuzzleWord> puzzleWords;
 
@@ -111,11 +112,11 @@ public class UserPuzzleDto {
       this.created = created;
     }
 
-    public Instant getDate() {
+    public LocalDate getDate() {
       return date;
     }
 
-    public void setDate(Instant date) {
+    public void setDate(LocalDate date) {
       this.date = date;
     }
 

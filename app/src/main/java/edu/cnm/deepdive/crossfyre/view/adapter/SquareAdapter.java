@@ -121,6 +121,8 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
     }
 
     if (position == selectedPosition) {
+      binding.square.requestFocus();
+      binding.square.selectAll();
       binding.getRoot().setBackgroundColor(selectionHighlightColor);
       binding.square.setVisibility(View.VISIBLE);
       binding.staticSquare.setVisibility(View.INVISIBLE);

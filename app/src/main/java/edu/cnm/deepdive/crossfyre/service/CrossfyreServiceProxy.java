@@ -6,6 +6,7 @@ import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Guess;
 import io.reactivex.rxjava3.core.Single;
 import java.time.Instant;
+import java.time.LocalDate;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -26,11 +27,11 @@ public interface CrossfyreServiceProxy {
 
   @GET("userpuzzles/{date}")
   Single<UserPuzzleDto> getUserPuzzle(
-      @Header("Authorization") String bearerToken, @Path("date") Instant date);
+      @Header("Authorization") String bearerToken, @Path("date") LocalDate date);
 
   @POST("userpuzzles/{date}/guesses")
   Single<UserPuzzleDto> sendGuess(
       @Header("Authorization") String bearerToken,
-      @Path("date") Instant date, @Body Guess guess);
+      @Path("date") LocalDate date, @Body Guess guess);
 
 }

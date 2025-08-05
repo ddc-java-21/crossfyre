@@ -10,9 +10,11 @@ import edu.cnm.deepdive.crossfyre.service.AbstractPuzzleService;
 import edu.cnm.deepdive.crossfyre.service.AbstractUserPuzzleService;
 import edu.cnm.deepdive.crossfyre.service.AbstractUserService;
 import edu.cnm.deepdive.crossfyre.service.AbstractGuessService;
+import edu.cnm.deepdive.crossfyre.service.UserPuzzleService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,54 +40,39 @@ import org.springframework.web.context.request.async.DeferredResult;
 public class GuessController {
 
   private final AbstractGuessService guessService;
-  private final AbstractUserPuzzleService userPuzzleService;
   private final AbstractUserService userService;
-  private final AbstractPuzzleService puzzleService;
+  private final AbstractUserPuzzleService userPuzzleService;
+
   private Puzzle puzzle;
 
 
   @Autowired
-  GuessController(AbstractGuessService guessService, AbstractUserPuzzleService userPuzzleService, AbstractUserService userService,
-      AbstractPuzzleService puzzleService) {
+  GuessController(AbstractGuessService guessService, AbstractUserService userService,
+      UserPuzzleService userPuzzleService) {
     this.guessService = guessService;
-    this.userPuzzleService = userPuzzleService;
     this.userService = userService;
-    this.puzzleService = puzzleService;
+    this.userPuzzleService = userPuzzleService;
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public Iterable<Guess> get(@PathVariable Instant date) {
+  public Iterable<Guess> get(@PathVariable LocalDate date) {
     return guessService.getAllInUserPuzzle(userService.getCurrentUser(), date);
   }
 
   @GetMapping(path = "/{guessKey}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Guess get(@PathVariable Instant date, @PathVariable UUID guessKey) {
+  public Guess get(@PathVariable LocalDate date, @PathVariable UUID guessKey) {
     return guessService.get(userService.getCurrentUser(), date, guessKey);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserPuzzle post(@PathVariable Instant date, @Valid @RequestBody GuessEndpointDto guessEndpointDto) {
+  public UserPuzzle post(@PathVariable LocalDate date, @Valid @RequestBody GuessEndpointDto guessEndpointDto) {
     Guess guess = new Guess();
     guess.setGuessChar(guessEndpointDto.getGuess().charAt(0));
     guess.setGuessPosition(new GuessPosition(
         guessEndpointDto.getGuessPosition().getRow(),
         guessEndpointDto.getGuessPosition().getColumn()
     ));
-    return guessService.add(userService.getCurrentUser(), date, guess);
-    // Do we need to update UserPuzzle from here? messageService.add() in chat implies no, but...
-    //UserPuzzle currentUserPuzzle = userPuzzleService.get(userService.getCurrentUser(), date); // should get last saved version of game
-//    List<Guess> guesses = new ArrayList<>();
-    //Iterable<Guess> guessesIt = guessService.getAllInUserPuzzle(userService.getCurrentUser(), date);
-//    for (Guess g : guessesIt) {
-//      guesses.add(g);
-//    }
-
-//    URI location = WebMvcLinkBuilder.linkTo(
-//      WebMvcLinkBuilder.methodOn(UserPuzzleController.class)
-//          .get(date)
-//    )
-//        .toUri();
-//    return ResponseEntity.created(location).body(updated);
+    return userPuzzleService.add(userService.getCurrentUser(), date, guess);
   }
 
 }
