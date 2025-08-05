@@ -69,8 +69,6 @@ public class UserPuzzleDto {
     private UUID key;
     @Expose
     private Integer size;
-//    @Expose
-//    private Board board;
 
     @Expose
     private Instant created;
@@ -95,14 +93,6 @@ public class UserPuzzleDto {
     public void setSize(Integer size) {
       this.size = size;
     }
-
-//    public Board getBoard() {
-//      return board;
-//    }
-
-//    public void setBoard(Board board) {
-//      this.board = board;
-//    }
 
     public Instant getCreated() {
       return created;
@@ -154,26 +144,6 @@ public class UserPuzzleDto {
       });
       return grid;
     }
-
-//    public enum Board {
-//      SUNDAY ("00___00___0___0___00___00"),
-////      SUNDAY("0__________________0____0"),
-//      MONDAY("0___00___0_______________"),
-//      TUESDAY("00_____________________00"),
-////      TUESDAY ("00___00___0___0___00___00"),
-//      WEDNESDAY("___00_______________00___"),
-//      THURSDAY("0___0_______________0___0"),
-//      FRIDAY("____0____0_____0____0____"),
-//      SATURDAY ("000__0____0___0____0__000");
-//
-//      @Expose
-//      public final String day;
-//
-//      Board(String day) {
-//        this.day = day;
-//      }
-//
-//    }
 
     public static class PuzzleWord {
 

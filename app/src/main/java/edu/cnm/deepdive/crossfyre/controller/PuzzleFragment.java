@@ -80,7 +80,6 @@ public class PuzzleFragment extends Fragment {
     viewModel.getWordStarts().observe(getViewLifecycleOwner(), (wordStarts) -> {
       if (wordStarts != null) {
         squareAdapter.setWordStarts(wordStarts);
-        squareAdapter.notifyDataSetChanged();
       }
     });
 
@@ -88,7 +87,6 @@ public class PuzzleFragment extends Fragment {
     viewModel.getSelectedCellPositions().observe(getViewLifecycleOwner(), (positions) -> {
       if (positions != null) {
         squareAdapter.setHighlightedPositions(positions);
-        squareAdapter.notifyDataSetChanged();
       }
     });
 
@@ -146,26 +144,12 @@ public class PuzzleFragment extends Fragment {
   }
 
   private void toggleClueDirection() {
-    if (storedWord == null || storedPuzzle == null) {
+    if (currentPosition == null) {
       return;
     }
 
-    PuzzleWord.Direction newDirection =
-        (storedWord.getDirection() == PuzzleWord.Direction.ACROSS)
-            ? PuzzleWord.Direction.DOWN
-            : PuzzleWord.Direction.ACROSS;
-
-    for (PuzzleWord word : storedPuzzle.getPuzzleWords()) {
-      if (word.getWordPosition().getRow() == storedWord.getWordPosition().getRow()
-          && word.getWordPosition().getColumn() == storedWord.getWordPosition().getColumn()
-          && word.getDirection() == newDirection) {
-
-//        int index = word.getWordPosition().getRow() * storedPuzzle.getSize()
-//            + word.getWordPosition().getColumn();
-        viewModel.selectSquare(currentPosition); // Triggers observers
-        return;
-      }
-    }
+    viewModel.selectSquare(currentPosition); // Triggers observers
+    return;
 
     Log.d("PuzzleFragment", "No alternate direction word found.");
   }
