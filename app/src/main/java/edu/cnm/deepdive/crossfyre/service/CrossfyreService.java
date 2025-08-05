@@ -13,6 +13,7 @@ import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.time.Instant;
+import java.time.LocalDate;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -44,12 +45,12 @@ public class CrossfyreService {
         .flatMap(proxy::getMyProfile);
   }
 
-  public Single<UserPuzzleDto> getUserPuzzle(Instant date) {
+  public Single<UserPuzzleDto> getUserPuzzle(LocalDate date) {
     return getBearerToken()
         .flatMap((token) -> proxy.getUserPuzzle(token, date));
   }
 
-  public Single<UserPuzzleDto> sendGuess(Instant date, Guess guess) {
+  public Single<UserPuzzleDto> sendGuess(LocalDate date, Guess guess) {
     return getBearerToken()
         .flatMap((token) -> proxy.sendGuess(token, date, guess));
   }

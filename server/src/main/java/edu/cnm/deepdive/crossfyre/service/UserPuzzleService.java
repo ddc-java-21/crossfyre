@@ -12,6 +12,7 @@ import edu.cnm.deepdive.crossfyre.service.dao.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +59,7 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
   }
 
   @Override
-  public Iterable<UserPuzzle> getAllByPuzzleDate(Instant date) {
+  public Iterable<UserPuzzle> getAllByPuzzleDate(LocalDate date) {
     return puzzleRepository
         .findByDate(date)
         .map(userPuzzleRepository::findByPuzzleOrderByCreatedDesc)
@@ -86,10 +87,8 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
             // only update the userPuzzle record if the state has changed
             return userPuzzleRepository.save(retrieved);
           }
-          retrieved.setSolved(false);
-          return userPuzzleRepository.save(retrieved);
           // if nothing has changed, return the unchanged user puzzle
-//          return retrieved;
+          return retrieved;
         })
         .or(() -> {
           UserPuzzle userPuzzle = new UserPuzzle();
@@ -106,7 +105,7 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
 
   @Override
   @Transactional
-  public UserPuzzle add(User requestor, Instant puzzleDate, Guess guess) {
+  public UserPuzzle add(User requestor, LocalDate puzzleDate, Guess guess) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
         .map((retrieved) -> {
@@ -129,7 +128,7 @@ public class UserPuzzleService implements AbstractUserPuzzleService {
 
 
   @Override
-  public UserPuzzle get(User user, Instant date) {
+  public UserPuzzle get(User user, LocalDate date) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, date)
         .orElseThrow();

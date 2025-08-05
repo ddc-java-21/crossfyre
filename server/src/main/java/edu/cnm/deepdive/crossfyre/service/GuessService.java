@@ -8,6 +8,7 @@ import edu.cnm.deepdive.crossfyre.service.dao.GuessRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -28,7 +29,7 @@ public class GuessService implements AbstractGuessService {
   }
 
   @Override
-  public Guess get(User user, Instant date, UUID guessKey) {
+  public Guess get(User user, LocalDate date, UUID guessKey) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, date)
         .flatMap((userPuzzle) -> guessRepository.findByUserPuzzleAndExternalKey(userPuzzle, guessKey))
@@ -36,7 +37,7 @@ public class GuessService implements AbstractGuessService {
   }
 
   @Override
-  public Iterable<Guess> getAllInUserPuzzle(User requestor, Instant puzzleDate) {
+  public Iterable<Guess> getAllInUserPuzzle(User requestor, LocalDate puzzleDate) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
         .map(guessRepository::findByUserPuzzleOrderByIdAsc)
@@ -45,7 +46,7 @@ public class GuessService implements AbstractGuessService {
 
   @Override
   @Transactional
-  public UserPuzzle add(User requestor, Instant puzzleDate, Guess guess) {
+  public UserPuzzle add(User requestor, LocalDate puzzleDate, Guess guess) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
         .flatMap((userPuzzle) -> {

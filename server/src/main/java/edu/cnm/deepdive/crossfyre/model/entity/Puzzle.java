@@ -19,6 +19,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,10 +56,10 @@ public class Puzzle {
   @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
 
-  @Temporal(TemporalType.TIMESTAMP)
+  @Temporal(TemporalType.DATE)
   @Column(nullable = true, updatable = true)
   @JsonProperty(value = "date", access = Access.READ_WRITE)
-  private Instant date;
+  private LocalDate date;
 
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
   @JsonIgnore
@@ -102,11 +103,11 @@ public class Puzzle {
     this.created = created;
   }
 
-  public Instant getDate() {
+  public LocalDate getDate() {
     return date;
   }
 
-  public void setDate(Instant date) {
+  public void setDate(LocalDate date) {
     this.date = date;
   }
 

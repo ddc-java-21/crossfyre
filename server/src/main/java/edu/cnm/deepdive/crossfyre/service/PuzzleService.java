@@ -68,16 +68,16 @@ public class PuzzleService implements AbstractPuzzleService {
     int boardIndex = currentDayValue % 7; // Sunday (7) → 0
 
     Board[] boards = Board.values();
-//    Board todaysBoard = boards[boardIndex];
-    Board todaysBoard = Board.TUESDAY;
+    Board todaysBoard = boards[boardIndex];
+//    Board todaysBoard = Board.TUESDAY;
     int boardSize = (int) Math.round(Math.sqrt(todaysBoard.day.length()));
 
-    Instant date = today.atStartOfDay(ZoneOffset.UTC).toInstant();
+//    Instant date = today.atStartOfDay(ZoneOffset.UTC).toInstant();
 
     // Create the Puzzle
     Puzzle puzzle = new Puzzle();
     puzzle.setBoard(todaysBoard);
-    puzzle.setDate(date);
+    puzzle.setDate(today);
     puzzle.setSize(boardSize);
     puzzle.setCreated(Instant.now());
 
@@ -124,7 +124,7 @@ public class PuzzleService implements AbstractPuzzleService {
 
 
   @Override
-  public Puzzle get(Instant date) {
+  public Puzzle get(LocalDate date) {
     return puzzleRepository
         .findByDate(date)
         .orElseThrow();

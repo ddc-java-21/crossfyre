@@ -6,6 +6,7 @@ import edu.cnm.deepdive.crossfyre.service.AbstractPuzzleWordService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -36,17 +37,17 @@ public class PuzzleWordController {
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public Iterable<PuzzleWord> get(@PathVariable Instant date) {
+  public Iterable<PuzzleWord> get(@PathVariable LocalDate date) {
     return puzzleWordService.getAllInPuzzle(date);
   }
 
   @GetMapping(path = "/{puzzleWordKey}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public PuzzleWord get(@PathVariable Instant date, @PathVariable UUID puzzleWordKey) {
+  public PuzzleWord get(@PathVariable LocalDate date, @PathVariable UUID puzzleWordKey) {
     return puzzleWordService.get(date, puzzleWordKey);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<PuzzleWord> post(@PathVariable Instant date, @Valid @RequestBody PuzzleWord puzzleWord) {
+  public ResponseEntity<PuzzleWord> post(@PathVariable LocalDate date, @Valid @RequestBody PuzzleWord puzzleWord) {
     PuzzleWord created =  puzzleWordService.add(date, puzzleWord);
     URI location = WebMvcLinkBuilder.linkTo(
             WebMvcLinkBuilder.methodOn(getClass())

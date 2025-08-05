@@ -5,6 +5,7 @@ import edu.cnm.deepdive.crossfyre.service.AbstractPuzzleService;
 import edu.cnm.deepdive.crossfyre.service.AbstractUserPuzzleService;
 import edu.cnm.deepdive.crossfyre.service.AbstractUserService;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -34,7 +35,7 @@ public class UserPuzzleController {
   }
 
   @GetMapping(path = "/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserPuzzle get(@PathVariable Instant date) {
+  public UserPuzzle get(@PathVariable  LocalDate date) {
     return userPuzzleService.getOrAddUserPuzzle(userService.getCurrentUser(), puzzleService.get(date));
   }
 

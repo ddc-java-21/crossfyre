@@ -14,6 +14,7 @@ import edu.cnm.deepdive.crossfyre.service.UserPuzzleService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -54,17 +55,17 @@ public class GuessController {
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public Iterable<Guess> get(@PathVariable Instant date) {
+  public Iterable<Guess> get(@PathVariable LocalDate date) {
     return guessService.getAllInUserPuzzle(userService.getCurrentUser(), date);
   }
 
   @GetMapping(path = "/{guessKey}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Guess get(@PathVariable Instant date, @PathVariable UUID guessKey) {
+  public Guess get(@PathVariable LocalDate date, @PathVariable UUID guessKey) {
     return guessService.get(userService.getCurrentUser(), date, guessKey);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public UserPuzzle post(@PathVariable Instant date, @Valid @RequestBody GuessEndpointDto guessEndpointDto) {
+  public UserPuzzle post(@PathVariable LocalDate date, @Valid @RequestBody GuessEndpointDto guessEndpointDto) {
     Guess guess = new Guess();
     guess.setGuessChar(guessEndpointDto.getGuess().charAt(0));
     guess.setGuessPosition(new GuessPosition(

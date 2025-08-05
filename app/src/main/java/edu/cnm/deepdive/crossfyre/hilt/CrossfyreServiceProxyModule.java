@@ -13,6 +13,8 @@ import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.service.CrossfyreServiceProxy;
 import edu.cnm.deepdive.crossfyre.view.serialization.InstantDeserializer;
 import edu.cnm.deepdive.crossfyre.view.serialization.InstantSerializer;
+import edu.cnm.deepdive.crossfyre.view.serialization.LocalDateDeserializer;
+import edu.cnm.deepdive.crossfyre.view.serialization.LocalDateSerializer;
 import java.time.Instant;
 import javax.inject.Singleton;
 import okhttp3.Interceptor;
@@ -30,12 +32,15 @@ public class CrossfyreServiceProxyModule {
 
   @Provides
   @Singleton
-  Gson provideGson(/*JsonDeserializer<Instant> deserializer*/ InstantDeserializer instantDeserializer, InstantSerializer instantSerializer) {
+  Gson provideGson(/*JsonDeserializer<Instant> deserializer*/ InstantDeserializer instantDeserializer, InstantSerializer instantSerializer,
+      LocalDateDeserializer localDateDeserializer, LocalDateSerializer localDateSerializer) {
     return new GsonBuilder()
         .excludeFieldsWithoutExposeAnnotation()
 //        .registerTypeAdapter(Instant.class, deserializer)
         .registerTypeAdapter(Instant.class, instantDeserializer)
         .registerTypeAdapter(Instant.class, instantSerializer)
+        .registerTypeAdapter(Instant.class, localDateDeserializer)
+        .registerTypeAdapter(Instant.class, localDateSerializer)
         .create();
   }
 
