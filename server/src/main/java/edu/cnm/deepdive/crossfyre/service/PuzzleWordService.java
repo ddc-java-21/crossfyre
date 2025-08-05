@@ -4,6 +4,7 @@ import edu.cnm.deepdive.crossfyre.model.entity.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleWordRepository;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -23,7 +24,7 @@ public class PuzzleWordService implements AbstractPuzzleWordService {
   }
 
   @Override
-  public Iterable<PuzzleWord> getAllInPuzzle(Instant date) {
+  public Iterable<PuzzleWord> getAllInPuzzle(LocalDate date) {
     return puzzleRepository
         .findByDate(date)
         .map(puzzleWordRepository::findByPuzzle)
@@ -31,7 +32,7 @@ public class PuzzleWordService implements AbstractPuzzleWordService {
   }
 
   @Override
-  public PuzzleWord add(Instant date, PuzzleWord puzzleWord) {
+  public PuzzleWord add(LocalDate date, PuzzleWord puzzleWord) {
     return puzzleRepository
         .findByDate(date)
         .map((puzzle) -> {
@@ -42,7 +43,7 @@ public class PuzzleWordService implements AbstractPuzzleWordService {
   }
 
   @Override
-  public PuzzleWord get(Instant date, UUID puzzleWordKey) {
+  public PuzzleWord get(LocalDate date, UUID puzzleWordKey) {
     return puzzleRepository
         .findByDate(date)
         .flatMap((puzzle) -> puzzleWordRepository.findByPuzzleDateAndExternalKey(date, puzzleWordKey))

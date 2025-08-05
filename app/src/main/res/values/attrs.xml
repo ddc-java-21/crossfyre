@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <attr name="toolbarElevation" format="dimension|reference"/>
+  <attr name="wallColor" format="color|reference"/>
+  <attr name="spaceColor" format="color|reference"/>
+  <attr name="selectionHighlightColor" format="color|reference"/>
+  <attr name="wordHighlightColor" format="color|reference"/>
+  <!--  <attr name="highlightedColor" format="color|reference"/>-->
 </resources>

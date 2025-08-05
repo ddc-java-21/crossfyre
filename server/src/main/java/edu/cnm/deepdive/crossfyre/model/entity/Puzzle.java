@@ -19,6 +19,8 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -54,19 +56,19 @@ public class Puzzle {
   @JsonProperty(value = "created", access = Access.READ_ONLY)
   private Instant created;
 
-  @Temporal(TemporalType.TIMESTAMP)
+  @Temporal(TemporalType.DATE)
   @Column(nullable = true, updatable = true)
   @JsonProperty(value = "date", access = Access.READ_WRITE)
-  private Instant date;
+  private LocalDate date;
 
-  @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
+  @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) // TN 2025-07-07 removed Cascade.ALL and orphanRemoval for Puzzle --> UserPuzzle relationship
   @JsonIgnore
   private List<UserPuzzle> userPuzzles = new LinkedList<>();
 
   @OneToMany(mappedBy = "puzzle", fetch = FetchType.LAZY,
       cascade = CascadeType.ALL,orphanRemoval = true)
   @JsonProperty(value = "puzzleWords", access = Access.READ_ONLY)
-  private List<PuzzleWord> puzzleWords = new LinkedList<>(); // TN 2025-07-07 added puzzleWords list
+  private final List<PuzzleWord> puzzleWords = new ArrayList<>(); // TN 2025-07-07 added puzzleWords list
 
 
   public long getId() {
@@ -101,11 +103,11 @@ public class Puzzle {
     this.created = created;
   }
 
-  public Instant getDate() {
+  public LocalDate getDate() {
     return date;
   }
 
-  public void setDate(Instant date) {
+  public void setDate(LocalDate date) {
     this.date = date;
   }
 
@@ -141,19 +143,27 @@ public class Puzzle {
   }
 
   public enum Board {
-    SUNDAY    ("0__________________0____0"),
-    MONDAY    ("0___00___0_______________"),
-    TUESDAY   ("00_____________________00"),
-    WEDNESDAY ("___00_______________00___"),
+    SUNDAY    ("0__________________0____0"/*, 5*/),   //   \u0000 OR \000
+    MONDAY    ("0___00___0_______________"), // 6 seconds completion time
+    TUESDAY ("000__0____0___0____0__000"),
+//     TUESDAY ("00___00___0___0___00___00"),
+    WEDNESDAY ("___00_______________00___"), // 28 seconds completion time
     THURSDAY  ("0___0_______________0___0"),
     FRIDAY    ("____0____0_____0____0____"),
-    SATURDAY  ("___00____0_____0____00___");
 
-    public final String day;
+    SATURDAY ("000__0____0___0____0__000");
+//    SATURDAY  ("___00____0_____0____00___"); // working 2:30 completion time
 
-    Board(String day) {
+
+    public final String day; // private
+    // field for row
+
+    Board(String day/*, int size*/) {
       this.day = day;
+      //this.size = size;
     }
+
+    // getter/accessor
 
   }
 

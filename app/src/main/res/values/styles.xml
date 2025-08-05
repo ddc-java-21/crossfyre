@@ -21,6 +21,11 @@
     <item name="toolbarElevation">@dimen/toolbar_elevation</item>
     <item name="toolbarStyle">@style/Widget.Toolbar</item>
     <item name="appBarLayoutStyle">@style/Widget.AppBarLayout</item>
+    <item name="wallColor">@color/wallColor</item>
+    <item name="spaceColor">@color/spaceColor</item>
+    <item name="wordHighlightColor">@color/wordHighlightColor</item>
+    <item name="selectionHighlightColor">@color/selectionHighlightColor</item>
+    <!--    <item name="highlightedColor">@colors/highlightedColor</item>-->
   </style>
 
   <style name="Widget.Toolbar" parent="Widget.Material3.Toolbar">

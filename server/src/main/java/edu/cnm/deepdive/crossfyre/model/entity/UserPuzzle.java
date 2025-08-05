@@ -53,15 +53,15 @@ public class UserPuzzle {
   private Instant solved;
 
   @OneToMany(mappedBy =
-      "userPuzzle", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+      "userPuzzle", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Guess> guesses = new LinkedList<>();
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne(fetch = FetchType.EAGER, optional = false)
   @JoinColumn(name = "puzzle_id", nullable = false, updatable = false)
   @JsonProperty(value = "puzzle", access = Access.READ_ONLY)
   private Puzzle puzzle;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne(fetch = FetchType.EAGER, optional = false)
   @JoinColumn(name = "user_id", nullable = false, updatable = false)
   @JsonProperty(value = "user", access = Access.READ_ONLY)
   @JsonIgnore

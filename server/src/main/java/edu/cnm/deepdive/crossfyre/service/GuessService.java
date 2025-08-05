@@ -8,10 +8,12 @@ import edu.cnm.deepdive.crossfyre.service.dao.GuessRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Profile("service")
@@ -19,18 +21,15 @@ public class GuessService implements AbstractGuessService {
 
   private final GuessRepository guessRepository;
   private final UserPuzzleRepository userPuzzleRepository;
-  private final PuzzleRepository puzzleRepository;
 
   @Autowired
-  GuessService(GuessRepository guessRepository, UserPuzzleRepository userPuzzleRepository,
-      PuzzleRepository puzzleRepository) {
+  GuessService(GuessRepository guessRepository, UserPuzzleRepository userPuzzleRepository) {
     this.guessRepository = guessRepository;
     this.userPuzzleRepository = userPuzzleRepository;
-    this.puzzleRepository = puzzleRepository;
   }
 
   @Override
-  public Guess get(User user, Instant date, UUID guessKey) {
+  public Guess get(User user, LocalDate date, UUID guessKey) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(user, date)
         .flatMap((userPuzzle) -> guessRepository.findByUserPuzzleAndExternalKey(userPuzzle, guessKey))
@@ -38,36 +37,30 @@ public class GuessService implements AbstractGuessService {
   }
 
   @Override
-  public Iterable<Guess> getAllInUserPuzzle(User requestor, Instant puzzleDate) {
+  public Iterable<Guess> getAllInUserPuzzle(User requestor, LocalDate puzzleDate) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
-        .map(userPuzzle -> {
-          return guessRepository.findByUserPuzzleOrderByIdAsc(userPuzzle);
-        })
+        .map(guessRepository::findByUserPuzzleOrderByIdAsc)
         .orElseThrow();
   }
 
   @Override
-  public Guess add(User requestor, Puzzle puzzle, Guess guess) {
-    return userPuzzleRepository
-        .findByUserAndPuzzle(requestor, puzzle)
-        .map((userPuzzle) -> {
-          guess.setUserPuzzle(userPuzzle);
-          return guessRepository.save(guess);
-        })
-        .orElseThrow(); // custom exception goes here
-  }
-
-  @Override
-  public Guess add(User requestor, Instant puzzleDate, Guess guess) {
+  @Transactional
+  public UserPuzzle add(User requestor, LocalDate puzzleDate, Guess guess) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
-        .map((userPuzzle) -> {
-          guess.setUserPuzzle(userPuzzle);
-          return guessRepository.save(guess);
+        .flatMap((userPuzzle) -> {
+          for (Guess previousGuess : userPuzzle.getGuesses()) {
+            if (previousGuess.getGuessPosition().guessRow() == guess.getGuessPosition().guessRow()
+                && previousGuess.getGuessPosition().guessColumn() == guess.getGuessPosition().guessColumn()) {
+              guessRepository.delete(previousGuess);
+            }
+          }
+          //userPuzzle.getGuesses().add(guess);
+          userPuzzleRepository.save(userPuzzle);
+          return userPuzzleRepository.findByUserAndPuzzleDate(requestor, puzzleDate);
         })
         .orElseThrow(); // custom exception goes here
   }
-
 
 }

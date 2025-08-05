@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class PuzzlePreloadDto {
   private Instant created;
 
   @JsonProperty(value = "date", access = Access.READ_WRITE)
-  private Instant date;
+  private LocalDate date;
 
   @JsonProperty(value = "puzzle_words", access = Access.READ_WRITE)
   private List<PuzzleWord> puzzleWords = new LinkedList<>(); // TN 2025-07-07 added puzzleWords list
@@ -166,11 +167,11 @@ public class PuzzlePreloadDto {
     this.created = created;
   }
 
-  public Instant getDate() {
+  public LocalDate getDate() {
     return date;
   }
 
-  public void setDate(Instant date) {
+  public void setDate(LocalDate date) {
     this.date = date;
   }
 
