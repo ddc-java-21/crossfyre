@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -32,6 +33,7 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
   private final List<Integer> highlightedPositions;
   private int[] wordStarts;
   private int selectedPosition;
+  private EditText selectedEditText;
   private final List<UserPuzzleDto.Guess> guesses;
 
   private OnGuessListener listener;
@@ -49,14 +51,10 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
   private final int selectionHighlightColor;
   private int size;
 
-  // TODO: 8/1/25 create field for puzzleWords or at least wordStarts for the numbering of the cells
-//  private final List<PuzzleWord> puzzleWord;
-
   @Inject
   SquareAdapter(@ActivityContext Context context) {
     super(context, R.layout.item_square);
     inflater = LayoutInflater.from(context);
-//    puzzleWord = new ArrayList<>();
     wallColor = getAttributeColor(R.attr.wallColor);
     spaceColor = getAttributeColor(R.attr.spaceColor);
     wordHighlightColor = getAttributeColor(R.attr.wordHighlightColor);
@@ -67,8 +65,7 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
     guesses = new LinkedList<>();
   }
 
-  // write method in viewmodel that would take big object adn get teh piece of the object we want to use and use transformations.map
-  public SquareAdapter setGrid(boolean[][] board) {
+  public void setGrid(boolean[][] board) {
     this.size = board.length;
     clear();
     // Using a stream to help us do a complex iteration
@@ -80,7 +77,6 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
           }
         });
     notifyDataSetChanged();
-    return this;
   }
 
   //What the gridview will invoke to know how to display the item at the position
@@ -94,12 +90,7 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
         // if were not inflating for an entire activity layout then we always use the three parameter form of inflate
         : ItemSquareBinding.inflate(inflater, parent, false);
 
-    binding.getRoot().setLayoutParams(new GridView.LayoutParams(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT
-    ));
-
-    binding.getRoot().setBackgroundResource(0);
+    binding.square.setTag(position);
 
     int row = position / size;
     int col = position % size;
@@ -128,21 +119,16 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
     if (highlightedPositions.contains(position)) {
       binding.getRoot().setBackgroundColor(wordHighlightColor);
     }
+
     if (position == selectedPosition) {
       binding.getRoot().setBackgroundColor(selectionHighlightColor);
-      Editable editable = binding.square.getText();
-      OnFocusChangeListener listener = (view, hasFocus) -> {
-        if (!hasFocus) {
-          String guess = editable.toString().strip();
-          if (!guess.isEmpty()) {
-            this.listener.onGuess(guess.charAt(0), row, col);
-          }
-        }
-      };
-      binding.square.setOnFocusChangeListener(listener);
-
       binding.square.setVisibility(View.VISIBLE);
       binding.staticSquare.setVisibility(View.INVISIBLE);
+      selectedEditText = binding.square;
+      binding.square.requestFocus();
+      if (!binding.square.getText().toString().isBlank()) {
+        binding.square.selectAll();
+      }
     }
 
     // TODO: 8/1/25 If this position represents a wordStart then update the corresponding textView
@@ -158,7 +144,6 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
     //once we've inflated the binding or bound it to an existing view item we return it and it will be displayed
     return binding.getRoot();
   }
-
 
   @ColorInt
   private int getAttributeColor(int colorAttrID) {
@@ -184,6 +169,14 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
   }
 
   public void setSelectedPosition(int selectedPosition) {
+    if (this.selectedPosition != -1 && this.selectedPosition != selectedPosition) {
+      int row = this.selectedPosition / size;
+      int col = this.selectedPosition % size;
+      String guess = selectedEditText.getText().toString().strip();
+      if (!guess.isEmpty()) {
+        this.listener.onGuess(guess.charAt(0), row, col);
+      }
+    }
     this.selectedPosition = selectedPosition;
     notifyDataSetChanged();
   }
