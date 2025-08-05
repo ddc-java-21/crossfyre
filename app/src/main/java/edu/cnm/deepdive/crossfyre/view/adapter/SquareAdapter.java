@@ -1,11 +1,15 @@
 package edu.cnm.deepdive.crossfyre.view.adapter;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -14,85 +18,124 @@ import dagger.hilt.android.qualifiers.ActivityContext;
 import dagger.hilt.android.scopes.FragmentScoped;
 import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.ItemSquareBinding;
-import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Guess;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import javax.inject.Inject;
 
 @FragmentScoped
-public class SquareAdapter extends ArrayAdapter<Character> {
+public class SquareAdapter extends ArrayAdapter<Boolean> {
 
   private final LayoutInflater inflater;
-  private List<Integer> highlightedPositions = new ArrayList<>();
-  private Map<Integer, Integer> wordStartMap = new HashMap<>();
+  private final List<Integer> highlightedPositions;
+  private int[] wordStarts;
+  private int selectedPosition;
+  private EditText selectedEditText;
+  private final List<UserPuzzleDto.Guess> guesses;
+
+  private OnGuessListener listener;
+
   @ColorInt
   private final int wallColor;
 
-  // TODO: 8/1/25 create field for puzzleWords or at least wordStarts for the numbering of the cells
-//  private final List<PuzzleWord> puzzleWord;
+  @ColorInt
+  private final int spaceColor;
+
+  @ColorInt
+  private final int wordHighlightColor;
+
+  @ColorInt
+  private final int selectionHighlightColor;
+  private int size;
 
   @Inject
   SquareAdapter(@ActivityContext Context context) {
     super(context, R.layout.item_square);
     inflater = LayoutInflater.from(context);
-//    puzzleWord = new ArrayList<>();
     wallColor = getAttributeColor(R.attr.wallColor);
+    spaceColor = getAttributeColor(R.attr.spaceColor);
+    wordHighlightColor = getAttributeColor(R.attr.wordHighlightColor);
+    selectionHighlightColor = getAttributeColor(R.attr.selectionHighlightColor);
+    highlightedPositions = new ArrayList<>();
+    wordStarts = new int[0];
+    selectedPosition = -1;
+    guesses = new LinkedList<>();
   }
-  // write method in viewmodel that would take big object adn get teh piece of the object we want to use and use transformations.map
-  public SquareAdapter setBoard(Character[][] board) {
+
+  public void setGrid(boolean[][] board) {
+    this.size = board.length;
     clear();
     // Using a stream to help us do a complex iteration
     // This would be like a for loop iterating then the column
     Arrays.stream(board)
-        .flatMap(Arrays::stream)
-        .forEach(this::add);
+        .forEach((row) -> {
+          for (boolean open : row) {
+            add(open);
+          }
+        });
     notifyDataSetChanged();
-    return this;
   }
 
   //What the gridview will invoke to know how to display the item at the position
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-    char c = getItem(position);
+    boolean open = getItem(position);
     ItemSquareBinding binding = (convertView != null)
         // if not null we want to bind whats already been inflated to our binding
         ? ItemSquareBinding.bind(convertView)
         // if were not inflating for an entire activity layout then we always use the three parameter form of inflate
         : ItemSquareBinding.inflate(inflater, parent, false);
 
-    binding.getRoot().setLayoutParams(new GridView.LayoutParams(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT
-    ));
+    binding.square.setTag(position);
 
-    binding.getRoot().setBackgroundResource(0);
+    int row = position / size;
+    int col = position % size;
+
+    if (open) {
+      String guess = guesses
+          .stream()
+          .filter((g) -> g.getGuessPosition().getRow() == row
+              && g.getGuessPosition().getColumn() == col)
+          .map(g -> String.valueOf(g.getGuess()))
+          .findFirst()
+          .orElse("");
+      binding.square.setText(guess);
+      binding.staticSquare.setText(guess);
+      binding.square.setVisibility(View.INVISIBLE);
+      binding.staticSquare.setVisibility(View.VISIBLE);
+      binding.getRoot().setBackgroundColor(spaceColor);
+    } else {
+      binding.square.setText("");
+      binding.staticSquare.setText("");
+      binding.square.setVisibility(View.INVISIBLE);
+      binding.staticSquare.setVisibility(View.INVISIBLE);
+      binding.getRoot().setBackgroundColor(wallColor);
+    }
 
     if (highlightedPositions.contains(position)) {
-      binding.getRoot().setBackgroundColor(getAttributeColor(R.color.highlightedColor));
+      binding.getRoot().setBackgroundColor(wordHighlightColor);
     }
 
-    switch (c) {
-      // represent what can be filled in
-      case '_' -> {
-        binding.square.setText("");
-      }
-      // if unicode then '\u0000'
-      case '0' -> { // represent what can't be filled in
-        binding.square.setText("");
-        binding.getRoot().setBackgroundColor(wallColor);
-      }
-      default -> { // represent what we are going to put in the edit text for the guess
-        binding.square.setText(String.valueOf(c));
+    if (position == selectedPosition) {
+      binding.getRoot().setBackgroundColor(selectionHighlightColor);
+      binding.square.setVisibility(View.VISIBLE);
+      binding.staticSquare.setVisibility(View.INVISIBLE);
+      selectedEditText = binding.square;
+      binding.square.requestFocus();
+      if (!binding.square.getText().toString().isBlank()) {
+        binding.square.selectAll();
       }
     }
+
     // TODO: 8/1/25 If this position represents a wordStart then update the corresponding textView
     // TODO: Assign clue number if this is a word start
-    if (wordStartMap.containsKey(position)) { // You'll have to pass in this map
-      binding.cellWordStartNumber.setText(String.valueOf(wordStartMap.get(position)));
+    int foundPosition = Arrays.binarySearch(wordStarts, position);
+    if (foundPosition >= 0) {
+      binding.cellWordStartNumber.setText(String.valueOf(foundPosition + 1));
       binding.cellWordStartNumber.setVisibility(View.VISIBLE);
     } else {
       binding.cellWordStartNumber.setVisibility(View.INVISIBLE);
@@ -101,8 +144,6 @@ public class SquareAdapter extends ArrayAdapter<Character> {
     //once we've inflated the binding or bound it to an existing view item we return it and it will be displayed
     return binding.getRoot();
   }
-
-
 
   @ColorInt
   private int getAttributeColor(int colorAttrID) {
@@ -117,12 +158,41 @@ public class SquareAdapter extends ArrayAdapter<Character> {
 
   public void setHighlightedPositions(
       List<Integer> highlightedPositions) {
-    this.highlightedPositions = highlightedPositions;
+    this.highlightedPositions.clear();
+    this.highlightedPositions.addAll(highlightedPositions);
+    notifyDataSetChanged();
   }
 
-  public void setWordStartMap(Map<Integer, Integer> wordStarts) {
-    this.wordStartMap = wordStarts;
+  public void setWordStarts(int[] wordStarts) {
+    this.wordStarts = wordStarts.clone();
     notifyDataSetChanged();
+  }
+
+  public void setSelectedPosition(int selectedPosition) {
+    if (this.selectedPosition != -1 && this.selectedPosition != selectedPosition) {
+      int row = this.selectedPosition / size;
+      int col = this.selectedPosition % size;
+      String guess = selectedEditText.getText().toString().strip();
+      if (!guess.isEmpty()) {
+        this.listener.onGuess(guess.charAt(0), row, col);
+      }
+    }
+    this.selectedPosition = selectedPosition;
+    notifyDataSetChanged();
+  }
+
+  public void setGuesses(List<Guess> guesses) {
+    this.guesses.clear();
+    this.guesses.addAll(guesses);
+    notifyDataSetChanged();
+  }
+
+  public void setListener(OnGuessListener listener) {
+    this.listener = listener;
+  }
+
+  public interface OnGuessListener {
+    void onGuess(char guess, int row, int column);
   }
 
 }

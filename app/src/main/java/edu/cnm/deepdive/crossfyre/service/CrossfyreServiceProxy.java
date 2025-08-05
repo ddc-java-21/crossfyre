@@ -1,12 +1,11 @@
 package edu.cnm.deepdive.crossfyre.service;
 
 
-import edu.cnm.deepdive.crossfyre.model.dto.GuessDto;
 import edu.cnm.deepdive.crossfyre.model.dto.User;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Guess;
 import io.reactivex.rxjava3.core.Single;
 import java.time.Instant;
-import java.util.List;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -32,6 +31,6 @@ public interface CrossfyreServiceProxy {
   @POST("userpuzzles/{date}/guesses")
   Single<UserPuzzleDto> sendGuess(
       @Header("Authorization") String bearerToken,
-      @Path("date") Instant date, @Body GuessDto guess);
+      @Path("date") Instant date, @Body Guess guess);
 
 }

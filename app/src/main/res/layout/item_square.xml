@@ -1,38 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  xmlns:app="http://schemas.android.com/apk/res-auto">
+  android:layout_height="wrap_content">
 
   <EditText
     android:id="@+id/square"
     android:layout_width="match_parent"
     android:layout_height="0dp"
-    app:layout_constraintDimensionRatio="1:1"
-    app:layout_constraintTop_toTopOf="parent"
+    android:inputType="text"
+    android:importantForAutofill="no"
     android:textStyle="bold"
-    android:background="@null"
     android:maxLines="1"
     android:maxLength="1"
     android:imeOptions="actionNext"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:textSize="140sp"
+    android:textSize="24sp"
+    android:background="@null"
+    android:textAlignment="center"
+    android:includeFontPadding="false"
+    app:layout_constraintDimensionRatio="1:1"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:ignore="LabelFor"
     />
 
-<!--  DONE add small textview for puzzleword number that goes on the start letter cell of a puzzle word-->
+  <TextView
+    android:id="@+id/static_square"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:textStyle="bold"
+    android:textSize="24sp"
+    android:background="@null"
+    android:textAlignment="center"
+    android:gravity="center"
+    android:includeFontPadding="false"
+    app:layout_constraintDimensionRatio="1:1"
+    app:layout_constraintTop_toTopOf="parent"
+    />
+
+  <!--  DONE add small textview for puzzleword number that goes on the start letter cell of a puzzle word-->
   <TextView
     android:id="@+id/cell_word_start_number"
-    android:layout_width="12dp"
-    android:layout_height="12dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_marginStart="2dp"
     android:layout_marginTop="2dp"
     android:textStyle="bold"
     android:visibility="invisible"
     android:textSize="11sp"
+    android:clickable="false"
+    android:focusable="false"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent"/>
+    app:layout_constraintStart_toStartOf="parent"
+    />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

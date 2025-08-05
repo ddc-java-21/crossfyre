@@ -2,28 +2,19 @@ package edu.cnm.deepdive.crossfyre.controller;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.GridLayout;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import dagger.hilt.android.AndroidEntryPoint;
-import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.FragmentPuzzleBinding;
-import edu.cnm.deepdive.crossfyre.model.dto.PuzzleWord;
-import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzle.Guess.Puzzle;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Guess;
+import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Guess.GuessPosition;
 import edu.cnm.deepdive.crossfyre.view.adapter.SquareAdapter;
 import edu.cnm.deepdive.crossfyre.viewmodel.PuzzleViewModel;
-import java.util.List;
 import javax.inject.Inject;
 
 @AndroidEntryPoint
@@ -38,38 +29,26 @@ public class PuzzleFragment extends Fragment {
   SquareAdapter squareAdapter;
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    binding = FragmentPuzzleBinding.inflate(getLayoutInflater());
-//    initializeTextFields();
-
-    // TODO: 7/30/25 Finish adding on create
-//    binding.clueDirection.listen
-  }
-
-  @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     binding = FragmentPuzzleBinding.inflate(inflater, container, false);
     // need to implement when the user clicks on an item we need to know what item is clicked
     // we can attach a listener to a gridview and know when an item is selected in a gridview
-    binding.puzzleGrid.setOnItemSelectedListener(new OnItemSelectedListener() {
-      // tells you which position in the gridview like 1,2,3,...25, the view is a gridview
-      @Override
-      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        viewModel.selectSquare(position);
+    binding.puzzleGrid.setOnItemClickListener(
+        (parent, view, position, id) -> viewModel.selectSquare(position));
 
-        // TODO: 8/1/25 Use position to determine which row and column are clicked and use that to update the viewmodel, done?
-      }
-
-      // Usually do nothing in this method
-      @Override
-      public void onNothingSelected(AdapterView<?> parent) {
-        // do nothing
-      }
-    });
-
+    squareAdapter.setListener(this::sendGuess);
     return binding.getRoot();
+  }
+
+  private void sendGuess(char guessChar, int row, int column) {
+    Guess guess = new Guess();
+    GuessPosition position = new GuessPosition();
+    position.setRow(row);
+    position.setColumn(column);
+    guess.setGuessPosition(position);
+    guess.setGuess(guessChar);
+    viewModel.sendGuess(guess);
   }
 
   @Override
@@ -80,22 +59,21 @@ public class PuzzleFragment extends Fragment {
     viewModel = new ViewModelProvider(requireActivity()).get(PuzzleViewModel.class);
 
     binding.puzzleGrid.setAdapter(squareAdapter);
-    binding.puzzleGrid.setNumColumns(5);
 
     // Observe board data from ViewModel
-    viewModel.getBoard().observe(getViewLifecycleOwner(), (board) -> {
+    viewModel.getGrid().observe(getViewLifecycleOwner(), (grid) -> {
 //      Character[][] currentBoard = board;
-      if (board != null) {
-        squareAdapter.setBoard(board);
+      if (grid != null) {
+        squareAdapter.setGrid(grid);
+        binding.puzzleGrid.setNumColumns(grid.length);
         squareAdapter.notifyDataSetChanged();
       }
     });
 
     // Observe word start positions for clue numbering
-    viewModel.getWordStartMap().observe(getViewLifecycleOwner(), (wordStartMap) -> {
-      if (wordStartMap != null) {
-        squareAdapter.setWordStartMap(wordStartMap);
-        squareAdapter.notifyDataSetChanged();
+    viewModel.getWordStarts().observe(getViewLifecycleOwner(), (wordStarts) -> {
+      if (wordStarts != null) {
+        squareAdapter.setWordStarts(wordStarts);
       }
     });
 
@@ -103,7 +81,6 @@ public class PuzzleFragment extends Fragment {
     viewModel.getSelectedCellPositions().observe(getViewLifecycleOwner(), (positions) -> {
       if (positions != null) {
         squareAdapter.setHighlightedPositions(positions);
-        squareAdapter.notifyDataSetChanged();
       }
     });
 
@@ -112,7 +89,18 @@ public class PuzzleFragment extends Fragment {
       if (word != null) {
         binding.clueFullDescriptionText.setText(word.getClue());
         binding.clueDirection.setText(word.getDirection().toString());
-//        squareAdapter.notifyDataSetCh
+      }
+    });
+
+    viewModel.getSelectedSquare().observe(getViewLifecycleOwner(), (position) -> {
+      if (position != null) {
+        squareAdapter.setSelectedPosition(position);
+      }
+    });
+
+    viewModel.getGuesses().observe(getViewLifecycleOwner(), (guesses) -> {
+      if (guesses != null) {
+        squareAdapter.setGuesses(guesses);
       }
     });
   }

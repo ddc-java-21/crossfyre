@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <color name="wallColor">#80000000</color>
-  <color name="highlightedColor">#5076b5c5</color>
+  <color name="spaceColor">#FFFFFFFF</color>
+  <color name="wordHighlightColor">#FFE8E8E8</color>
+  <color name="selectionHighlightColor">#FFD0D0D0</color>
 </resources>

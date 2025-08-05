@@ -8,6 +8,7 @@ import edu.cnm.deepdive.crossfyre.service.dao.GuessRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.PuzzleRepository;
 import edu.cnm.deepdive.crossfyre.service.dao.UserPuzzleRepository;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -60,16 +61,17 @@ public class GuessService implements AbstractGuessService {
   }
 
   @Override
-//  @Transactional
-  public synchronized UserPuzzle add(User requestor, Instant puzzleDate, Guess guess) {
+  public UserPuzzle add(User requestor, Instant puzzleDate, Guess guess) {
     return userPuzzleRepository
         .findByUserAndPuzzleDate(requestor, puzzleDate)
-        .flatMap((userPuzzle) -> {
+        .map((userPuzzle) -> {
           guess.setUserPuzzle(userPuzzle);
-          guessRepository.save(guess);
-          return userPuzzleRepository.findByUserAndPuzzleDate(requestor, puzzleDate);
+          List<Guess> guesses = userPuzzle.getGuesses();
+          guesses.removeIf((g) -> g.getGuessPosition().equals(guess.getGuessPosition()));
+          guesses.add(guess);
+          return userPuzzleRepository.save(userPuzzle);
         })
-        .orElseThrow(); // custom exception goes here
+        .orElseThrow();
   }
 
 //  @Override
