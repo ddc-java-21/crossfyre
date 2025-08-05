@@ -27,6 +27,7 @@ public class PuzzleFragment extends Fragment {
   private PuzzleViewModel viewModel;
   private PuzzleWord storedWord = null;
   private Puzzle storedPuzzle = null;
+  private Integer currentPosition = null;
 
   //When an instance of the puzzle fragemnt gets created, right after it gets initialized and constructor is done
   // Hilt will inject an adapter
@@ -79,6 +80,7 @@ public class PuzzleFragment extends Fragment {
     viewModel.getWordStarts().observe(getViewLifecycleOwner(), (wordStarts) -> {
       if (wordStarts != null) {
         squareAdapter.setWordStarts(wordStarts);
+        squareAdapter.notifyDataSetChanged();
       }
     });
 
@@ -86,6 +88,7 @@ public class PuzzleFragment extends Fragment {
     viewModel.getSelectedCellPositions().observe(getViewLifecycleOwner(), (positions) -> {
       if (positions != null) {
         squareAdapter.setHighlightedPositions(positions);
+        squareAdapter.notifyDataSetChanged();
       }
     });
 
@@ -96,6 +99,7 @@ public class PuzzleFragment extends Fragment {
         binding.clueFullDescriptionText.setText(String.format(getString(R.string.clue_format_string), word.getClue()));
         binding.clueDirection.setText(word.getDirection().toString());
 
+        // ⬇️ ICON + CONTENT DESCRIPTION LOGIC ⬇️
         if (word.getDirection() == PuzzleWord.Direction.ACROSS) {
           binding.directionToggleButton.setImageResource(R.drawable.arrow_across_24px);
           binding.directionToggleButton.setContentDescription(getString(R.string.puzzle_word_direction_across));
@@ -125,6 +129,7 @@ public class PuzzleFragment extends Fragment {
 
 
     viewModel.getSelectedSquare().observe(getViewLifecycleOwner(), (position) -> {
+      currentPosition = position;
       if (position != null) {
         squareAdapter.setSelectedPosition(position);
       }
@@ -150,16 +155,14 @@ public class PuzzleFragment extends Fragment {
             ? PuzzleWord.Direction.DOWN
             : PuzzleWord.Direction.ACROSS;
 
-    Integer currentPosition = viewModel.getSelectedSquare().getValue();
-
-    int row = currentPosition / storedPuzzle.getSize();
-    int col = currentPosition % storedPuzzle.getSize();
-
-    // Look for a word at the current cell with the new direction
     for (PuzzleWord word : storedPuzzle.getPuzzleWords()) {
-      if (word.getDirection() == newDirection && word.includes(row, col)) {
-        // Directly select the new word while keeping the same square highlighted
-        viewModel.selectWord(word);
+      if (word.getWordPosition().getRow() == storedWord.getWordPosition().getRow()
+          && word.getWordPosition().getColumn() == storedWord.getWordPosition().getColumn()
+          && word.getDirection() == newDirection) {
+
+//        int index = word.getWordPosition().getRow() * storedPuzzle.getSize()
+//            + word.getWordPosition().getColumn();
+        viewModel.selectSquare(currentPosition); // Triggers observers
         return;
       }
     }

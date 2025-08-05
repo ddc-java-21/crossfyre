@@ -116,6 +116,7 @@ public class PuzzleService implements AbstractPuzzleService {
         }
         //puzzleWordRepository.saveAll(puzzleWords);
 //      puzzle.getPuzzleWords().addAll(puzzleWords); // need to pass in a Collection, not an Iterable
+        System.out.println("Finished generating puzzle");
         puzzleRepository.save(puzzle);
       }
     } while (!valid);

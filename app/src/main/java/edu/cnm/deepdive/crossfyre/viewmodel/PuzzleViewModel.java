@@ -51,24 +51,24 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
 
   // Stretch goal boolean[][] false = wall, true = space because grid below is just getting board
 
-  private static Character[][] buildBoard(UserPuzzleDto up) {
-    if (up == null || up.getPuzzle() == null) {
-      return null;
-    }
-    int size = up.getPuzzle().getSize();
-    Character[][] grid = new Character[size][size];
-    String layout = up.getPuzzle().getBoard().day;
-    if (layout.length() != size * size) {
-      throw new IllegalStateException("Board layout does not match size × size.");
-    }
-    int index = 0;
-    for (int row = 0; row < size; row++) {
-      for (int col = 0; col < size; col++) {
-        grid[row][col] = layout.charAt(index++);
-      }
-    }
-    return grid;
-  }
+//  private static Character[][] buildBoard(UserPuzzleDto up) {
+//    if (up == null || up.getPuzzle() == null) {
+//      return null;
+//    }
+//    int size = up.getPuzzle().getSize();
+//    Character[][] grid = new Character[size][size];
+//    String layout = up.getPuzzle().getBoard().day;
+//    if (layout.length() != size * size) {
+//      throw new IllegalStateException("Board layout does not match size × size.");
+//    }
+//    int index = 0;
+//    for (int row = 0; row < size; row++) {
+//      for (int col = 0; col < size; col++) {
+//        grid[row][col] = layout.charAt(index++);
+//      }
+//    }
+//    return grid;
+//  }
   // LiveData for mapping position → clue number
 
   @Inject
@@ -116,8 +116,8 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
 
   private void handleUserPuzzle(UserPuzzleDto dto) {
     if (dto != null) {
-      Log.d(TAG, "Board layout: " + dto.getPuzzle().getBoard().day);
-      Log.d(TAG, "Puzzle words count: " + dto.getPuzzle().getPuzzleWords().size());
+//      Log.d(TAG, "Board layout: " + dto.getPuzzle().getBoard().day);
+//      Log.d(TAG, "Puzzle words count: " + dto.getPuzzle().getPuzzleWords().size());
       userPuzzle.postValue(dto);
     }
   }

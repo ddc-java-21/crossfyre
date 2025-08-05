@@ -40,7 +40,7 @@ public class PuzzleController {
 
   @GetMapping(path = "/generate", produces = MediaType.APPLICATION_JSON_VALUE)
   public List<PuzzleWord> generate() {
-    return generator.generatePuzzleWords(Board.TUESDAY);
+    return generator.generatePuzzleWords(Board.SATURDAY);
   }
 
 }
