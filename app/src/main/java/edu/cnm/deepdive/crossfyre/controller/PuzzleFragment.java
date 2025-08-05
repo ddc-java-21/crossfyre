@@ -95,12 +95,24 @@ public class PuzzleFragment extends Fragment {
         storedWord = word;
         binding.clueFullDescriptionText.setText(String.format(getString(R.string.clue_format_string), word.getClue()));
         binding.clueDirection.setText(word.getDirection().toString());
+
+        // ⬇️ ICON + CONTENT DESCRIPTION LOGIC ⬇️
+        if (word.getDirection() == PuzzleWord.Direction.ACROSS) {
+          binding.directionToggleButton.setImageResource(R.drawable.arrow_across_24px);
+          binding.directionToggleButton.setContentDescription(getString(R.string.puzzle_word_direction_across));
+        } else {
+          binding.directionToggleButton.setImageResource(R.drawable.arrow_down_24px);
+          binding.directionToggleButton.setContentDescription(getString(R.string.puzzle_word_direction_down));
+        }
+
         if (storedPuzzle != null) {
           // method does here
           setCellWordStartNumber(storedWord);
         }
       }
     });
+
+
 
     viewModel.getCurrentPuzzle().observe(getViewLifecycleOwner(), (puzzle) -> {
       if (puzzle != null) {
@@ -111,6 +123,7 @@ public class PuzzleFragment extends Fragment {
         }
       }
     });
+
 
     viewModel.getSelectedSquare().observe(getViewLifecycleOwner(), (position) -> {
       if (position != null) {
@@ -123,6 +136,34 @@ public class PuzzleFragment extends Fragment {
         squareAdapter.setGuesses(guesses);
       }
     });
+
+    // Add toggle button click listener
+    binding.directionToggleButton.setOnClickListener((v) -> toggleClueDirection());
+  }
+
+  private void toggleClueDirection() {
+    if (storedWord == null || storedPuzzle == null) {
+      return;
+    }
+
+    PuzzleWord.Direction newDirection =
+        (storedWord.getDirection() == PuzzleWord.Direction.ACROSS)
+            ? PuzzleWord.Direction.DOWN
+            : PuzzleWord.Direction.ACROSS;
+
+    for (PuzzleWord word : storedPuzzle.getPuzzleWords()) {
+      if (word.getWordPosition().getRow() == storedWord.getWordPosition().getRow()
+          && word.getWordPosition().getColumn() == storedWord.getWordPosition().getColumn()
+          && word.getDirection() == newDirection) {
+
+        int index = word.getWordPosition().getRow() * storedPuzzle.getSize()
+            + word.getWordPosition().getColumn();
+        viewModel.selectSquare(index); // Triggers observers
+        return;
+      }
+    }
+
+    Log.d("PuzzleFragment", "No alternate direction word found.");
   }
 
   private void setCellWordStartNumber(PuzzleWord word) {
