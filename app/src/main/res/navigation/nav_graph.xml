@@ -59,6 +59,7 @@
   <fragment
     android:id="@+id/puzzle_fragment"
     android:name="edu.cnm.deepdive.crossfyre.controller.PuzzleFragment"
+    android:label="@string/puzzle_fragment_label"
     tools:layout="@layout/fragment_puzzle">
     <action
       android:id="@+id/action_puzzle_fragment_to_login_fragment"

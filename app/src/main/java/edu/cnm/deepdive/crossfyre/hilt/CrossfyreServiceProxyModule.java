@@ -16,6 +16,7 @@ import edu.cnm.deepdive.crossfyre.view.serialization.InstantSerializer;
 import edu.cnm.deepdive.crossfyre.view.serialization.LocalDateDeserializer;
 import edu.cnm.deepdive.crossfyre.view.serialization.LocalDateSerializer;
 import java.time.Instant;
+import java.time.LocalDate;
 import javax.inject.Singleton;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -39,8 +40,8 @@ public class CrossfyreServiceProxyModule {
 //        .registerTypeAdapter(Instant.class, deserializer)
         .registerTypeAdapter(Instant.class, instantDeserializer)
         .registerTypeAdapter(Instant.class, instantSerializer)
-        .registerTypeAdapter(Instant.class, localDateDeserializer)
-        .registerTypeAdapter(Instant.class, localDateSerializer)
+        .registerTypeAdapter(LocalDate.class, localDateDeserializer)
+        .registerTypeAdapter(LocalDate.class, localDateSerializer)
         .create();
   }
 

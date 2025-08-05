@@ -1,6 +1,6 @@
 <resources>
   <string name="login_fragment_label">Sign in to Crossfyre</string>
-  <string name="main_fragment_label">Service Bearer Token</string>
+  <string name="main_fragment_label">Crossfyre - Test your mettle</string>
   <string name="sign_in_failure_message">Unable to sign in with provided credentials.</string>
   <string name="sign_out_title">Sign out</string>
   <string name="settings_title">Settings</string>
@@ -13,4 +13,5 @@
   <string name="puzzle_word_direction">Across</string>
   <string name="puzzle_word_clue_text">A clue would go here</string>
   <string name="default_clue_text">Clue:  </string>
+  <string name="puzzle_fragment_label">Crossfyre</string>
 </resources>
