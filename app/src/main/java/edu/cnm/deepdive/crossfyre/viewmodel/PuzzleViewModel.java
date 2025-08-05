@@ -189,6 +189,10 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
         );
   }
 
+  public void selectWord(PuzzleWord word) {
+    selectedWord.setValue(word);
+  }
+
   @Override
   public void onStop(@NonNull LifecycleOwner owner) {
     pending.clear();

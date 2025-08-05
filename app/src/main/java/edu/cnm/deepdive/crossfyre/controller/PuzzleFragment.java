@@ -96,7 +96,6 @@ public class PuzzleFragment extends Fragment {
         binding.clueFullDescriptionText.setText(String.format(getString(R.string.clue_format_string), word.getClue()));
         binding.clueDirection.setText(word.getDirection().toString());
 
-        // ⬇️ ICON + CONTENT DESCRIPTION LOGIC ⬇️
         if (word.getDirection() == PuzzleWord.Direction.ACROSS) {
           binding.directionToggleButton.setImageResource(R.drawable.arrow_across_24px);
           binding.directionToggleButton.setContentDescription(getString(R.string.puzzle_word_direction_across));
@@ -151,14 +150,16 @@ public class PuzzleFragment extends Fragment {
             ? PuzzleWord.Direction.DOWN
             : PuzzleWord.Direction.ACROSS;
 
-    for (PuzzleWord word : storedPuzzle.getPuzzleWords()) {
-      if (word.getWordPosition().getRow() == storedWord.getWordPosition().getRow()
-          && word.getWordPosition().getColumn() == storedWord.getWordPosition().getColumn()
-          && word.getDirection() == newDirection) {
+    Integer currentPosition = viewModel.getSelectedSquare().getValue();
 
-        int index = word.getWordPosition().getRow() * storedPuzzle.getSize()
-            + word.getWordPosition().getColumn();
-        viewModel.selectSquare(index); // Triggers observers
+    int row = currentPosition / storedPuzzle.getSize();
+    int col = currentPosition % storedPuzzle.getSize();
+
+    // Look for a word at the current cell with the new direction
+    for (PuzzleWord word : storedPuzzle.getPuzzleWords()) {
+      if (word.getDirection() == newDirection && word.includes(row, col)) {
+        // Directly select the new word while keeping the same square highlighted
+        viewModel.selectWord(word);
         return;
       }
     }
