@@ -245,4 +245,5 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   public LiveData<UserPuzzleDto.Puzzle> getCurrentPuzzle() {
     return currentPuzzle;
   }
+
 }
