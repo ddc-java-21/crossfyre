@@ -17,6 +17,12 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import javax.inject.Inject;
 
 /**
+ * ViewModel responsible for managing Google Sign-In authentication state and operations,
+ * including sign-in, sign-out, and token refresh handling.
+ *
+ * <p>Uses {@link GoogleSignInService} for interacting with Google Sign-In APIs and exposes
+ * authentication status and errors via {@link LiveData}.</p>
+ *
  * @noinspection deprecation
  */
 @HiltViewModel
@@ -30,6 +36,11 @@ public class LoginViewModel extends ViewModel implements DefaultLifecycleObserve
   private final MutableLiveData<Throwable> signInThrowable;
   private final CompositeDisposable pending;
 
+  /**
+   * Constructs the ViewModel with injected {@link GoogleSignInService}.
+   *
+   * @param service the Google Sign-In service to manage authentication.
+   */
   @Inject
   LoginViewModel(GoogleSignInService service) {
     this.service = service;
@@ -39,18 +50,37 @@ public class LoginViewModel extends ViewModel implements DefaultLifecycleObserve
     pending = new CompositeDisposable();
   }
 
+  /**
+   * Gets a {@link LiveData} holding the current signed-in Google account.
+   *
+   * @return the live data for GoogleSignInAccount.
+   */
   public LiveData<GoogleSignInAccount> getAccount() {
     return account;
   }
 
+  /**
+   * Gets a {@link LiveData} holding any error thrown during token refresh operations.
+   *
+   * @return the live data for refresh-related errors.
+   */
   public LiveData<Throwable> getRefreshThrowable() {
     return refreshThrowable;
   }
 
+  /**
+   * Gets a {@link LiveData} holding any error thrown during sign-in operations.
+   *
+   * @return the live data for sign-in related errors.
+   */
   public LiveData<Throwable> getSignInThrowable() {
     return signInThrowable;
   }
 
+  /**
+   * Attempts to silently refresh the current Google sign-in session.
+   * Clears prior errors before attempting refresh.
+   */
   public void refresh() {
     refreshThrowable.setValue(null);
     signInThrowable.setValue(null);
@@ -63,12 +93,24 @@ public class LoginViewModel extends ViewModel implements DefaultLifecycleObserve
         );
   }
 
+  /**
+   * Starts the interactive sign-in flow using the given launcher.
+   * Clears prior errors before starting sign-in.
+   *
+   * @param launcher the launcher to initiate the sign-in intent.
+   */
   public void startSignIn(@NonNull ActivityResultLauncher<Intent> launcher) {
     refreshThrowable.setValue(null);
     signInThrowable.setValue(null);
     service.startSignIn(launcher);
   }
 
+  /**
+   * Completes the sign-in process after receiving the result.
+   * Clears prior errors before processing.
+   *
+   * @param result the activity result from the sign-in flow.
+   */
   public void completeSignIn(@NonNull ActivityResult result) {
     refreshThrowable.setValue(null);
     signInThrowable.setValue(null);
@@ -81,6 +123,10 @@ public class LoginViewModel extends ViewModel implements DefaultLifecycleObserve
         );
   }
 
+  /**
+   * Signs out the current user and clears the account data.
+   * Clears prior errors before signing out.
+   */
   public void signOut() {
     refreshThrowable.setValue(null);
     signInThrowable.setValue(null);
@@ -92,6 +138,12 @@ public class LoginViewModel extends ViewModel implements DefaultLifecycleObserve
     pending.add(disposable);
   }
 
+  /**
+   * Helper method to log and post throwable errors to the specified target LiveData.
+   *
+   * @param throwable the error to post.
+   * @param target the target LiveData to receive the error.
+   */
   private void postThrowable(
       @NonNull Throwable throwable, @NonNull MutableLiveData<Throwable> target) {
     Log.e(TAG, throwable.getMessage(), throwable);

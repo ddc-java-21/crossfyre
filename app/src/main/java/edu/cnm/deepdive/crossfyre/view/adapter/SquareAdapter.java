@@ -25,6 +25,10 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.inject.Inject;
 
+/**
+ * Adapter for displaying a crossword puzzle grid of squares in a {@link GridView}.
+ * Handles rendering of cell appearance, text entry, highlights, and word numbering.
+ */
 @FragmentScoped
 public class SquareAdapter extends ArrayAdapter<Boolean> {
 
@@ -49,14 +53,15 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
   private final int selectionHighlightColor;
   private int size;
 
-  // TODO: 8/1/25 create field for puzzleWords or at least wordStarts for the numbering of the cells
-//  private final List<PuzzleWord> puzzleWord;
-
+  /**
+   * Constructs an instance of {@link SquareAdapter} for a crossword puzzle grid.
+   *
+   * @param context Activity context injected by Hilt.
+   */
   @Inject
   SquareAdapter(@ActivityContext Context context) {
     super(context, R.layout.item_square);
     inflater = LayoutInflater.from(context);
-//    puzzleWord = new ArrayList<>();
     wallColor = getAttributeColor(R.attr.wallColor);
     spaceColor = getAttributeColor(R.attr.spaceColor);
     wordHighlightColor = getAttributeColor(R.attr.wordHighlightColor);
@@ -67,17 +72,20 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
     guesses = new LinkedList<>();
   }
 
-  // write method in viewmodel that would take big object adn get teh piece of the object we want to use and use transformations.map
-  //What the gridview will invoke to know how to display the item at the position
-
+  /**
+   * Inflates or reuses the view for a single cell in the grid.
+   *
+   * @param position    Index of the item in the adapter.
+   * @param convertView Reusable view (if any).
+   * @param parent      Parent view group.
+   * @return Inflated or reused view for the cell.
+   */
   @NonNull
   @Override
   public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
     boolean open = getItem(position);
     ItemSquareBinding binding = (convertView != null)
-        // if not null we want to bind whats already been inflated to our binding
         ? ItemSquareBinding.bind(convertView)
-        // if were not inflating for an entire activity layout then we always use the three parameter form of inflate
         : ItemSquareBinding.inflate(inflater, parent, false);
 
     binding.getRoot().setLayoutParams(new GridView.LayoutParams(
@@ -114,6 +122,7 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
     if (highlightedPositions.contains(position)) {
       binding.getRoot().setBackgroundColor(wordHighlightColor);
     }
+
     if (position == selectedPosition) {
       binding.square.requestFocus();
       binding.square.selectAll();
@@ -133,8 +142,6 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
       binding.staticSquare.setVisibility(View.INVISIBLE);
     }
 
-    // TODO: 8/1/25 If this position represents a wordStart then update the corresponding textView
-    // TODO: Assign clue number if this is a word start
     int foundPosition = Arrays.binarySearch(wordStarts, position);
     if (foundPosition >= 0) {
       binding.cellWordStartNumber.setText(String.valueOf(foundPosition + 1));
@@ -143,10 +150,15 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
       binding.cellWordStartNumber.setVisibility(View.INVISIBLE);
     }
 
-    //once we've inflated the binding or bound it to an existing view item we return it and it will be displayed
     return binding.getRoot();
   }
 
+  /**
+   * Gets a resolved color value from the theme using an attribute ID.
+   *
+   * @param colorAttrID Color attribute resource ID.
+   * @return Resolved color integer.
+   */
   @ColorInt
   private int getAttributeColor(int colorAttrID) {
     TypedValue typedValue = new TypedValue();
@@ -154,32 +166,55 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
     return typedValue.data;
   }
 
+  /**
+   * Returns the current list of highlighted cell positions.
+   *
+   * @return List of highlighted cell indices.
+   */
   public List<Integer> getHighlightedPositions() {
     return highlightedPositions;
   }
 
-  public void setHighlightedPositions(
-      List<Integer> highlightedPositions) {
+  /**
+   * Sets the highlighted positions to the specified list.
+   *
+   * @param highlightedPositions New list of positions to highlight.
+   */
+  public void setHighlightedPositions(List<Integer> highlightedPositions) {
     this.highlightedPositions.clear();
     this.highlightedPositions.addAll(highlightedPositions);
     notifyDataSetChanged();
   }
 
+  /**
+   * Sets the positions that are the starting cells of words.
+   *
+   * @param wordStarts Array of word start positions.
+   */
   public void setWordStarts(int[] wordStarts) {
     this.wordStarts = wordStarts.clone();
     notifyDataSetChanged();
   }
 
+  /**
+   * Sets the selected cell position.
+   *
+   * @param selectedPosition Index of selected cell.
+   */
   public void setSelectedPosition(int selectedPosition) {
     this.selectedPosition = selectedPosition;
     notifyDataSetChanged();
   }
 
+  /**
+   * Converts a 2D board of booleans into the flat data for this adapter.
+   *
+   * @param board 2D boolean array where {@code true} indicates an open square.
+   * @return This adapter for chaining.
+   */
   public SquareAdapter setGrid(boolean[][] board) {
     this.size = board.length;
     clear();
-    // Using a stream to help us do a complex iteration
-    // This would be like a for loop iterating then the column
     Arrays.stream(board)
         .forEach((row) -> {
           for (boolean open : row) {
@@ -190,17 +225,38 @@ public class SquareAdapter extends ArrayAdapter<Boolean> {
     return this;
   }
 
+  /**
+   * Sets the current list of guesses to be rendered on the grid.
+   *
+   * @param guesses List of user guesses.
+   */
   public void setGuesses(List<Guess> guesses) {
     this.guesses.clear();
     this.guesses.addAll(guesses);
     notifyDataSetChanged();
   }
 
+  /**
+   * Sets the listener to be notified when the user enters a guess.
+   *
+   * @param listener Listener for guess entry.
+   */
   public void setListener(OnGuessListener listener) {
     this.listener = listener;
   }
 
+  /**
+   * Interface definition for a callback to be invoked when a guess is made.
+   */
   public interface OnGuessListener {
+
+    /**
+     * Called when a character is guessed by the user.
+     *
+     * @param guess  Character guessed.
+     * @param row    Row of the guessed cell.
+     * @param column Column of the guessed cell.
+     */
     void onGuess(char guess, int row, int column);
   }
 

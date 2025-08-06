@@ -16,16 +16,45 @@ import edu.cnm.deepdive.crossfyre.databinding.FragmentBearerBinding;
 import edu.cnm.deepdive.crossfyre.viewmodel.LoginViewModel;
 import edu.cnm.deepdive.crossfyre.viewmodel.PuzzleViewModel;
 
+/**
+ * Fragment responsible for displaying bearer token information to the user.
+ * This fragment integrates with the authentication system to show the current
+ * user's ID token from Google Sign-In.
+ *
+ * <p>Uses Hilt for dependency injection and observes authentication state
+ * through the LoginViewModel.</p>
+ */
 @AndroidEntryPoint
 public class BearerFragment extends Fragment {
 
+  /**
+   * View binding instance for accessing UI components in the fragment layout.
+   */
   private FragmentBearerBinding binding;
+
+  /**
+   * ViewModel for managing login and authentication state.
+   */
   private LoginViewModel viewModel;
 
+  /**
+   * ViewModel for managing puzzle-related data and operations.
+   */
   private PuzzleViewModel puzzleViewModel;
 
+  /**
+   * Flag to track whether a guess has been sent to prevent duplicate submissions.
+   */
   private boolean sentGuess = false;
 
+  /**
+   * Creates and returns the view hierarchy associated with the fragment.
+   *
+   * @param inflater The LayoutInflater object that can be used to inflate views
+   * @param container The parent view that the fragment's UI will be attached to
+   * @param savedInstanceState Bundle containing the activity's previously saved state
+   * @return The root view of the inflated fragment layout, or null
+   */
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -34,6 +63,13 @@ public class BearerFragment extends Fragment {
     return binding.getRoot();
   }
 
+  /**
+   * Called after the fragment's view has been created. Sets up view models,
+   * observes authentication state, and configures the bearer token display.
+   *
+   * @param view The view returned by onCreateView
+   * @param savedInstanceState Bundle containing the activity's previously saved state
+   */
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -56,4 +92,3 @@ public class BearerFragment extends Fragment {
   }
 
 }
-

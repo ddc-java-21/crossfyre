@@ -20,13 +20,19 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * @noinspection deprecation
+ * Service that handles Google Sign-In authentication, refreshing tokens,
+ * and signing users in or out.
  */
 @Singleton
 public class GoogleSignInService {
 
   private final GoogleSignInClient client;
 
+  /**
+   * Creates and configures a {@link GoogleSignInClient} with required scopes and ID token.
+   *
+   * @param context the application context used to configure the sign-in client
+   */
   @Inject
   GoogleSignInService(@ApplicationContext Context context) {
     GoogleSignInOptions options = new GoogleSignInOptions.Builder()
@@ -38,6 +44,11 @@ public class GoogleSignInService {
     client = GoogleSignIn.getClient(context, options);
   }
 
+  /**
+   * Attempts to silently refresh the current sign-in session.
+   *
+   * @return a {@link Single} emitting the refreshed {@link GoogleSignInAccount}
+   */
   public Single<GoogleSignInAccount> refresh() {
     return Single.create((SingleEmitter<GoogleSignInAccount> emitter) ->
             client
@@ -48,10 +59,21 @@ public class GoogleSignInService {
         .observeOn(Schedulers.io());
   }
 
+  /**
+   * Initiates the sign-in flow by launching the intent via a launcher.
+   *
+   * @param launcher launcher used to handle the result
+   */
   public void startSignIn(@NonNull ActivityResultLauncher<Intent> launcher) {
     launcher.launch(client.getSignInIntent());
   }
 
+  /**
+   * Completes the sign-in process using the result from the launched intent.
+   *
+   * @param result the result of the sign-in activity
+   * @return a {@link Single} emitting the signed-in {@link GoogleSignInAccount}
+   */
   public Single<GoogleSignInAccount> completeSignIn(ActivityResult result) {
     return Single.create((SingleEmitter<GoogleSignInAccount> emitter) -> {
           try {
@@ -66,6 +88,11 @@ public class GoogleSignInService {
         .subscribeOn(Schedulers.io());
   }
 
+  /**
+   * Signs out the currently authenticated Google account.
+   *
+   * @return a {@link Completable} that completes when the sign-out succeeds
+   */
   public Completable signOut() {
     return Completable.create((emitter) ->
             client

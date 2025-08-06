@@ -19,13 +19,43 @@ import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.FragmentLoginBinding;
 import edu.cnm.deepdive.crossfyre.viewmodel.LoginViewModel;
 
+/**
+ * Fragment responsible for handling user authentication and sign-in functionality.
+ * This fragment provides the login interface and manages the Google Sign-In process,
+ * including navigation to the main application screens upon successful authentication.
+ *
+ * <p>Uses the Activity Result API to handle sign-in results and observes authentication
+ * state through the LoginViewModel. Navigates to the list screen upon successful login
+ * and displays error messages for failed sign-in attempts.</p>
+ */
 @AndroidEntryPoint
 public class LoginFragment extends Fragment {
 
+  /**
+   * View binding instance for accessing UI components in the login fragment layout.
+   */
   private FragmentLoginBinding binding;
+
+  /**
+   * ViewModel for managing login state, authentication operations, and sign-in results.
+   */
   private LoginViewModel viewModel;
+
+  /**
+   * Activity result launcher for handling Google Sign-In intent results using the
+   * modern Activity Result API.
+   */
   private ActivityResultLauncher<Intent> launcher;
 
+  /**
+   * Creates and returns the view hierarchy associated with the fragment.
+   * Sets up the sign-in button click listener to initiate the authentication process.
+   *
+   * @param inflater The LayoutInflater object that can be used to inflate views
+   * @param container The parent view that the fragment's UI will be attached to
+   * @param savedInstanceState Bundle containing the activity's previously saved state
+   * @return The root view of the inflated fragment layout, or null
+   */
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -35,6 +65,17 @@ public class LoginFragment extends Fragment {
     return binding.getRoot();
   }
 
+  /**
+   * Called after the fragment's view has been created. Initializes the ViewModel,
+   * sets up observers for authentication state and error handling, and registers
+   * the activity result launcher for sign-in operations.
+   *
+   * <p>Observes account changes to navigate to the list screen upon successful login,
+   * and monitors sign-in errors to display appropriate user feedback.</p>
+   *
+   * @param view The view returned by onCreateView
+   * @param savedInstanceState Bundle containing the activity's previously saved state
+   */
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -59,6 +100,10 @@ public class LoginFragment extends Fragment {
     launcher = registerForActivityResult(new StartActivityForResult(), viewModel::completeSignIn);
   }
 
+  /**
+   * Called when the view hierarchy associated with the fragment is being removed.
+   * Cleans up the view binding reference to prevent memory leaks.
+   */
   @Override
   public void onDestroyView() {
     binding = null;

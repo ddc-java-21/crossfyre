@@ -14,11 +14,32 @@ import dagger.hilt.android.AndroidEntryPoint;
 import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.viewmodel.LoginViewModel;
 
+/**
+ * Pre-login fragment that serves as the initial screen for unauthenticated users.
+ * This fragment automatically checks for existing authentication credentials and
+ * navigates appropriately based on the authentication state.
+ *
+ * <p>Acts as a silent authentication check screen that redirects users to either
+ * the main application (if authenticated) or the login screen (if authentication
+ * fails or no valid credentials exist). Uses Hilt for dependency injection and
+ * observes authentication state through the LoginViewModel.</p>
+ */
 @AndroidEntryPoint
 public class PreLoginFragment extends Fragment {
 
+  /**
+   * Root view of the fragment layout, used for navigation operations.
+   */
   private View root;
 
+  /**
+   * Creates and returns the view hierarchy associated with the fragment.
+   *
+   * @param inflater The LayoutInflater object that can be used to inflate views
+   * @param container The parent view that the fragment's UI will be attached to
+   * @param savedInstanceState Bundle containing the activity's previously saved state
+   * @return The root view of the inflated fragment layout, or null
+   */
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -27,6 +48,17 @@ public class PreLoginFragment extends Fragment {
     return root;
   }
 
+  /**
+   * Called after the fragment's view has been created. Sets up observers for
+   * authentication state monitoring and initiates the authentication refresh process.
+   *
+   * <p>Observes account changes to navigate to the main list screen upon successful
+   * authentication, and monitors refresh errors to redirect to the login screen
+   * when authentication fails or credentials are invalid.</p>
+   *
+   * @param view The view returned by onCreateView
+   * @param savedInstanceState Bundle containing the activity's previously saved state
+   */
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -51,6 +83,10 @@ public class PreLoginFragment extends Fragment {
     viewModel.refresh();
   }
 
+  /**
+   * Called when the view hierarchy associated with the fragment is being removed.
+   * Cleans up the root view reference to prevent memory leaks.
+   */
   @Override
   public void onDestroyView() {
     root = null;
