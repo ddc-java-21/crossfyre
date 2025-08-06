@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.compose.ui.graphics.Shape;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.snackbar.Snackbar;
@@ -32,6 +31,11 @@ import javax.inject.Inject;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import nl.dionsegijn.konfetti.core.Position.Relative;
+import nl.dionsegijn.konfetti.core.emitter.EmitterConfig;
+import nl.dionsegijn.konfetti.core.models.Shape;
+import nl.dionsegijn.konfetti.core.models.Shape.Circle;
+import nl.dionsegijn.konfetti.core.models.Shape.Square;
 import nl.dionsegijn.konfetti.xml.KonfettiView;
 import nl.dionsegijn.konfetti.core.Party;
 import nl.dionsegijn.konfetti.core.Position;
@@ -228,7 +232,43 @@ public class PuzzleFragment extends Fragment {
 
     viewModel.getSolved().observe(getViewLifecycleOwner(), (solved) -> {
       if (Boolean.TRUE.equals(solved)) {
-        Snackbar.make(binding.getRoot(), R.string.solved_string, Snackbar.LENGTH_SHORT).show();
+
+//        KonfettiView konfettiView = binding.konfettiView;
+//        konfettiView.setVisibility(View.VISIBLE);
+//
+//        EmitterConfig emitterConfig = new Emitter(100, TimeUnit.MILLISECONDS).perSecond(50);
+//
+//        Party party = new PartyFactory(emitterConfig)
+//            .spread(360)
+//                .shapes(Square.INSTANCE, Circle.INSTANCE)
+//                    .position(new Relative(0.5,0.0))
+//                        .build();
+//
+//        konfettiView.start(party);
+
+        new AlertDialog.Builder(requireContext())
+            .setTitle("🎉 Puzzle Solved!")
+            .setMessage("Congratulations! You completed the puzzle.")
+//            .setCancelable(false)
+            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+//            .setPositiveButton("Go Back", (dialog, which) -> {
+//                  konfettiView.stopGracefully();
+//                  konfettiView.setVisibility(View.GONE);
+//                  navigateToMain();
+//                })
+                .show();
+
+//        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+//          if (isAdded()) {
+//            konfettiView.stopGracefully();
+//            konfettiView.setVisibility(View.GONE);
+//            navigateToMain();
+//          }
+//        }, 3000);
+
+
+
+//        Snackbar.make(binding.getRoot(), R.string.solved_string, Snackbar.LENGTH_SHORT).show();
       }
     });
 
