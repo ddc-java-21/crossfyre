@@ -2,6 +2,7 @@ package edu.cnm.deepdive.crossfyre.model.dto;
 
 import androidx.annotation.Nullable;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -15,6 +16,7 @@ public class UserPuzzleDto {
   @Expose
   private Instant created;
   @Expose
+  @SerializedName("is_solved")
   private Boolean isSolved;
   @Expose
   private List<Guess> guesses;

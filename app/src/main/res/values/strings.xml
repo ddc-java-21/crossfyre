@@ -17,4 +17,5 @@
   <string name="puzzle_fragment_label">Crossfyre</string>
   <string name="clue_format_string">Clue: %s</string>
   <string name="toggle_direction">Toggle Direction</string>
+  <string name="solved_string">Congratulations! You have solved today\'s Crossfyre.</string>
 </resources>

@@ -33,21 +33,22 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   private final CrossfyreService crossfyreService;
   private final MutableLiveData<User> currentUser = new MutableLiveData<>();
   private final MutableLiveData<UserPuzzleDto> userPuzzle;
-  private final LiveData<UserPuzzleDto.Puzzle> currentPuzzle;
+  private final LiveData<Puzzle> currentPuzzle;
   private final LiveData<int[]> wordStarts;
-  private final LiveData<List<UserPuzzleDto.Puzzle.PuzzleWord>> words;
-  private final MutableLiveData<UserPuzzleDto.Puzzle.PuzzleWord> selectedWord;
+  private final LiveData<List<PuzzleWord>> words;
+  private final MutableLiveData<PuzzleWord> selectedWord;
   private final MutableLiveData<List<Integer>> selectedCellPositions;
-  private final LiveData<UserPuzzleDto.Puzzle.PuzzleWord.Direction> selectedDirection;
-  private final LiveData<List<UserPuzzleDto.Guess>> guesses;
+  private final LiveData<Direction> selectedDirection;
+  private final LiveData<List<Guess>> guesses;
   private final MutableLiveData<Integer> selectedSquare;
   private final LiveData<boolean[][]> grid;
+  private final LiveData<Boolean> solved;
   private final MutableLiveData<Throwable> throwable;
   private final CompositeDisposable pending;
 
   private int lastClickedRow = -1;
   private int lastClickedCol = -1;
-  private UserPuzzleDto.Puzzle.PuzzleWord.Direction lastDirection = null;
+  private Direction lastDirection = null;
 
   // Stretch goal boolean[][] false = wall, true = space because grid below is just getting board
 
@@ -85,9 +86,10 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
         (sw) -> (sw != null) ? sw.getDirection() : null);
     guesses = Transformations.map(userPuzzle, (up) -> (up != null) ? up.getGuesses() : null);
     selectedSquare = new MutableLiveData<>();
+    grid = Transformations.map(currentPuzzle, Puzzle::getGrid);
+    solved = Transformations.map(userPuzzle, (up) -> (up != null) ? up.getSolved() : null);
     pending = new CompositeDisposable();
     throwable = new MutableLiveData<>();
-    grid = Transformations.map(currentPuzzle, Puzzle::getGrid);
     fetchCurrentUser();
     fetchUserPuzzle();
   }
@@ -123,7 +125,7 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   }
 
   public void selectSquare(int position) {
-    UserPuzzleDto.Puzzle puzzle = userPuzzle.getValue().getPuzzle();
+    Puzzle puzzle = userPuzzle.getValue().getPuzzle();
 
     int row = position / puzzle.getSize();
     int col = position % puzzle.getSize();
@@ -214,7 +216,7 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     return wordStarts;
   }
 
-  public LiveData<UserPuzzleDto.Puzzle.PuzzleWord> getSelectedWord() {
+  public LiveData<PuzzleWord> getSelectedWord() {
     return selectedWord;
   }
 
@@ -222,11 +224,11 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     return selectedCellPositions;
   }
 
-  public LiveData<UserPuzzleDto.Puzzle.PuzzleWord.Direction> getSelectedDirection() {
+  public LiveData<Direction> getSelectedDirection() {
     return selectedDirection;
   }
 
-  public LiveData<List<UserPuzzleDto.Guess>> getGuesses() {
+  public LiveData<List<Guess>> getGuesses() {
     return guesses;
   }
 
@@ -242,8 +244,11 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     return userPuzzle;
   }
 
-  public LiveData<UserPuzzleDto.Puzzle> getCurrentPuzzle() {
+  public LiveData<Puzzle> getCurrentPuzzle() {
     return currentPuzzle;
   }
 
+  public LiveData<Boolean> getSolved() {
+    return solved;
+  }
 }

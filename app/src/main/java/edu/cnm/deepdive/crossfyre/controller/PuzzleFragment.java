@@ -5,10 +5,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import com.google.android.material.snackbar.Snackbar;
 import dagger.hilt.android.AndroidEntryPoint;
 import edu.cnm.deepdive.crossfyre.R;
 import edu.cnm.deepdive.crossfyre.databinding.FragmentPuzzleBinding;
@@ -94,16 +96,19 @@ public class PuzzleFragment extends Fragment {
     viewModel.getSelectedWord().observe(getViewLifecycleOwner(), (word) -> {
       if (word != null) {
         storedWord = word;
-        binding.clueFullDescriptionText.setText(String.format(getString(R.string.clue_format_string), word.getClue()));
+        binding.clueFullDescriptionText.setText(
+            String.format(getString(R.string.clue_format_string), word.getClue()));
         binding.clueDirection.setText(word.getDirection().toString());
 
         // ⬇️ ICON + CONTENT DESCRIPTION LOGIC ⬇️
         if (word.getDirection() == PuzzleWord.Direction.ACROSS) {
           binding.directionToggleButton.setImageResource(R.drawable.arrow_across_24px);
-          binding.directionToggleButton.setContentDescription(getString(R.string.puzzle_word_direction_across));
+          binding.directionToggleButton.setContentDescription(
+              getString(R.string.puzzle_word_direction_across));
         } else {
           binding.directionToggleButton.setImageResource(R.drawable.arrow_down_24px);
-          binding.directionToggleButton.setContentDescription(getString(R.string.puzzle_word_direction_down));
+          binding.directionToggleButton.setContentDescription(
+              getString(R.string.puzzle_word_direction_down));
         }
 
         if (storedPuzzle != null) {
@@ -112,8 +117,6 @@ public class PuzzleFragment extends Fragment {
         }
       }
     });
-
-
 
     viewModel.getCurrentPuzzle().observe(getViewLifecycleOwner(), (puzzle) -> {
       if (puzzle != null) {
@@ -124,7 +127,6 @@ public class PuzzleFragment extends Fragment {
         }
       }
     });
-
 
     viewModel.getSelectedSquare().observe(getViewLifecycleOwner(), (position) -> {
       currentPosition = position;
@@ -139,8 +141,15 @@ public class PuzzleFragment extends Fragment {
       }
     });
 
+    viewModel.getSolved().observe(getViewLifecycleOwner(), (solved) -> {
+      if (Boolean.TRUE.equals(solved)) {
+        Snackbar.make(binding.getRoot(), R.string.solved_string, Snackbar.LENGTH_SHORT).show();
+      }
+    });
+
     // Add toggle button click listener
     binding.directionToggleButton.setOnClickListener((v) -> toggleClueDirection());
+
   }
 
   private void toggleClueDirection() {
@@ -155,7 +164,8 @@ public class PuzzleFragment extends Fragment {
   }
 
   private void setCellWordStartNumber(PuzzleWord word) {
-    int position = word.getWordPosition().getRow() * storedPuzzle.getSize() + word.getWordPosition().getColumn();
+    int position = word.getWordPosition().getRow() * storedPuzzle.getSize() + word.getWordPosition()
+        .getColumn();
     int cellWordStartNumber = -1;
     for (int i = 0; i < storedPuzzle.getWordStarts().length; i++) {
       if (position == storedPuzzle.getWordStarts()[i]) {
