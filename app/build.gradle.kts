@@ -86,7 +86,10 @@ android {
 
 dependencies {
 
+
     // .jar-based libraries included in project
+    implementation("nl.dionsegijn:konfetti-xml:2.0.2")
+
 
     // Basic Android components
     implementation(libs.app.compat)
@@ -115,6 +118,7 @@ dependencies {
 
     // Room annotation processor, runtime library, and ReactiveX integration
     implementation(libs.room.runtime)
+    implementation(libs.ui.graphics.android)
     annotationProcessor(libs.room.compiler)
     implementation(libs.room.rx.java)
 
