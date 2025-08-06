@@ -17,14 +17,18 @@ import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Puzzle.PuzzleWord;
 import edu.cnm.deepdive.crossfyre.model.dto.UserPuzzleDto.Puzzle.PuzzleWord.Direction;
 import edu.cnm.deepdive.crossfyre.service.CrossfyreService;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.inject.Inject;
 
+/**
+ * ViewModel responsible for handling puzzle data and user interactions for the crossword puzzle.
+ * <p>
+ * Manages the current user profile, current puzzle, puzzle state including guesses, selected word,
+ * and selected cells, as well as interaction with the backend service to fetch and update puzzle data.
+ */
 @HiltViewModel
 public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserver {
 
@@ -49,40 +53,21 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
   private int lastClickedCol = -1;
   private UserPuzzleDto.Puzzle.PuzzleWord.Direction lastDirection = null;
 
-  // Stretch goal boolean[][] false = wall, true = space because grid below is just getting board
-
-//  private static Character[][] buildBoard(UserPuzzleDto up) {
-//    if (up == null || up.getPuzzle() == null) {
-//      return null;
-//    }
-//    int size = up.getPuzzle().getSize();
-//    Character[][] grid = new Character[size][size];
-//    String layout = up.getPuzzle().getBoard().day;
-//    if (layout.length() != size * size) {
-//      throw new IllegalStateException("Board layout does not match size × size.");
-//    }
-//    int index = 0;
-//    for (int row = 0; row < size; row++) {
-//      for (int col = 0; col < size; col++) {
-//        grid[row][col] = layout.charAt(index++);
-//      }
-//    }
-//    return grid;
-//  }
-  // LiveData for mapping position → clue number
-
+  /**
+   * Constructs a PuzzleViewModel with the provided CrossfyreService.
+   *
+   * @param crossfyreService the service for network operations related to the puzzle and user.
+   */
   @Inject
   public PuzzleViewModel(CrossfyreService crossfyreService) {
     this.crossfyreService = crossfyreService;
     userPuzzle = new MutableLiveData<>();
     currentPuzzle = Transformations.map(userPuzzle, (up) -> (up != null) ? up.getPuzzle() : null);
-    wordStarts = Transformations.map(userPuzzle, (up) -> (up != null) ? up.getPuzzle()
-        .getWordStarts() : null);
+    wordStarts = Transformations.map(userPuzzle, (up) -> (up != null) ? up.getPuzzle().getWordStarts() : null);
     words = Transformations.map(currentPuzzle, (cp) -> (cp != null) ? cp.getPuzzleWords() : null);
     selectedWord = new MutableLiveData<>();
     selectedCellPositions = new MutableLiveData<>();
-    selectedDirection = Transformations.map(selectedWord,
-        (sw) -> (sw != null) ? sw.getDirection() : null);
+    selectedDirection = Transformations.map(selectedWord, (sw) -> (sw != null) ? sw.getDirection() : null);
     guesses = Transformations.map(userPuzzle, (up) -> (up != null) ? up.getGuesses() : null);
     selectedSquare = new MutableLiveData<>();
     pending = new CompositeDisposable();
@@ -92,7 +77,10 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     fetchUserPuzzle();
   }
 
-  // Server side check to use Schedules single threaded pool method instead of Schedules.io()
+  /**
+   * Fetches the current logged-in user profile from the backend service.
+   * Updates the LiveData currentUser or throwable on failure.
+   */
   private void fetchCurrentUser() {
     throwable.setValue(null);
     crossfyreService.getMyProfile()
@@ -101,9 +89,12 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
             this::postThrowable,
             pending
         );
-
   }
 
+  /**
+   * Fetches the puzzle for the current date from the backend service.
+   * Updates the LiveData userPuzzle or throwable on failure.
+   */
   private void fetchUserPuzzle() {
     throwable.setValue(null);
     crossfyreService.getUserPuzzle(LocalDate.now())
@@ -114,26 +105,32 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
         );
   }
 
+  /**
+   * Handles a fetched UserPuzzleDto by posting it to the userPuzzle LiveData.
+   *
+   * @param dto the puzzle data transfer object fetched from the backend.
+   */
   private void handleUserPuzzle(UserPuzzleDto dto) {
     if (dto != null) {
-//      Log.d(TAG, "Board layout: " + dto.getPuzzle().getBoard().day);
-//      Log.d(TAG, "Puzzle words count: " + dto.getPuzzle().getPuzzleWords().size());
       userPuzzle.postValue(dto);
     }
   }
 
+  /**
+   * Selects a square in the puzzle grid by position index.
+   * Updates the selected word and highlighted cell positions accordingly.
+   *
+   * @param position the linear position in the puzzle grid.
+   */
   public void selectSquare(int position) {
     UserPuzzleDto.Puzzle puzzle = userPuzzle.getValue().getPuzzle();
-
     int row = position / puzzle.getSize();
     int col = position % puzzle.getSize();
     boolean sameCellClicked = lastClickedRow == row && lastClickedCol == col;
 
-    //noinspection SimplifyStreamApiCallChains
-    List<PuzzleWord> candidates = puzzle
-        .getPuzzleWords()
+    List<PuzzleWord> candidates = puzzle.getPuzzleWords()
         .stream()
-        .filter((word) -> word.includes(row, col))
+        .filter(word -> word.includes(row, col))
         .collect(Collectors.toList());
 
     if (candidates.isEmpty()) {
@@ -142,12 +139,10 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
 
     PuzzleWord matchedWord = (candidates.size() == 1)
         ? candidates.get(0)
-        : candidates
-            .stream()
-            .filter((word) -> sameCellClicked
+        : candidates.stream()
+            .filter(word -> sameCellClicked
                 ? !word.equals(selectedWord.getValue())
-                : word.getDirection() == Direction.ACROSS
-            )
+                : word.getDirection() == Direction.ACROSS)
             .findFirst()
             .orElseThrow();
 
@@ -160,9 +155,9 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     int size = puzzle.getSize();
     int rowOffset = matchedWord.getDirection().rowOffset();
     int colOffset = matchedWord.getDirection().columnOffset();
-    List<Integer> selectedPositions = IntStream
-        .range(0, matchedWord.getWordPosition().getLength())
-        .map((sp) -> {
+
+    List<Integer> selectedPositions = IntStream.range(0, matchedWord.getWordPosition().getLength())
+        .map(sp -> {
           int selectionRow = startRow + sp * rowOffset;
           int selectionCol = startCol + sp * colOffset;
           return selectionRow * size + selectionCol;
@@ -175,13 +170,14 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
     selectedWord.setValue(matchedWord);
   }
 
-
+  /**
+   * Sends a guess for a letter in the puzzle to the backend service.
+   *
+   * @param guess the guess object containing the guessed letter and position.
+   */
   public void sendGuess(Guess guess) {
     throwable.setValue(null);
-    crossfyreService.sendGuess(
-            userPuzzle.getValue().getPuzzle().getDate(),
-            guess
-        )
+    crossfyreService.sendGuess(userPuzzle.getValue().getPuzzle().getDate(), guess)
         .subscribe(
             userPuzzle::postValue,
             this::postThrowable,
@@ -189,59 +185,122 @@ public class PuzzleViewModel extends ViewModel implements DefaultLifecycleObserv
         );
   }
 
+  /**
+   * Selects a puzzle word programmatically.
+   *
+   * @param word the PuzzleWord to select.
+   */
   public void selectWord(PuzzleWord word) {
     selectedWord.setValue(word);
   }
 
+  /**
+   * Clears pending disposables when lifecycle owner stops.
+   *
+   * @param owner the lifecycle owner.
+   */
   @Override
   public void onStop(@NonNull LifecycleOwner owner) {
     pending.clear();
     DefaultLifecycleObserver.super.onStop(owner);
   }
 
+  /**
+   * Posts a Throwable error to the throwable LiveData and logs the error.
+   *
+   * @param throwable the Throwable to post.
+   */
   private void postThrowable(Throwable throwable) {
     Log.e(TAG, throwable.getMessage(), throwable);
     this.throwable.postValue(throwable);
   }
 
-
-  // LiveData Getters
+  /**
+   * Gets the puzzle grid as a LiveData of a 2D boolean array.
+   *
+   * @return the grid LiveData.
+   */
   public LiveData<boolean[][]> getGrid() {
     return grid;
   }
 
+  /**
+   * Gets the array of word start positions as LiveData.
+   *
+   * @return the word starts LiveData.
+   */
   public LiveData<int[]> getWordStarts() {
     return wordStarts;
   }
 
+  /**
+   * Gets the currently selected puzzle word as LiveData.
+   *
+   * @return the selected word LiveData.
+   */
   public LiveData<UserPuzzleDto.Puzzle.PuzzleWord> getSelectedWord() {
     return selectedWord;
   }
 
+  /**
+   * Gets the list of selected cell positions as LiveData.
+   *
+   * @return the selected cell positions LiveData.
+   */
   public LiveData<List<Integer>> getSelectedCellPositions() {
     return selectedCellPositions;
   }
 
+  /**
+   * Gets the currently selected direction of the puzzle word as LiveData.
+   *
+   * @return the selected direction LiveData.
+   */
   public LiveData<UserPuzzleDto.Puzzle.PuzzleWord.Direction> getSelectedDirection() {
     return selectedDirection;
   }
 
+  /**
+   * Gets the list of guesses made by the user as LiveData.
+   *
+   * @return the guesses LiveData.
+   */
   public LiveData<List<UserPuzzleDto.Guess>> getGuesses() {
     return guesses;
   }
 
+  /**
+   * Gets the currently selected square position as LiveData.
+   *
+   * @return the selected square LiveData.
+   */
   public LiveData<Integer> getSelectedSquare() {
     return selectedSquare;
   }
 
+  /**
+   * Gets any errors encountered during backend operations as LiveData.
+   *
+   * @return the throwable LiveData.
+   */
   public LiveData<Throwable> getThrowable() {
     return throwable;
   }
 
+  /**
+   * Gets the current UserPuzzleDto as LiveData.
+   *
+   * @return the user puzzle LiveData.
+   */
   public LiveData<UserPuzzleDto> getUserPuzzle() {
     return userPuzzle;
   }
 
+  /**
+   * Gets the current Puzzle object as LiveData.
+   *
+   * @return the current puzzle LiveData.
+   */
   public LiveData<UserPuzzleDto.Puzzle> getCurrentPuzzle() {
     return currentPuzzle;
   }

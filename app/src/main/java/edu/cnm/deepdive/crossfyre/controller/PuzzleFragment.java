@@ -20,20 +20,61 @@ import edu.cnm.deepdive.crossfyre.view.adapter.SquareAdapter;
 import edu.cnm.deepdive.crossfyre.viewmodel.PuzzleViewModel;
 import javax.inject.Inject;
 
+/**
+ * Fragment responsible for displaying and managing the crossword puzzle game interface.
+ * This fragment handles the interactive crossword grid, clue display, user input,
+ * and communication with the puzzle game logic through the PuzzleViewModel.
+ *
+ * <p>Manages the puzzle grid using a custom SquareAdapter, observes puzzle state
+ * changes, handles user interactions for selecting squares and entering guesses,
+ * and displays clue information with directional toggle functionality. Uses Hilt
+ * for dependency injection of the grid adapter.</p>
+ */
 @AndroidEntryPoint
 public class PuzzleFragment extends Fragment {
 
+  /**
+   * View binding instance for accessing UI components in the puzzle fragment layout.
+   */
   private FragmentPuzzleBinding binding;
+
+  /**
+   * ViewModel for managing puzzle state, user interactions, and game logic.
+   */
   private PuzzleViewModel viewModel;
+
+  /**
+   * Currently selected word in the puzzle, cached for UI updates and clue display.
+   */
   private PuzzleWord storedWord = null;
+
+  /**
+   * Current puzzle data, cached for grid operations and word numbering calculations.
+   */
   private Puzzle storedPuzzle = null;
+
+  /**
+   * Position of the currently selected square in the puzzle grid.
+   */
   private Integer currentPosition = null;
 
-  //When an instance of the puzzle fragemnt gets created, right after it gets initialized and constructor is done
-  // Hilt will inject an adapter
+  /**
+   * Custom adapter for managing the puzzle grid display and user interactions.
+   * Injected by Hilt when the fragment instance is created.
+   */
   @Inject
   SquareAdapter squareAdapter;
 
+  /**
+   * Creates and returns the view hierarchy associated with the fragment.
+   * Sets up the puzzle grid click listener and configures the square adapter
+   * with a guess submission callback.
+   *
+   * @param inflater The LayoutInflater object that can be used to inflate views
+   * @param container The parent view that the fragment's UI will be attached to
+   * @param savedInstanceState Bundle containing the activity's previously saved state
+   * @return The root view of the inflated fragment layout
+   */
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -47,6 +88,14 @@ public class PuzzleFragment extends Fragment {
     return binding.getRoot();
   }
 
+  /**
+   * Sends a user's guess to the ViewModel for processing and validation.
+   * Creates a Guess object with the character input and grid position coordinates.
+   *
+   * @param guessChar The character guessed by the user
+   * @param row The row position in the puzzle grid
+   * @param column The column position in the puzzle grid
+   */
   private void sendGuess(char guessChar, int row, int column) {
     Guess guess = new Guess();
     GuessPosition position = new GuessPosition();
@@ -57,6 +106,18 @@ public class PuzzleFragment extends Fragment {
     viewModel.sendGuess(guess);
   }
 
+  /**
+   * Called after the fragment's view has been created. Initializes the ViewModel,
+   * configures the puzzle grid adapter, and sets up observers for all puzzle state
+   * changes including grid updates, word selections, and user guesses.
+   *
+   * <p>Establishes observers for grid data, word start positions, selected cell positions,
+   * selected word details, current puzzle state, selected square position, and user guesses.
+   * Also configures the direction toggle button click listener.</p>
+   *
+   * @param view The view returned by onCreateView
+   * @param savedInstanceState Bundle containing the activity's previously saved state
+   */
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     Log.d("PuzzleFragment", "onViewCreated");
@@ -143,6 +204,11 @@ public class PuzzleFragment extends Fragment {
     binding.directionToggleButton.setOnClickListener((v) -> toggleClueDirection());
   }
 
+  /**
+   * Handles the direction toggle button click to switch between across and down
+   * word selections for the current square position. Re-triggers square selection
+   * to cycle through available word directions.
+   */
   private void toggleClueDirection() {
     if (currentPosition == null) {
       return;
@@ -154,6 +220,13 @@ public class PuzzleFragment extends Fragment {
 //    Log.d("PuzzleFragment", "No alternate direction word found.");
   }
 
+  /**
+   * Calculates and displays the clue number for the selected word based on its
+   * starting position in the puzzle grid. Uses the puzzle's word starts array
+   * to determine the appropriate numbering sequence.
+   *
+   * @param word The puzzle word for which to calculate and display the clue number
+   */
   private void setCellWordStartNumber(PuzzleWord word) {
     int position = word.getWordPosition().getRow() * storedPuzzle.getSize() + word.getWordPosition().getColumn();
     int cellWordStartNumber = -1;
@@ -166,6 +239,10 @@ public class PuzzleFragment extends Fragment {
     binding.cellWordStartNumber.setText(String.valueOf(cellWordStartNumber));
   }
 
+  /**
+   * Called when the view hierarchy associated with the fragment is being removed.
+   * Cleans up the view binding reference to prevent memory leaks.
+   */
   @Override
   public void onDestroyView() {
     binding = null;

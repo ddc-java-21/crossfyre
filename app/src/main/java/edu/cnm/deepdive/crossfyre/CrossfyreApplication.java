@@ -19,16 +19,22 @@ import android.app.Application;
 import dagger.hilt.android.HiltAndroidApp;
 
 /**
- * Initializes (in the {@link #onCreate()} method) application-level resources that cannot be
- * handled with Hilt dependency injection. This class <strong>must</strong> be referenced in
- * {@code AndroidManifest.xml}, or it will not be loaded and used by the Android system.
+ * Application class for the Crossfyre app.
+ * <p>
+ * This class initializes application-level resources that cannot be handled by Hilt dependency injection.
+ * It must be declared in {@code AndroidManifest.xml} to be properly used by the Android system.
  */
 @HiltAndroidApp
 public class CrossfyreApplication extends Application {
 
+  /**
+   * Called when the application is starting, before any activity, service, or receiver objects
+   * have been created.
+   */
   @Override
   public void onCreate() {
     super.onCreate();
+    // Initialize any application-level resources here if needed.
   }
 
 }

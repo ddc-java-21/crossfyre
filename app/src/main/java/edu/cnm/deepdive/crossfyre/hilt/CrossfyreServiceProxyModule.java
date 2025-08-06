@@ -26,11 +26,30 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Hilt dependency injection module that provides network-related dependencies for the
+ * CrossFyre application. This module configures and provides singleton instances of
+ * Gson serialization, HTTP interceptors, and the main service proxy for API communication.
+ *
+ * <p>Installed in the SingletonComponent to ensure application-wide availability of
+ * network dependencies. Configures custom serializers for Java 8 time types and
+ * sets up HTTP logging based on application configuration.</p>
+ */
 @Module
 @InstallIn(SingletonComponent.class)
 public class CrossfyreServiceProxyModule {
 
-
+  /**
+   * Provides a configured Gson instance for JSON serialization and deserialization.
+   * Configures custom type adapters for Instant and LocalDate types, and excludes
+   * fields without @Expose annotations from serialization.
+   *
+   * @param instantDeserializer Custom deserializer for Instant objects
+   * @param instantSerializer Custom serializer for Instant objects
+   * @param localDateDeserializer Custom deserializer for LocalDate objects
+   * @param localDateSerializer Custom serializer for LocalDate objects
+   * @return Configured Gson instance with custom type adapters
+   */
   @Provides
   @Singleton
   Gson provideGson(/*JsonDeserializer<Instant> deserializer*/ InstantDeserializer instantDeserializer, InstantSerializer instantSerializer,
@@ -45,6 +64,14 @@ public class CrossfyreServiceProxyModule {
         .create();
   }
 
+  /**
+   * Provides an HTTP logging interceptor configured with the logging level specified
+   * in the application's string resources. The logging level is read from the
+   * log_level string resource and converted to uppercase for HttpLoggingInterceptor.
+   *
+   * @param context Application context for accessing string resources
+   * @return Configured HttpLoggingInterceptor with appropriate logging level
+   */
   @Provides
   @Singleton
   Interceptor provideInterceptor(@ApplicationContext Context context) {
@@ -52,6 +79,16 @@ public class CrossfyreServiceProxyModule {
         .setLevel(Level.valueOf(context.getString(R.string.log_level).toUpperCase()));
   }
 
+  /**
+   * Provides the main service proxy for API communication with the CrossFyre backend.
+   * Configures a complete Retrofit instance with OkHttpClient, Gson converter,
+   * RxJava3 call adapter, and the base URL from application resources.
+   *
+   * @param context Application context for accessing string resources (base URL)
+   * @param gson Configured Gson instance for JSON conversion
+   * @param interceptor HTTP logging interceptor for request/response logging
+   * @return Configured CrossfyreServiceProxy for API communication
+   */
   @Provides
   @Singleton
   CrossfyreServiceProxy provideProxy(
