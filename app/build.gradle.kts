@@ -86,8 +86,11 @@ android {
 
 dependencies {
 
+    // Gif adding components
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
-    // .jar-based libraries included in project
+    // Celebration Konfetti components
     implementation("nl.dionsegijn:konfetti-xml:2.0.2")
 
 

@@ -8,11 +8,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -232,41 +235,68 @@ public class PuzzleFragment extends Fragment {
 
     viewModel.getSolved().observe(getViewLifecycleOwner(), (solved) -> {
       if (Boolean.TRUE.equals(solved)) {
+        binding.konfettiView.setVisibility(View.VISIBLE);
+        binding.celebrationGifView.setVisibility(View.VISIBLE);
+        binding.congratsLabel.setVisibility(View.VISIBLE);
 
-//        KonfettiView konfettiView = binding.konfettiView;
-//        konfettiView.setVisibility(View.VISIBLE);
-//
-//        EmitterConfig emitterConfig = new Emitter(100, TimeUnit.MILLISECONDS).perSecond(50);
-//
-//        Party party = new PartyFactory(emitterConfig)
-//            .spread(360)
-//                .shapes(Square.INSTANCE, Circle.INSTANCE)
-//                    .position(new Relative(0.5,0.0))
-//                        .build();
-//
-//        konfettiView.start(party);
+        TextView congratsLabel = binding.congratsLabel;
+        ImageView gifView = binding.celebrationGifView;
 
-        new AlertDialog.Builder(requireContext())
-            .setTitle("🎉 Puzzle Solved!")
-            .setMessage("Congratulations! You completed the puzzle.")
+        congratsLabel.setVisibility(View.VISIBLE);
+        gifView.setVisibility(View.VISIBLE);
+
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.elmo_fire_puzzle_completion)
+            .into(gifView);
+
+        KonfettiView konfettiView = binding.konfettiView;
+        konfettiView.setVisibility(View.VISIBLE);
+
+
+        EmitterConfig emitterConfig = new Emitter(100, TimeUnit.MILLISECONDS).perSecond(50);
+        Party party = new PartyFactory(emitterConfig)
+            .spread(360)
+            .shapes(Square.INSTANCE, Circle.INSTANCE)
+            .position(new Relative(0.5,0.0))
+            .build();
+
+        konfettiView.start(party);
+
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+          if (isAdded()) {
+            konfettiView.stopGracefully();
+            konfettiView.setVisibility(View.GONE);
+            binding.congratsLabel.setVisibility(View.GONE);
+          }
+        }, 15000);
+
+        congratsLabel.setOnClickListener((v) -> {
+          congratsLabel.setVisibility(View.GONE);
+          gifView.setVisibility(View.GONE);
+          navigateToMain();
+        });
+
+//        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+//              gifView.setVisibility(View.GONE);
+//            },
+//            6000);
+
+//
+//
+//
+//        new AlertDialog.Builder(requireContext())
+//            .setTitle("🎉 Puzzle Solved!")
+//            .setMessage("Congratulations! You completed the puzzle.")
 //            .setCancelable(false)
-            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+//            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
 //            .setPositiveButton("Go Back", (dialog, which) -> {
 //                  konfettiView.stopGracefully();
 //                  konfettiView.setVisibility(View.GONE);
 //                  navigateToMain();
 //                })
-                .show();
-
-//        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-//          if (isAdded()) {
-//            konfettiView.stopGracefully();
-//            konfettiView.setVisibility(View.GONE);
-//            navigateToMain();
-//          }
-//        }, 3000);
-
-
+//                .show();
+//
 
 //        Snackbar.make(binding.getRoot(), R.string.solved_string, Snackbar.LENGTH_SHORT).show();
       }

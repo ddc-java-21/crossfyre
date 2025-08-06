@@ -18,4 +18,5 @@
   <string name="clue_format_string">Clue: %s</string>
   <string name="toggle_direction">Toggle Direction</string>
   <string name="solved_string">Congratulations! You have solved today\'s Crossfyre.</string>
+  <string name="congrats_gif">Celebration animation</string>
 </resources>
