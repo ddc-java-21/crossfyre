@@ -20,18 +20,27 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+/**
+ * Generates crossword puzzle words based on a given board pattern and word list.
+ * Loads words from a resource file grouped by word length, and uses a recursive backtracking
+ * algorithm to place words on the board according to the pattern.
+ */
 @Component
 public class GeneratorService implements AbstractGeneratorService {
 
   private static final String WORDS_FILE = "crossword/englishWordsWithTwoLetterWords.txt";
-  //private final List<String> words;
   private final Map<Integer, List<String>> wordListsMap;
 
+  /**
+   * Initializes a new instance of {@code GeneratorService}, loading and grouping words
+   * by their length from a resource file.
+   *
+   * @throws IOException if the resource file cannot be read.
+   */
   public GeneratorService() throws IOException {
     Resource resource = new ClassPathResource(WORDS_FILE);
     try (Stream<String> lines = Files.lines(Paths.get(resource.getURI()))) {
@@ -45,26 +54,26 @@ public class GeneratorService implements AbstractGeneratorService {
                 return list1;
               })
           ));
-//          .collect(Collectors.groupingBy(String::length));
     }
   }
 
+  /**
+   * Generates a list of {@link PuzzleWord} instances that can be placed on the specified puzzle board.
+   *
+   * @param frame Board containing the pattern (0s and _s) representing blocked and open cells.
+   * @return List of words placed on the board with their positions and directions.
+   */
   @Override
   public List<PuzzleWord> generatePuzzleWords(Board frame) {
     String pattern = frame.day;
     int size = (int) Math.round(Math.sqrt(pattern.length()));
-//    List<String> candidates = getCandidates(size);
 
-    // Declare a local map variable and copy field values (wordListsMap) into it
     Map<Integer, List<String>> candidatesMap = new HashMap<>();
-    for (Map.Entry<Integer, List<String>> entry : wordListsMap.entrySet())
-    {
+    for (Map.Entry<Integer, List<String>> entry : wordListsMap.entrySet()) {
       candidatesMap.put(entry.getKey(), new ArrayList<>(entry.getValue()));
     }
 
-    // Shuffle list of words for each word length
-    for (Map.Entry<Integer, List<String>> entry : candidatesMap.entrySet())
-    {
+    for (Map.Entry<Integer, List<String>> entry : candidatesMap.entrySet()) {
       Collections.shuffle(entry.getValue());
     }
 
@@ -83,7 +92,6 @@ public class GeneratorService implements AbstractGeneratorService {
     System.out.println(success ? "Success" : "Failed");
     System.out.println(placements);
 
-    // Finally, transfer data from placements into puzzleWords
     List<PuzzleWord> puzzleWords = new ArrayList<>();
     for (Map.Entry<WordStart, String> entry : placements.entrySet()) {
       WordStart wordStart = entry.getKey();
@@ -101,6 +109,13 @@ public class GeneratorService implements AbstractGeneratorService {
     return puzzleWords;
   }
 
+  /**
+   * Finds valid starting points on the board for words in both ACROSS and DOWN directions.
+   *
+   * @param size  Size of the board (rows and columns).
+   * @param board 2D character array representing the board pattern.
+   * @return List of potential word starts with positions and directions.
+   */
   private static List<WordStart> findStarts(int size, char[][] board) {
     List<WordStart> starts = new LinkedList<>();
     for (int row = 0; row < size; row++) {
@@ -110,7 +125,7 @@ public class GeneratorService implements AbstractGeneratorService {
         if (board[row][column] != '0' && wallLeft) {
           int length = 0;
           for (int wordColumn = column; wordColumn < size && board[row][wordColumn] != '0'; wordColumn++, length++) {
-            // do nothing
+            // count length
           }
           if (length > 1) {
             starts.add(new WordStart(row, column, length, Direction.ACROSS));
@@ -119,7 +134,7 @@ public class GeneratorService implements AbstractGeneratorService {
         if (board[row][column] != '0' && (wallAbove || board[row - 1][column] == '0')) {
           int length = 0;
           for (int wordRow = row; wordRow < size && board[wordRow][column] != '0'; wordRow++, length++) {
-            // do nothing
+            // count length
           }
           if (length > 1) {
             starts.add(new WordStart(row, column, length, Direction.DOWN));
@@ -131,16 +146,13 @@ public class GeneratorService implements AbstractGeneratorService {
     return starts;
   }
 
-//  @NotNull
-//  private List<String> getCandidates(int size) {
-//    List<String> candidates = words
-//        .stream()
-//        .filter((word) -> word.length() <= size)
-//        .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-//    Collections.shuffle(candidates);
-//    return candidates;
-//  }
-
+  /**
+   * Converts a linear string pattern into a 2D character array representing the board.
+   *
+   * @param size    Size of the board.
+   * @param pattern Linear pattern representing board layout.
+   * @return 2D array of board characters.
+   */
   private static char[][] buildBoard(int size, String pattern) {
     char[][] board = new char[size][];
     for (int i = 0; i < size; i++) {
@@ -149,12 +161,21 @@ public class GeneratorService implements AbstractGeneratorService {
     return board;
   }
 
+  /**
+   * Recursively attempts to place words from the candidate list into the board to fill all word slots.
+   *
+   * @param board        Current state of the board.
+   * @param starts       List of available word starting points.
+   * @param candidatesMap Map of candidate words by length.
+   * @param usedWords    Set of already used words to avoid repeats.
+   * @param placements   Map to store word placements.
+   * @return true if successful in placing all words, false otherwise.
+   */
   private static boolean generate(char[][] board, List<WordStart> starts, Map<Integer, List<String>> candidatesMap,
       Set<String> usedWords, Map<WordStart, String> placements) {
 
     return starts.isEmpty() || candidatesMap.get(starts.getFirst().length())
         .stream()
-//        .filter((word) -> word.length() == starts.getFirst().length())
         .filter((word) -> !usedWords.contains(word))
         .anyMatch((word) -> {
           WordStart start = starts.getFirst();
@@ -187,7 +208,9 @@ public class GeneratorService implements AbstractGeneratorService {
         });
   }
 
-
+  /**
+   * Enum representing word directions (ACROSS or DOWN), with corresponding row and column offsets.
+   */
   private enum Direction {
     ACROSS(0, 1),
     DOWN(1, 0);
@@ -207,8 +230,12 @@ public class GeneratorService implements AbstractGeneratorService {
     public int columnOffset() {
       return columnOffset;
     }
-
   }
+
+  /**
+   * Record representing a starting point for a word, including its position, length, and direction.
+   * Implements {@link Comparable} to enable natural ordering by direction, row, and column.
+   */
   private record WordStart(int row, int column, int length, Direction direction) implements Comparable<WordStart> {
 
     private static final Comparator<WordStart> COMPARATOR = Comparator.comparing(WordStart::direction)
@@ -219,7 +246,5 @@ public class GeneratorService implements AbstractGeneratorService {
     public int compareTo(@NotNull WordStart other) {
       return COMPARATOR.compare(this, other);
     }
-
   }
-
 }
