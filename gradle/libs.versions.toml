@@ -56,6 +56,7 @@ android-test-runner = "1.6.2"
 junit-android = "1.8.0"
 instant-task-executor = "1.0.0"
 espresso = "3.6.1"
+ui-graphics-android = "1.8.3"
 
 
 [libraries]
@@ -156,6 +157,7 @@ instant-task-executor = { group = "io.github.neboskreb", name = "instant-task-ex
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "ui-graphics-android" }
 
 
 [bundles]
