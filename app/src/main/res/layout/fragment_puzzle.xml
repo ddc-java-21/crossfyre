@@ -11,7 +11,7 @@
     android:layout_width="0dp"
     android:layout_height="0dp"
     android:layout_margin="@dimen/full_dynamic_spacing"
-    android:background="#80808000"
+    android:background="@color/backgroundColorRed"
     android:columnWidth="0dp"
     android:gravity="center"
     app:layout_constraintDimensionRatio="1:1"
@@ -21,37 +21,6 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     />
-  <TextView
-    android:id="@+id/clue_direction"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    app:layout_constraintTop_toBottomOf="@+id/direction_toggle_button"
-    app:layout_constraintStart_toEndOf="@id/cell_word_start_number"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintBottom_toTopOf="@id/clue_full_description_text"
-    android:text="NONE"
-    android:textStyle="bold"
-    android:textSize="10pt"
-    android:layout_margin="@dimen/full_dynamic_spacing"
-    android:layout_marginTop="@dimen/half_dynamic_spacing"
-    />
-
-  <TextView
-    android:id="@+id/cell_word_start_number"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/half_dynamic_spacing"
-    android:layout_marginTop="@dimen/full_dynamic_spacing"
-    app:layout_constraintStart_toStartOf="@id/guideline_vertical"
-    app:layout_constraintTop_toBottomOf="@id/direction_toggle_button"
-    app:layout_constraintBottom_toTopOf="@id/clue_full_description_text"
-    app:layout_constraintEnd_toStartOf="@id/clue_direction"
-    android:textSize="10pt"
-    android:textStyle="bold"
-    android:text="1"
-    />
-
-
 
   <ImageButton
     android:id="@+id/direction_toggle_button"
@@ -64,9 +33,40 @@
     app:layout_constraintBottom_toTopOf="@id/clue_direction"
     android:src="@drawable/arrow_across_24px"
     android:background="?attr/selectableItemBackgroundBorderless"
-    android:layout_marginTop="@dimen/full_dynamic_spacing"
-    android:layout_marginBottom="@dimen/full_dynamic_spacing"
     />
+
+  <TextView
+    android:id="@+id/clue_direction"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toBottomOf="@+id/direction_toggle_button"
+    app:layout_constraintStart_toEndOf="@id/cell_word_start_number"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintBottom_toTopOf="@id/clue_full_description_text"
+    android:text="NONE"
+    android:textStyle="bold"
+    android:textSize="20pt"
+    android:layout_margin="@dimen/full_dynamic_spacing"
+    android:layout_marginTop="@dimen/full_dynamic_spacing"
+    />
+
+
+  <TextView
+    android:id="@+id/cell_word_start_number"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/half_dynamic_spacing"
+    android:layout_marginBottom="@dimen/full_dynamic_spacing"
+    android:layout_marginTop="@dimen/full_dynamic_spacing"
+    app:layout_constraintStart_toStartOf="@id/guideline_vertical"
+    app:layout_constraintTop_toBottomOf="@id/direction_toggle_button"
+    app:layout_constraintBottom_toTopOf="@id/clue_full_description_text"
+    app:layout_constraintEnd_toStartOf="@id/clue_direction"
+    android:textSize="20pt"
+    android:textStyle="bold"
+    android:text="1"
+    />
+
 
 
   <TextView
@@ -78,8 +78,11 @@
     app:layout_constraintEnd_toEndOf="@id/guideline_vertical_2"
     android:text="NONE"
     android:textStyle="bold"
+    android:textSize="25dp"
     android:layout_marginTop="@dimen/full_dynamic_spacing"
     />
+
+
   <androidx.constraintlayout.widget.Guideline
     android:id="@+id/guideline_horizontal"
     android:layout_width="match_parent"
