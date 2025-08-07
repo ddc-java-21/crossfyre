@@ -1,7 +1,0 @@
-spring:
-  application:
-    name: generate
-
-  main:
-    web-application-type: none
-
